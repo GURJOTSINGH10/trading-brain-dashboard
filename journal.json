@@ -1,0 +1,62 @@
+{
+  "lastSession": "03/07/2026",
+  "equity": 100000,
+  "positions": [
+    {
+      "picked": "3 Jul",
+      "symbol": "SUNPHARMA",
+      "sector": "Pharma",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 1925,
+      "sl": 1856,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "3 Jul",
+      "symbol": "DIVISLAB",
+      "sector": "Pharma",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 6888,
+      "sl": 6578,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "3 Jul",
+      "symbol": "ICICIBANK",
+      "sector": "Private Banks",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 1420,
+      "sl": 1356,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "3 Jul",
+      "symbol": "TORNTPHARM",
+      "sector": "Pharma",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 4783,
+      "sl": 4568,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "3 Jul",
+      "symbol": "ZYDUSLIFE",
+      "sector": "Pharma",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 1143,
+      "sl": 1095,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    }
+  ],
+  "closed": []
+}

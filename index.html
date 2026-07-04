@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading Brain — Daily Scan</title>
+<style>
+  :root {
+    --bg: #0e1118;
+    --surface: #171c28;
+    --surface-2: #1f2635;
+    --surface-3: #273046;
+    --border: #2a3348;
+    --text: #e9edf5;
+    --muted: #8b94a8;
+    --accent: #4da6ff;
+    --green: #2ecc8f;
+    --red: #f0616d;
+    --amber: #f2b53c;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    line-height: 1.55;
+    padding-bottom: 48px;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+
+  /* Topbar */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 0 12px; flex-wrap: wrap; gap: 10px;
+  }
+  .brand { font-size: 19px; font-weight: 800; letter-spacing: 0.6px; display: flex; align-items: center; gap: 10px; }
+  .brand .logo {
+    width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(135deg, #4da6ff, #2ecc8f);
+    display: inline-flex; align-items: center; justify-content: center; font-size: 15px; color: #0e1118;
+  }
+  .brand span.b2 { color: var(--accent); }
+  .gen-time { color: var(--muted); font-size: 12px; }
+  .demo-badge {
+    background: var(--amber); color: #17130a; font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px;
+  }
+
+  /* Tabs */
+  .tabs {
+    position: sticky; top: 0; z-index: 20; background: var(--bg);
+    display: flex; gap: 8px; padding: 10px 0 14px; border-bottom: 1px solid var(--border); margin-bottom: 20px;
+  }
+  .tab {
+    background: var(--surface); color: var(--muted); border: 1px solid var(--border);
+    padding: 9px 20px; border-radius: 24px; font-size: 13.5px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; font-family: inherit;
+  }
+  .tab:hover { border-color: var(--accent); color: var(--text); }
+  .tab.active { background: var(--accent); border-color: var(--accent); color: #0b1524; }
+
+  /* Cards / hero */
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 20px 22px;
+  }
+  .hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; margin-bottom: 8px; }
+  .hero-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600; }
+  .hero-day { font-size: 25px; font-weight: 800; margin-top: 4px; letter-spacing: 0.2px; }
+  .gear-row { display: flex; align-items: flex-end; gap: 14px; margin-top: 14px; }
+  .gear-bars { display: flex; gap: 5px; align-items: flex-end; }
+  .gear-bar { width: 20px; border-radius: 4px 4px 2px 2px; background: var(--surface-3); }
+  .gear-bar.on { background: linear-gradient(180deg, #2ecc8f, #1fa374); }
+  .gear-label { font-size: 19px; font-weight: 800; color: var(--green); line-height: 1.1; }
+  .gear-sub { font-size: 11.5px; color: var(--muted); }
+  .verdict {
+    margin-top: 16px; font-size: 13.5px; color: #c9d2e3;
+    border-left: 3px solid var(--accent); padding-left: 12px; font-style: italic;
+  }
+  .capital-stat { display: flex; justify-content: space-between; align-items: baseline; padding: 7px 0; border-bottom: 1px dashed var(--border); font-size: 13.5px; }
+  .capital-stat:last-of-type { border-bottom: none; }
+  .capital-stat span { color: var(--muted); }
+  .capital-stat b { font-size: 15px; }
+  .pos { color: var(--green); } .neg { color: var(--red); }
+  .sizing-note { margin-top: 10px; font-size: 12px; color: var(--muted); background: var(--surface-2); border-radius: 8px; padding: 8px 10px; }
+
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 1.8px; color: var(--muted); margin: 26px 0 12px; font-weight: 700; }
+
+  /* Market checks */
+  .checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+  .check {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 11px;
+    padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start;
+  }
+  .check .dot { width: 9px; height: 9px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+  .dot.good { background: var(--green); box-shadow: 0 0 8px rgba(46,204,143,0.5); }
+  .dot.warn { background: var(--amber); box-shadow: 0 0 8px rgba(242,181,60,0.5); }
+  .dot.bad { background: var(--red); box-shadow: 0 0 8px rgba(240,97,109,0.5); }
+  .check b { font-size: 13px; display: block; }
+  .check small { color: var(--muted); font-size: 12px; }
+
+  /* Sectors */
+  .sectors { display: flex; gap: 10px; flex-wrap: wrap; }
+  .sector-chip {
+    background: rgba(77,166,255,0.08); border: 1px solid rgba(77,166,255,0.45); border-radius: 22px;
+    padding: 8px 16px; font-size: 13px;
+  }
+  .sector-chip b { color: var(--accent); }
+  .sector-chip span { color: var(--muted); font-size: 12px; }
+
+  /* Picks */
+  .picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
+  .pick { display: flex; flex-direction: column; gap: 11px; }
+  .pick-head { display: flex; justify-content: space-between; align-items: flex-start; }
+  .pick-symbol { font-size: 19px; font-weight: 800; letter-spacing: 0.3px; }
+  .pick-name { color: var(--muted); font-size: 12px; }
+  .pick-cmp { text-align: right; font-size: 16px; font-weight: 700; }
+  .pick-cmp small { display: block; color: var(--muted); font-size: 10.5px; font-weight: 400; letter-spacing: 1px; }
+  .flags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .flag {
+    font-size: 10.5px; font-weight: 600; padding: 3px 9px; border-radius: 12px;
+    background: rgba(77,166,255,0.1); color: var(--accent); border: 1px solid rgba(77,166,255,0.3);
+  }
+  .spark-wrap { background: var(--surface-2); border-radius: 10px; padding: 8px 6px 4px; }
+  .levels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center; }
+  .level { background: var(--surface-2); border-radius: 9px; padding: 9px 4px 7px; }
+  .level small { display: block; color: var(--muted); font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.6px; }
+  .level b { font-size: 14px; }
+  .level.pivot b { color: var(--accent); }
+  .level.sl b { color: var(--red); }
+  .level.target b { color: var(--green); }
+  .pick-row { font-size: 13px; }
+  .pick-row span { color: var(--muted); }
+  .size-row {
+    background: rgba(46,204,143,0.07); border: 1px dashed rgba(46,204,143,0.35);
+    border-radius: 9px; padding: 8px 11px; font-size: 12.5px;
+  }
+  .size-row b { color: var(--green); }
+  .size-row span { color: var(--muted); }
+  .comment {
+    background: var(--surface-2); border-radius: 9px; padding: 10px 12px;
+    font-size: 13px; font-style: italic; border-left: 3px solid var(--amber); color: #d5dcea;
+  }
+
+  /* Track record */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+  .stat { padding: 16px 18px; }
+  .stat small { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; display: block; }
+  .stat b { font-size: 21px; font-weight: 800; display: block; margin-top: 2px; }
+  .stat .sub { font-size: 11.5px; color: var(--muted); }
+  .equity-card { padding: 18px 20px; }
+  .equity-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .equity-head b { font-size: 15px; }
+  .equity-head span { color: var(--muted); font-size: 12px; }
+  .breakdown { display: flex; gap: 10px; flex-wrap: wrap; }
+  .bd-chip {
+    display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 22px; padding: 7px 15px; font-size: 12.5px;
+  }
+  .bd-chip b { font-size: 15px; }
+  .bd-win b { color: var(--green); } .bd-sl b { color: var(--red); } .bd-fail b { color: var(--amber); }
+  .bd-nt b { color: var(--muted); } .bd-open b { color: var(--accent); }
+
+  .table-scroll { overflow-x: auto; border-radius: 13px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; background: var(--surface); min-width: 760px; }
+  th, td { padding: 11px 14px; text-align: left; font-size: 13px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td.wrap-cell { white-space: normal; min-width: 240px; }
+  th { color: var(--muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: 1.2px; background: var(--surface-2); }
+  tr:last-child td { border-bottom: none; }
+  .badge { font-size: 10.5px; font-weight: 700; padding: 3px 10px; border-radius: 12px; letter-spacing: 0.4px; }
+  .badge.win { background: rgba(46,204,143,0.15); color: var(--green); }
+  .badge.sl { background: rgba(240,97,109,0.15); color: var(--red); }
+  .badge.fail { background: rgba(242,181,60,0.15); color: var(--amber); }
+  .badge.no-trigger { background: var(--surface-3); color: var(--muted); }
+  .badge.open { background: rgba(77,166,255,0.15); color: var(--accent); }
+  td .note { color: var(--muted); font-size: 12px; }
+
+  .footer {
+    margin-top: 34px; padding: 16px; background: var(--surface); border-radius: 12px;
+    color: var(--muted); font-size: 12px; text-align: center; border: 1px solid var(--border);
+  }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  @media (max-width: 720px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-day { font-size: 21px; }
+  }
+  @media (max-width: 480px) {
+    .levels { grid-template-columns: repeat(2, 1fr); }
+    .tab { padding: 8px 14px; font-size: 12.5px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand"><span class="logo">₹</span>TRADING&nbsp;<span class="b2">BRAIN</span></div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span class="demo-badge" id="demoBadge" style="display:none;">DEMO DATA</span>
+      <span class="gen-time" id="genTime"></span>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-view="scan">📋 Aaj ka Scan</button>
+    <button class="tab" data-view="track">📈 Track Record</button>
+  </div>
+
+  <!-- ============ SCAN VIEW ============ -->
+  <div class="view active" id="view-scan">
+    <div class="hero">
+      <div class="card">
+        <div class="hero-label">Next Trading Day</div>
+        <div class="hero-day" id="nextDay"></div>
+        <div class="gear-row">
+          <div class="gear-bars" id="gearBars"></div>
+          <div>
+            <div class="gear-label" id="gearLabel"></div>
+            <div class="gear-sub" id="gearSize"></div>
+          </div>
+        </div>
+        <div class="verdict" id="verdict"></div>
+      </div>
+      <div class="card">
+        <div class="hero-label" style="margin-bottom:8px;">Paper Portfolio — ₹1 Lakh Challenge</div>
+        <div class="capital-stat"><span>Starting capital</span><b id="capStart"></b></div>
+        <div class="capital-stat"><span>Current capital</span><b id="capNow"></b></div>
+        <div class="capital-stat"><span>Net P&amp;L</span><b id="capPnl"></b></div>
+        <div class="capital-stat"><span>Win rate</span><b id="capWinrate"></b></div>
+        <div class="sizing-note" id="sizingNote"></div>
+      </div>
+    </div>
+
+    <h2>Market Health Check</h2>
+    <div class="checks" id="checks"></div>
+
+    <h2>Hot Sectors</h2>
+    <div class="sectors" id="sectors"></div>
+
+    <h2 id="picksHeading">Ready Stocks — High Priority List</h2>
+    <div class="picks" id="picks"></div>
+  </div>
+
+  <!-- ============ TRACK RECORD VIEW ============ -->
+  <div class="view" id="view-track">
+    <h2 style="margin-top:4px;">Portfolio Stats — ₹1 Lakh, Gear-Based Sizing (10–25%)</h2>
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <h2>Equity Curve</h2>
+    <div class="card equity-card">
+      <div class="equity-head">
+        <b id="equityTitle"></b>
+        <span>Sirf closed trades — open positions alag</span>
+      </div>
+      <div id="equityChart"></div>
+    </div>
+
+    <h2>Kya Hua Kahan — Breakdown</h2>
+    <div class="breakdown" id="breakdown"></div>
+
+    <h2>Trade Journal — Har Pick ka Hisaab</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr>
+          <th>Picked</th><th>Stock</th><th>Size</th><th>Invested</th><th>P&amp;L</th><th>Status</th><th>Kya hua</th>
+        </tr></thead>
+        <tbody id="journal"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    Framework-based view hai, financial advice nahi. Apna risk khud manage karo — I am a risk manager, remember?<br>
+    Paper portfolio hai — asli paisa nahi. SL ke bina koi trade nahi. Ye SEBI-registered advisory nahi hai.
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+(function () {
+  const d = window.DASHBOARD_DATA;
+  if (!d) { document.body.innerHTML = '<p style="padding:40px;text-align:center;">Data load nahi hua — data.js check karo.</p>'; return; }
+
+  const inr = n => '₹' + Math.round(n).toLocaleString('en-IN');
+  const sizeByGear = d.portfolio.sizeByGear;
+
+  /* ---- Tabs ---- */
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('view-' + t.dataset.view).classList.add('active');
+    window.scrollTo(0, 0);
+  }));
+
+  /* ---- Portfolio simulation from journal (closed trades, sequential compounding) ---- */
+  let equity = d.portfolio.startCapital;
+  const curve = [{ label: 'Start', v: equity }];
+  const rows = [];
+  let wins = 0, losses = 0, slHits = 0, boFails = 0, noTrigs = 0, opens = 0;
+  let winSum = 0, lossSum = 0, best = null, worst = null;
+
+  d.journal.forEach(t => {
+    const sizePct = sizeByGear[(t.gear || 1) - 1];
+    let invested = 0, pnlAmt = 0, qty = 0;
+    if (t.status !== 'no-trigger') {
+      const alloc = equity * sizePct / 100;
+      qty = Math.max(1, Math.floor(alloc / t.entry));
+      invested = qty * t.entry;
+      pnlAmt = invested * t.pnlPct / 100;
+    }
+    if (t.status === 'win' || t.status === 'sl' || t.status === 'fail') {
+      equity += pnlAmt;
+      curve.push({ label: t.symbol, v: equity });
+      if (t.pnlPct > 0) { wins++; winSum += t.pnlPct; } else { losses++; lossSum += t.pnlPct; }
+      if (t.status === 'sl') slHits++;
+      if (t.status === 'fail') boFails++;
+      if (best === null || t.pnlPct > best) best = t.pnlPct;
+      if (worst === null || t.pnlPct < worst) worst = t.pnlPct;
+    } else if (t.status === 'no-trigger') { noTrigs++; }
+    else if (t.status === 'open') { opens++; }
+    rows.push({ t, sizePct, invested, pnlAmt, qty });
+  });
+
+  const closed = wins + losses;
+  const netPnl = equity - d.portfolio.startCapital;
+  const netPct = netPnl / d.portfolio.startCapital * 100;
+  const winRate = closed ? Math.round(wins / closed * 100) : 0;
+
+  /* ---- Scan view ---- */
+  document.getElementById('genTime').textContent = 'Updated: ' + d.generatedAt;
+  if (d.demo) document.getElementById('demoBadge').style.display = 'inline-block';
+  document.getElementById('nextDay').textContent = d.nextTradingDay;
+
+  const gearBars = document.getElementById('gearBars');
+  for (let i = 1; i <= 5; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'gear-bar' + (i <= d.market.gear ? ' on' : '');
+    bar.style.height = (12 + i * 6) + 'px';
+    gearBars.appendChild(bar);
+  }
+  document.getElementById('gearLabel').textContent = d.market.gearLabel;
+  document.getElementById('gearSize').textContent = 'Position size: ' + sizeByGear[d.market.gear - 1] + '% of capital';
+  document.getElementById('verdict').textContent = '“' + d.market.verdict + '”';
+
+  document.getElementById('capStart').textContent = inr(d.portfolio.startCapital);
+  document.getElementById('capNow').textContent = inr(equity);
+  const pnlEl = document.getElementById('capPnl');
+  pnlEl.textContent = (netPnl >= 0 ? '+' : '-') + inr(Math.abs(netPnl)) + ' (' + (netPct >= 0 ? '+' : '') + netPct.toFixed(1) + '%)';
+  pnlEl.className = netPnl >= 0 ? 'pos' : 'neg';
+  document.getElementById('capWinrate').textContent = winRate + '% (' + wins + 'W / ' + losses + 'L)';
+  document.getElementById('sizingNote').textContent = d.portfolio.sizingRule + ' — abhi ' + d.market.gearLabel + ' = ' + sizeByGear[d.market.gear - 1] + '% per trade';
+
+  document.getElementById('checks').innerHTML = d.market.checks.map(c =>
+    `<div class="check"><div class="dot ${c.status}"></div><div><b>${c.label}</b><small>${c.note}</small></div></div>`
+  ).join('');
+
+  document.getElementById('sectors').innerHTML = d.hotSectors.length
+    ? d.hotSectors.map(s => `<div class="sector-chip"><b>${s.name}</b> · <span>${s.note}</span></div>`).join('')
+    : '<div class="sector-chip"><span>Koi hot sector nahi — action ka wait karo</span></div>';
+
+  function sparkline(values, pivot, id) {
+    const w = 300, h = 64, pad = 5;
+    const min = Math.min(...values, pivot), max = Math.max(...values, pivot);
+    const x = i => pad + i * (w - 2 * pad) / (values.length - 1);
+    const y = v => h - pad - (v - min) * (h - 2 * pad) / (max - min || 1);
+    const pts = values.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+    const areaPts = `${pad},${h - pad} ${pts} ${(w - pad).toFixed(1)},${h - pad}`;
+    const py = y(pivot).toFixed(1);
+    const up = values[values.length - 1] >= values[0];
+    const hex = up ? '#2ecc8f' : '#f0616d';
+    const lastX = x(values.length - 1).toFixed(1), lastY = y(values[values.length - 1]).toFixed(1);
+    return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="64" preserveAspectRatio="none">
+      <defs><linearGradient id="g${id}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="${hex}" stop-opacity="0.25"/>
+        <stop offset="1" stop-color="${hex}" stop-opacity="0"/>
+      </linearGradient></defs>
+      <polygon points="${areaPts}" fill="url(#g${id})"/>
+      <line x1="0" y1="${py}" x2="${w}" y2="${py}" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4 4" opacity="0.75"/>
+      <polyline points="${pts}" fill="none" stroke="${hex}" stroke-width="1.8" stroke-linejoin="round"/>
+      <circle cx="${lastX}" cy="${lastY}" r="2.6" fill="${hex}"/>
+    </svg>`;
+  }
+
+  const picksEl = document.getElementById('picks');
+  const curGearPct = sizeByGear[d.market.gear - 1];
+  if (!d.picks.length) {
+    document.getElementById('picksHeading').textContent = 'Aaj Koi Setup Nahi';
+    picksEl.innerHTML = `<div class="card pick"><div class="comment">Cash bhi ek position hai bhaiya. Environment hi nahi hai to setup ka kya karna. Wait for the right opportunity.</div></div>`;
+  } else {
+    picksEl.innerHTML = d.picks.map((p, i) => {
+      const alloc = equity * curGearPct / 100;
+      const qty = Math.max(1, Math.floor(alloc / p.cmp));
+      return `
+      <div class="card pick">
+        <div class="pick-head">
+          <div>
+            <div class="pick-symbol">${p.symbol}</div>
+            <div class="pick-name">${p.name} · ${p.sector}</div>
+          </div>
+          <div class="pick-cmp">₹${p.cmp.toLocaleString('en-IN')}<small>CMP</small></div>
+        </div>
+        <div class="flags">${p.flags.map(f => `<span class="flag">${f}</span>`).join('')}</div>
+        <div class="spark-wrap">${sparkline(p.spark, p.pivot, i)}</div>
+        <div class="levels">
+          <div class="level pivot"><small>Pivot</small><b>${p.pivot.toLocaleString('en-IN')}</b></div>
+          <div class="level sl"><small>SL (${p.slPct}%)</small><b>${p.sl.toLocaleString('en-IN')}</b></div>
+          <div class="level target"><small>Target</small><b>${p.target}</b></div>
+          <div class="level"><small>R : R</small><b>${p.rr}</b></div>
+        </div>
+        <div class="size-row">Position (${d.market.gearLabel}, ${curGearPct}%): <b>${qty} shares ≈ ${inr(qty * p.cmp)}</b> <span>· SL hit hua to loss ≈ ${inr(qty * (p.cmp - p.sl))}</span></div>
+        <div class="pick-row"><span>Setup:</span> ${p.setup}</div>
+        <div class="pick-row"><span>Entry:</span> ${p.entry}</div>
+        <div class="pick-row"><span>Volume:</span> ${p.volumeNote}</div>
+        <div class="comment">${p.comment}</div>
+      </div>`;
+    }).join('');
+  }
+
+  /* ---- Track view ---- */
+  const avgWin = wins ? (winSum / wins).toFixed(1) : '0';
+  const avgLoss = losses ? (lossSum / losses).toFixed(1) : '0';
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="card stat"><small>Current capital</small><b>${inr(equity)}</b><span class="sub">start: ${inr(d.portfolio.startCapital)}</span></div>
+    <div class="card stat"><small>Net P&amp;L</small><b class="${netPnl >= 0 ? 'pos' : 'neg'}">${netPnl >= 0 ? '+' : ''}${netPct.toFixed(1)}%</b><span class="sub">${inr(Math.abs(netPnl))} ${netPnl >= 0 ? 'profit' : 'loss'}</span></div>
+    <div class="card stat"><small>Win rate</small><b>${winRate}%</b><span class="sub">${wins}W / ${losses}L (${closed} closed)</span></div>
+    <div class="card stat"><small>Avg win / loss</small><b>+${avgWin}% / ${avgLoss}%</b><span class="sub">expectancy ka game hai</span></div>
+    <div class="card stat"><small>Best / worst</small><b><span class="pos">+${(best ?? 0).toFixed(1)}%</span> / <span class="neg">${(worst ?? 0).toFixed(1)}%</span></b><span class="sub">outliers dono taraf</span></div>
+    <div class="card stat"><small>Open positions</small><b>${opens}</b><span class="sub">no-trigger: ${noTrigs} picks</span></div>`;
+
+  document.getElementById('equityTitle').textContent = inr(d.portfolio.startCapital) + ' → ' + inr(equity);
+  (function drawEquity() {
+    const w = 640, h = 180, padL = 10, padR = 52, padY = 18;
+    const vs = curve.map(c => c.v);
+    const min = Math.min(...vs), max = Math.max(...vs);
+    const x = i => padL + i * (w - padL - padR) / (curve.length - 1);
+    const y = v => h - padY - (v - min) * (h - 2 * padY) / (max - min || 1);
+    const pts = curve.map((c, i) => `${x(i).toFixed(1)},${y(c.v).toFixed(1)}`).join(' ');
+    const area = `${padL},${h - padY} ${pts} ${x(curve.length - 1).toFixed(1)},${h - padY}`;
+    const baseY = y(d.portfolio.startCapital).toFixed(1);
+    const lx = x(curve.length - 1).toFixed(1), ly = y(equity).toFixed(1);
+    const up = equity >= d.portfolio.startCapital;
+    const hex = up ? '#2ecc8f' : '#f0616d';
+    document.getElementById('equityChart').innerHTML = `
+    <svg viewBox="0 0 ${w} ${h}" width="100%" preserveAspectRatio="none" style="display:block;">
+      <defs><linearGradient id="geq" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="${hex}" stop-opacity="0.22"/>
+        <stop offset="1" stop-color="${hex}" stop-opacity="0"/>
+      </linearGradient></defs>
+      <line x1="${padL}" y1="${baseY}" x2="${w - padR}" y2="${baseY}" stroke="#8b94a8" stroke-width="0.8" stroke-dasharray="5 5" opacity="0.5"/>
+      <polygon points="${area}" fill="url(#geq)"/>
+      <polyline points="${pts}" fill="none" stroke="${hex}" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="${lx}" cy="${ly}" r="3.2" fill="${hex}"/>
+      <text x="${w - padR + 6}" y="${ly}" fill="${hex}" font-size="11" dominant-baseline="middle">${(netPct >= 0 ? '+' : '') + netPct.toFixed(1)}%</text>
+    </svg>`;
+  })();
+
+  document.getElementById('breakdown').innerHTML = `
+    <div class="bd-chip bd-win"><b>${wins}</b> Wins — partial book + trail</div>
+    <div class="bd-chip bd-sl"><b>${slHits}</b> SL hit — out, end of story</div>
+    <div class="bd-chip bd-fail"><b>${boFails}</b> Breakout fail — abnormal, exit</div>
+    <div class="bd-chip bd-nt"><b>${noTrigs}</b> Trigger nahi aaya — paisa nahi laga</div>
+    <div class="bd-chip bd-open"><b>${opens}</b> Open — chal rahi hai</div>`;
+
+  document.getElementById('journal').innerHTML = rows.map(r => {
+    const t = r.t;
+    const statusLabel = { win: 'WIN', sl: 'SL HIT', fail: 'BO FAIL', 'no-trigger': 'NO TRIGGER', open: 'OPEN' }[t.status];
+    const pnlCell = t.status === 'no-trigger' ? '<span class="note">—</span>'
+      : `<span class="${r.pnlAmt >= 0 ? 'pos' : 'neg'}">${r.pnlAmt >= 0 ? '+' : '-'}${inr(Math.abs(r.pnlAmt))} (${t.pnlPct >= 0 ? '+' : ''}${t.pnlPct}%)</span>`;
+    return `<tr>
+      <td>${t.picked}</td>
+      <td><b>${t.symbol}</b><br><span class="note">${t.sector}</span></td>
+      <td>${r.sizePct}%<br><span class="note">gear ${t.gear}</span></td>
+      <td>${t.status === 'no-trigger' ? '<span class="note">—</span>' : inr(r.invested) + '<br><span class="note">' + r.qty + ' × ₹' + t.entry.toLocaleString('en-IN') + '</span>'}</td>
+      <td>${pnlCell}</td>
+      <td><span class="badge ${t.status}">${statusLabel}</span></td>
+      <td class="wrap-cell"><span class="note">${t.reason}</span></td>
+    </tr>`;
+  }).join('');
+})();
+</script>
+</body>
+</html>
