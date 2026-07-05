@@ -148,6 +148,7 @@ async function main() {
   }
 
   let adv = 0, dec = 0, ab50 = 0, hi52 = 0, lo52 = 0, total = 0;
+  let boWork = 0, boFlat = 0, boFail = 0; // recent breakouts: traction / no-traction / pop-and-drop
   for (const u of universe) {
     const ch = charts[u.s]; if (!ch) continue;
     total++;
@@ -157,8 +158,25 @@ async function main() {
     const hh = Math.max(...ch.h.slice(-252)), ll = Math.min(...ch.l.slice(-252));
     if (c[n - 1] >= hh * 0.97) hi52++;
     if (c[n - 1] <= ll * 1.05) lo52++;
+
+    // Breakouts working? — pichhle 5 din me volume-backed breakout dhundo, phir TRACTION check
+    // Creator ka asli sawaal: breakout ke baad stock MOVE kar raha hai ya sirf latka hua hai?
+    const v20avg = sma(ch.v, 20);
+    for (let i = n - 1; i >= n - 5 && i >= 16; i--) {
+      const priorHigh = Math.max(...ch.h.slice(i - 15, i)); // pivot = 15 din ka high us din se pehle
+      if (c[i] > priorHigh && ch.v[i] > (v20avg || 0) * 1.2) {
+        const gain = (c[n - 1] - priorHigh) / priorHigh * 100; // breakout ke baad move
+        if (gain < -0.5) boFail++;        // pivot ke neeche gir gaya = pop & drop
+        else if (gain >= 2) boWork++;     // 2%+ move = asli traction, follow-through
+        else boFlat++;                    // latka hua, move nahi = "attraction nahi mila"
+        break; // sirf sabse recent breakout ginolo
+      }
+    }
   }
   const pctAb50 = total ? Math.round(ab50 / total * 100) : 0;
+  const boTotal = boWork + boFlat + boFail;
+  const boWorkPct = boTotal ? Math.round(boWork / boTotal * 100) : null; // sirf traction wale
+  const boFailPct = boTotal ? Math.round(boFail / boTotal * 100) : null;
 
   let inrNote = 'Data nahi mila', inrGood = true;
   if (usdinr) {
@@ -176,7 +194,23 @@ async function main() {
   if (pctAb50 >= 55) score++; else if (pctAb50 < 40) score--;
   if (adv > dec) score++;
   if (hi52 >= Math.max(3, total * 0.04)) score++;
-  const gear = (!above10 && !above50) ? 1 : Math.max(1, Math.min(5, Math.round(score * 5 / 7)));
+
+  // ★ Breakouts working? — creator ka SABSE bada thermometer (Section 2 & 6)
+  // Traction wale (2%+ move) hi asli "working" — flat/failed = confidence nahi banta
+  let boStatus, boNote;
+  if (boTotal >= 6) {
+    const tail = `${boWork} traction, ${boFlat} flat, ${boFail} fail`;
+    if (boWorkPct >= 45 && boFailPct < 30) { score++; boStatus = 'good'; boNote = `${boWorkPct}% breakouts move kar rahe (${tail}) — follow-through accha, confidence banta hai`; }
+    else if (boWorkPct >= 30) { boStatus = 'warn'; boNote = `${boWorkPct}% me traction (${tail}) — selective/mixed, size control me rakho`; }
+    else { score -= 2; boStatus = 'bad'; boNote = `Sirf ${boWorkPct}% breakouts move kar rahe (${tail}) — pop & drop, choppy phase, chhoti size`; }
+  } else {
+    boStatus = 'warn'; boNote = `Abhi sirf ${boTotal} recent breakouts — sample chhota, dekhte raho`;
+  }
+
+  let gear = (!above10 && !above50) ? 1 : Math.max(1, Math.min(5, Math.round(score * 5 / 8)));
+  // Breakouts move nahi kar rahe = confidence low = aggression pe hard cap (chahe breadth accha ho)
+  if (boTotal >= 6 && boWorkPct < 35) gear = Math.min(gear, 3);
+  if (boTotal >= 6 && boWorkPct < 25) gear = Math.min(gear, 2);
   const noTrade = gear <= 1;
   const gearLabel = ['Neutral', '1st Gear', '2nd Gear', '3rd Gear', '4th Gear', '5th Gear'][gear] || '1st Gear';
 
@@ -191,6 +225,7 @@ async function main() {
   const checks = [
     { label: 'CNX Smallcap vs 50 DMA', status: above50 ? (rising50 ? 'good' : 'warn') : 'bad', note: above50 ? `50 DMA ke upar (${holdDays} din se hold)${rising50 ? ', rising' : ', lekin 50 DMA flat/declining'}` : '50 DMA ke neeche — environment kharab' },
     { label: '10 DMA', status: above10 ? 'good' : 'bad', note: above10 ? 'Index 10 DMA ke upar — first signs of strength' : '10 DMA ke neeche — scan ka time nahi' },
+    { label: 'Breakouts working?', status: boStatus, note: boNote },
     { label: 'Breadth (50 DMA ke upar)', status: pctAb50 >= 55 ? 'good' : pctAb50 >= 40 ? 'warn' : 'bad', note: `${pctAb50}% universe 50 DMA ke upar` },
     { label: 'Advance / Decline', status: adv > dec ? 'good' : 'warn', note: `${adv} advances vs ${dec} declines aaj` },
     { label: '52W high zone', status: hi52 > lo52 ? 'good' : hi52 === lo52 ? 'warn' : 'bad', note: `${hi52} stocks 52W-high zone me, ${lo52} low zone me` },
