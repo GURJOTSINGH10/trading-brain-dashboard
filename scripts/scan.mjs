@@ -277,7 +277,7 @@ async function main() {
       const comment = commentBits.join('. ') + '. Breakout aaye tabhi entry bhaiya — usse pehle jo bhi hai, sirf indication hai.';
 
       candidates.push({
-        symbol: u.s, name: u.n, sector: u.sec,
+        symbol: u.s, name: u.n, sector: u.sec, cap: u.cap || 'Small',
         cmp: roundPrice(close), pivot: roundPrice(pivot),
         entry: `${roundPrice(pivot)} ke upar close/cross, elevated volume ke saath`,
         sl, slPct, target: `${t1} – ${t2}`, rr: `1 : ${rr}`,

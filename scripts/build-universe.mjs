@@ -1,5 +1,6 @@
 // Universe builder — NSE ki official index lists se universe.json banata hai.
 // Nifty 500 (large+mid+small) + Nifty Microcap 250 = ~750 tradeable stocks.
+// Har stock ko cap tag milta hai (Large/Mid/Small/Micro) NSE ki official lists se.
 // Curated sectors (Defence, Railways etc.) ko priority — baaki CSV industry se.
 // Quarterly re-run karo (index rebalance ke baad): node scripts/build-universe.mjs
 
@@ -15,9 +16,17 @@ const LISTS = [
   'https://niftyindices.com/IndexConstituent/ind_niftymicrocap250_list.csv'
 ];
 
+// NSE ki official cap classification — in lists se har symbol ko Large/Mid/Small/Micro tag milta hai.
+// Order matters: Large sabse pehle (agar kahin overlap ho to bada cap jeet-ta hai).
+const CAP_LISTS = [
+  ['https://niftyindices.com/IndexConstituent/ind_nifty100list.csv', 'Large'],
+  ['https://niftyindices.com/IndexConstituent/ind_niftymidcap150list.csv', 'Mid'],
+  ['https://niftyindices.com/IndexConstituent/ind_niftysmallcap250list.csv', 'Small'],
+  ['https://niftyindices.com/IndexConstituent/ind_niftymicrocap250_list.csv', 'Micro']
+];
+
 function parseCsvLine(line) {
   // Format: Company Name,Industry,Symbol,Series,ISIN Code
-  // Company name me comma ho sakta hai — end se parse karo
   const f = line.split(',').map(s => s.trim().replace(/^"|"$/g, ''));
   if (f.length < 5) return null;
   return {
@@ -28,28 +37,50 @@ function parseCsvLine(line) {
   };
 }
 
+async function fetchCsv(url) {
+  const res = await fetch(url, { headers: { 'User-Agent': UA, 'Referer': 'https://niftyindices.com/' } });
+  if (!res.ok) { console.error(`FAIL ${res.status}: ${url}`); return []; }
+  const text = await res.text();
+  return text.split(/\r?\n/).slice(1).filter(l => l.trim());
+}
+
 async function main() {
-  // curated sectors preserve karo (Defence/Railways jaisi granularity CSV me nahi hoti)
+  // Step 1: cap map banao (symbol -> Large/Mid/Small/Micro)
+  const capMap = new Map();
+  for (const [url, cap] of CAP_LISTS) {
+    const lines = await fetchCsv(url);
+    let n = 0;
+    for (const line of lines) {
+      const row = parseCsvLine(line);
+      if (!row) continue;
+      if (!capMap.has(row.symbol)) { capMap.set(row.symbol, cap); n++; }
+    }
+    console.log(`cap ${cap}: ${n} symbols`);
+  }
+
+  // Step 2: curated sectors preserve karo (Defence/Railways granularity CSV me nahi hoti)
   const existing = JSON.parse(readFileSync(join(ROOT, 'universe.json'), 'utf8')).stocks;
-  const curated = new Map(existing.map(s => [s.s, s]));
-
   const merged = new Map();
-  for (const [sym, s] of curated) merged.set(sym, s);
+  for (const s of existing) merged.set(s.s, { ...s, cap: s.cap || capMap.get(s.s) || 'Small' });
 
+  // Step 3: Nifty 500 + Microcap se universe fill karo
   for (const url of LISTS) {
-    const res = await fetch(url, { headers: { 'User-Agent': UA, 'Referer': 'https://niftyindices.com/' } });
-    if (!res.ok) { console.error(`FAIL ${res.status}: ${url}`); continue; }
-    const text = await res.text();
-    const lines = text.split(/\r?\n/).slice(1).filter(l => l.trim());
+    const lines = await fetchCsv(url);
     let added = 0;
     for (const line of lines) {
       const row = parseCsvLine(line);
       if (!row || row.series !== 'EQ') continue; // sirf EQ series — T2T/BE nahi
-      if (merged.has(row.symbol)) continue;       // curated sector jeet-ta hai
+      const cap = capMap.get(row.symbol) || 'Small';
+      if (merged.has(row.symbol)) {
+        // curated stock ka sector rakho, lekin cap update kar do
+        merged.get(row.symbol).cap = capMap.get(row.symbol) || merged.get(row.symbol).cap;
+        continue;
+      }
       merged.set(row.symbol, {
         s: row.symbol,
         n: row.name.replace(/\s+(Limited|Ltd\.?)$/i, ''),
-        sec: row.industry || 'Other'
+        sec: row.industry || 'Other',
+        cap
       });
       added++;
     }
@@ -57,11 +88,12 @@ async function main() {
   }
 
   const stocks = [...merged.values()].sort((a, b) => a.s.localeCompare(b.s));
+  const capCounts = stocks.reduce((m, s) => (m[s.cap] = (m[s.cap] || 0) + 1, m), {});
   writeFileSync(join(ROOT, 'universe.json'), JSON.stringify({
-    note: `NSE universe — Nifty 500 + Microcap 250 + curated momentum list (${stocks.length} stocks). SME/T2T excluded. Rebuild: node scripts/build-universe.mjs`,
+    note: `NSE universe — Nifty 500 + Microcap 250 + curated momentum list (${stocks.length} stocks) with cap tags. SME/T2T excluded. Rebuild: node scripts/build-universe.mjs`,
     stocks
   }, null, 1));
-  console.log(`universe.json: total ${stocks.length} stocks`);
+  console.log(`universe.json: total ${stocks.length} stocks | caps:`, capCounts);
 }
 
 main().catch(e => { console.error(e); process.exit(1); });
