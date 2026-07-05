@@ -91,6 +91,7 @@ async function main() {
   const capCounts = stocks.reduce((m, s) => (m[s.cap] = (m[s.cap] || 0) + 1, m), {});
   writeFileSync(join(ROOT, 'universe.json'), JSON.stringify({
     note: `NSE universe — Nifty 500 + Microcap 250 + curated momentum list (${stocks.length} stocks) with cap tags. SME/T2T excluded. Rebuild: node scripts/build-universe.mjs`,
+    builtAt: new Date().toISOString(),
     stocks
   }, null, 1));
   console.log(`universe.json: total ${stocks.length} stocks | caps:`, capCounts);

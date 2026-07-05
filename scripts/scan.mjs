@@ -7,13 +7,35 @@
 // ============================================================
 
 import { readFileSync, writeFileSync } from 'fs';
+import { execSync } from 'child_process';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+const HERE = dirname(fileURLToPath(import.meta.url));
 const START_CAPITAL = 100000;
 const SIZE_BY_GEAR = [10, 14, 17, 21, 25];
 const MIN_TRADED_VALUE = 5e7; // ₹5 Cr avg daily traded value
+const UNIVERSE_MAX_AGE_DAYS = 10; // har 10 din me stock list auto-refresh
+
+// Universe 10 din se purana ho to NSE lists se rebuild kar do (self-healing).
+// Fail ho jaye (NSE down) to purani list se hi chalte raho — scan kabhi na ruke.
+function refreshUniverseIfStale() {
+  try {
+    const uni = JSON.parse(readFileSync(join(ROOT, 'universe.json'), 'utf8'));
+    const builtAt = uni.builtAt ? new Date(uni.builtAt) : null;
+    const ageDays = builtAt ? (Date.now() - builtAt.getTime()) / 86400000 : Infinity;
+    if (ageDays < UNIVERSE_MAX_AGE_DAYS) {
+      console.log(`Universe ${ageDays.toFixed(1)} din purana — fresh hai, rebuild nahi.`);
+      return;
+    }
+    console.log(`Universe ${ageDays === Infinity ? 'undated' : ageDays.toFixed(1) + ' din purana'} — rebuild kar rahe (NSE lists se)...`);
+    execSync('node ' + JSON.stringify(join(HERE, 'build-universe.mjs')), { stdio: 'inherit', timeout: 180000 });
+    console.log('Universe rebuild ho gaya.');
+  } catch (e) {
+    console.error('Universe rebuild fail (purani list se chal rahe):', e.message);
+  }
+}
 
 // ---------- data fetch ----------
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36';
@@ -76,6 +98,9 @@ function nextTradingDay(lastSessionTs) {
 async function main() {
   const FORCE = process.argv.includes('--force');
   console.log('Trading Brain scan shuru...');
+
+  // Stock universe 10 din se purana ho to auto-rebuild (bina --force ke bhi)
+  if (!FORCE) refreshUniverseIfStale();
 
   // --- state load ---
   let state = { lastSession: null, equity: START_CAPITAL, positions: [], closed: [] };

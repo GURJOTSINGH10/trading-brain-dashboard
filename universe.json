@@ -1,5 +1,6 @@
 {
  "note": "NSE universe — Nifty 500 + Microcap 250 + curated momentum list (749 stocks) with cap tags. SME/T2T excluded. Rebuild: node scripts/build-universe.mjs",
+ "builtAt": "2026-07-05T06:29:49.753Z",
  "stocks": [
   {
    "s": "360ONE",
