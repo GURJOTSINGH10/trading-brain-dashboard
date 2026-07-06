@@ -1,5 +1,5 @@
 {
-  "lastSession": "03/07/2026",
+  "lastSession": "06/07/2026",
   "equity": 100000,
   "positions": [
     {
@@ -11,7 +11,7 @@
       "pivot": 1925,
       "sl": 1856,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "3 Jul",
@@ -22,7 +22,7 @@
       "pivot": 6888,
       "sl": 6578,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "3 Jul",
@@ -33,7 +33,7 @@
       "pivot": 1420,
       "sl": 1356,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "3 Jul",
@@ -44,7 +44,7 @@
       "pivot": 4783,
       "sl": 4568,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "3 Jul",
@@ -54,6 +54,66 @@
       "sizePct": 21,
       "pivot": 1143,
       "sl": 1095,
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 1145,
+      "qty": 18,
+      "invested": 20610,
+      "daysSinceTrigger": 0,
+      "triggerDate": "6 Jul"
+    },
+    {
+      "picked": "6 Jul",
+      "symbol": "ASIANPAINT",
+      "sector": "Consumer Durables",
+      "gear": 3,
+      "sizePct": 17,
+      "pivot": 2771,
+      "sl": 2646,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "6 Jul",
+      "symbol": "GRASIM",
+      "sector": "Construction Materials",
+      "gear": 3,
+      "sizePct": 17,
+      "pivot": 3219,
+      "sl": 3074,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "6 Jul",
+      "symbol": "APOLLOHOSP",
+      "sector": "Healthcare",
+      "gear": 3,
+      "sizePct": 17,
+      "pivot": 8925,
+      "sl": 8536,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "6 Jul",
+      "symbol": "ADANIENT",
+      "sector": "Diversified",
+      "gear": 3,
+      "sizePct": 17,
+      "pivot": 3245,
+      "sl": 3099,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "6 Jul",
+      "symbol": "PIDILITIND",
+      "sector": "Chemicals",
+      "gear": 3,
+      "sizePct": 17,
+      "pivot": 1626,
+      "sl": 1578,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
