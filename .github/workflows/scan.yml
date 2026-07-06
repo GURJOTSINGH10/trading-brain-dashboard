@@ -3,6 +3,8 @@ name: Daily Scan (7 PM IST)
 on:
   schedule:
     - cron: '40 13 * * 1-5'
+    - cron: '55 13 * * 1-5'
+    - cron: '10 14 * * 1-5'
   workflow_dispatch:
 
 permissions:
