@@ -310,9 +310,10 @@ async function main() {
       if (fivePct) sc2 += 2;
       if (hot) sc2 += 4;
       // Creator ka focus small/midcap momentum hai — liquidity sirf floor hai (₹5Cr min),
-      // usse upar size ka koi rank-bonus nahi. Ulta: chhote explosive movers ko preference,
-      // large-cap ko 0 (setup exceptional ho to bhi aa sakta hai, par size se jeet nahi milegi).
-      const capPref = { Micro: 3, Small: 3, Mid: 1.5, Large: 0 };
+      // usse upar size ka koi rank-bonus nahi. Chhote explosive movers ko preference.
+      // Large-cap ko BHAARI penalty (-6): creator "hum large caps trade nahi karte" —
+      // sirf truly generational setup hi is handicap ko paar karke pick me aa payega.
+      const capPref = { Micro: 3, Small: 3, Mid: 1.5, Large: -6 };
       sc2 += capPref[u.cap] ?? 2.5;
 
       // SL: swing low ya ~3.5% niche pivot se
