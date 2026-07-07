@@ -442,7 +442,7 @@ async function main() {
 
   // --- display journal (closed + open/pending) ---
   const journalOut = [
-    ...state.closed.slice(-20),
+    ...state.closed.slice(-200),
     ...state.positions.filter(p => p.entryStatus === 'open').map(p => ({
       picked: p.picked, symbol: p.symbol, sector: p.sector, gear: p.gear, entry: p.entry,
       status: 'open', pnlPct: p.curPnlPct ?? 0,
