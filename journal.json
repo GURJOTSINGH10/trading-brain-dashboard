@@ -1,6 +1,40 @@
 {
-  "lastSession": "03/07/2026",
+  "lastSession": "07/07/2026",
   "equity": 100000,
-  "positions": [],
+  "positions": [
+    {
+      "picked": "7 Jul",
+      "symbol": "EQUITASBNK",
+      "sector": "Financial Services",
+      "gear": 2,
+      "sizePct": 14,
+      "pivot": 79.7,
+      "sl": 76.1,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "7 Jul",
+      "symbol": "LALPATHLAB",
+      "sector": "Healthcare",
+      "gear": 2,
+      "sizePct": 14,
+      "pivot": 1718,
+      "sl": 1641,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "7 Jul",
+      "symbol": "STAR",
+      "sector": "Healthcare",
+      "gear": 2,
+      "sizePct": 14,
+      "pivot": 1150,
+      "sl": 1098,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    }
+  ],
   "closed": []
 }
