@@ -34,6 +34,7 @@
       "sl": 1098,
       "entryStatus": "pending",
       "daysWaiting": 1
+<<<<<<< Updated upstream
     },
     {
       "picked": "8 Jul",
@@ -67,6 +68,8 @@
       "sl": 1177,
       "entryStatus": "pending",
       "daysWaiting": 0
+=======
+>>>>>>> Stashed changes
     }
   ],
   "closed": [
