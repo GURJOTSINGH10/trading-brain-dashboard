@@ -1,5 +1,5 @@
 {
-  "lastSession": "07/07/2026",
+  "lastSession": "08/07/2026",
   "equity": 101173.58,
   "positions": [
     {
@@ -11,7 +11,7 @@
       "pivot": 79.7,
       "sl": 76.1,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "7 Jul",
@@ -22,7 +22,7 @@
       "pivot": 1718,
       "sl": 1641,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "7 Jul",
@@ -32,6 +32,39 @@
       "sizePct": 14,
       "pivot": 1150,
       "sl": 1098,
+      "entryStatus": "pending",
+      "daysWaiting": 1
+    },
+    {
+      "picked": "8 Jul",
+      "symbol": "SAILIFE",
+      "sector": "Healthcare",
+      "gear": 3,
+      "sizePct": 17,
+      "pivot": 1260,
+      "sl": 1203,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "8 Jul",
+      "symbol": "NIVABUPA",
+      "sector": "Financial Services",
+      "gear": 3,
+      "sizePct": 17,
+      "pivot": 89,
+      "sl": 85,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "8 Jul",
+      "symbol": "KAJARIACER",
+      "sector": "Consumer Durables",
+      "gear": 3,
+      "sizePct": 17,
+      "pivot": 1233,
+      "sl": 1177,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
