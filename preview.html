@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading Brain — Daily Scan (Glass Preview)</title>
+<style>
+  :root {
+    --bg: #0a0d14;
+    --surface: rgba(255,255,255,0.05);
+    --surface-2: rgba(255,255,255,0.07);
+    --surface-3: rgba(255,255,255,0.13);
+    --border: rgba(255,255,255,0.14);
+    --border-soft: rgba(255,255,255,0.09);
+    --text: #edf1f8;
+    --muted: #97a1b6;
+    --accent: #54a9ff;
+    --green: #31d492;
+    --red: #ff6b76;
+    --amber: #ffc14d;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-feature-settings: "tnum";
+    line-height: 1.55;
+    padding-bottom: 56px;
+    -webkit-font-smoothing: antialiased;
+    /* default mood (blue) — JS gear se badalta hai */
+    --mood: var(--accent); --mood-rgb: 84,169,255;
+  }
+  /* MARKET MOOD — gear se poora mahaul badalta hai */
+  body.mood-good { --mood: var(--green); --mood-rgb: 49,212,146; }
+  body.mood-warn { --mood: var(--amber); --mood-rgb: 255,193,77; }
+  body.mood-bad  { --mood: var(--red);   --mood-rgb: 255,107,118; }
+  /* Liquid glass ke peeche mood ki roshni (orbs) */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      radial-gradient(55% 40% at 82% -8%, rgba(var(--mood-rgb), 0.22), transparent 65%),
+      radial-gradient(45% 38% at -8% 28%, rgba(84,169,255,0.13), transparent 65%),
+      radial-gradient(60% 45% at 50% 112%, rgba(var(--mood-rgb), 0.14), transparent 65%);
+    transition: background 0.6s ease;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  /* Topbar */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 0 12px; flex-wrap: wrap; gap: 10px;
+  }
+  .brand { font-size: 20px; font-weight: 800; letter-spacing: 0.4px; display: flex; align-items: center; gap: 11px; }
+  .brand .logo {
+    width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, #54a9ff, #31d492);
+    display: inline-flex; align-items: center; justify-content: center; font-size: 17px; color: #0a0d14;
+    box-shadow: 0 4px 14px rgba(84,169,255,0.35);
+  }
+  .brand span.b2 {
+    background: linear-gradient(90deg, #54a9ff, #31d492);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .gen-time { color: var(--muted); font-size: 12px; }
+  .demo-badge {
+    background: var(--amber); color: #17130a; font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px;
+  }
+  .scan-btn {
+    background: linear-gradient(135deg, #54a9ff, #31d492); color: #0a1220;
+    font-size: 13px; font-weight: 700; padding: 8px 18px; border-radius: 22px;
+    text-decoration: none; letter-spacing: 0.3px; white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(49,212,146,0.3); transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .scan-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(49,212,146,0.45); }
+
+  /* Tabs */
+  .tabs {
+    position: sticky; top: 0; z-index: 20;
+    background: linear-gradient(180deg, var(--bg) 75%, transparent);
+    display: flex; gap: 8px; padding: 10px 0 16px; margin-bottom: 18px;
+  }
+  .tab {
+    background: var(--surface); color: var(--muted); border: 1px solid var(--border);
+    padding: 10px 22px; border-radius: 24px; font-size: 13.5px; font-weight: 700;
+    cursor: pointer; transition: all 0.18s; font-family: inherit; letter-spacing: 0.2px;
+  }
+  .tab:hover { border-color: var(--accent); color: var(--text); transform: translateY(-1px); }
+  .tab.active {
+    background: linear-gradient(135deg, #54a9ff, #3d8ee6); border-color: transparent; color: #0a1220;
+    box-shadow: 0 4px 16px rgba(84,169,255,0.35);
+  }
+
+  /* Cards — liquid glass */
+  .card {
+    background: linear-gradient(160deg, rgba(255,255,255,0.085), rgba(255,255,255,0.028));
+    backdrop-filter: blur(14px) saturate(150%);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-top-color: rgba(255,255,255,0.20);
+    border-radius: 18px;
+    padding: 22px 24px;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.05);
+    animation: fadeUp 0.45s ease both;
+  }
+  .table-scroll {
+    backdrop-filter: blur(14px) saturate(150%);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+  }
+  /* purane browser jisme blur nahi chalta — solid fallback */
+  @supports not ((backdrop-filter: blur(4px)) or (-webkit-backdrop-filter: blur(4px))) {
+    .card, .table-scroll { background: #141a28; }
+  }
+  .hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; margin-bottom: 8px; }
+  .hero-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1.4px; font-weight: 700; }
+  .hero-day { font-size: 27px; font-weight: 800; margin-top: 4px; letter-spacing: -0.3px; }
+  .gear-row { display: flex; align-items: flex-end; gap: 16px; margin-top: 16px; }
+  .gear-bars { display: flex; gap: 6px; align-items: flex-end; }
+  .gear-bar { width: 22px; border-radius: 6px 6px 3px 3px; background: var(--surface-3); transition: background 0.3s; }
+  .gear-bar.on { background: linear-gradient(180deg, var(--mood), rgba(var(--mood-rgb), 0.55)); box-shadow: 0 0 16px rgba(var(--mood-rgb), 0.5); }
+  .gear-label { font-size: 20px; font-weight: 800; color: var(--mood); line-height: 1.1; }
+  .gear-sub { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+  .verdict {
+    margin-top: 18px; font-size: 13.5px; color: #d3dae8;
+    border-left: 3px solid var(--mood); padding: 2px 0 2px 14px; font-style: italic;
+    background: linear-gradient(90deg, rgba(var(--mood-rgb), 0.09), transparent);
+    border-radius: 0 8px 8px 0;
+  }
+  .capital-stat { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px dashed var(--border-soft); font-size: 13.5px; }
+  .capital-stat:last-of-type { border-bottom: none; }
+  .capital-stat span { color: var(--muted); }
+  .capital-stat b { font-size: 15.5px; }
+  .pos { color: var(--green); } .neg { color: var(--red); }
+  .sizing-note { margin-top: 12px; font-size: 12px; color: var(--muted); background: var(--surface-2); border-radius: 10px; padding: 9px 12px; }
+
+  /* Section headings */
+  h2 {
+    font-size: 12.5px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted);
+    margin: 30px 0 14px; font-weight: 800; display: flex; align-items: center; gap: 12px;
+  }
+  h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
+
+  /* Market checks */
+  .checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(245px, 1fr)); gap: 11px; }
+  .check {
+    background: var(--surface); border: 1px solid var(--border-soft); border-radius: 13px;
+    padding: 13px 15px; display: flex; gap: 11px; align-items: flex-start;
+    animation: fadeUp 0.45s ease both;
+  }
+  .check .dot { width: 9px; height: 9px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+  .dot.good { background: var(--green); box-shadow: 0 0 10px rgba(49,212,146,0.6); }
+  .dot.warn { background: var(--amber); box-shadow: 0 0 10px rgba(255,193,77,0.6); }
+  .dot.bad { background: var(--red); box-shadow: 0 0 10px rgba(255,107,118,0.6); }
+  .check b { font-size: 13px; display: block; }
+  .check small { color: var(--muted); font-size: 12px; }
+
+  /* Sectors */
+  .sectors { display: flex; gap: 10px; flex-wrap: wrap; }
+  .sector-chip {
+    background: rgba(84,169,255,0.08); border: 1px solid rgba(84,169,255,0.35); border-radius: 24px;
+    padding: 9px 18px; font-size: 13px; animation: fadeUp 0.45s ease both;
+  }
+  .sector-chip b { color: var(--accent); }
+  .sector-chip span { color: var(--muted); font-size: 12px; }
+
+  /* Picks */
+  .picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 18px; }
+  .pick { display: flex; flex-direction: column; gap: 12px; transition: transform 0.18s, border-color 0.18s; }
+  .pick:hover { transform: translateY(-3px); border-color: #33415f; }
+  .pick:nth-child(2) { animation-delay: 0.06s; } .pick:nth-child(3) { animation-delay: 0.12s; }
+  .pick:nth-child(4) { animation-delay: 0.18s; } .pick:nth-child(5) { animation-delay: 0.24s; }
+  .pick-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .pick-id { display: flex; gap: 12px; align-items: center; }
+  .avatar {
+    width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 15px; color: #0a1220;
+    background: linear-gradient(135deg, hsl(var(--h) 75% 62%), hsl(calc(var(--h) + 45) 70% 48%));
+  }
+  .pick-symbol { font-size: 18px; font-weight: 800; letter-spacing: 0.2px; display: flex; align-items: center; gap: 8px; }
+  .cap-badge {
+    font-size: 9.5px; font-weight: 800; padding: 2px 8px; border-radius: 10px;
+    letter-spacing: 0.6px; text-transform: uppercase; border: 1px solid transparent;
+  }
+  .cap-Large { background: rgba(84,169,255,0.14); color: #7fc0ff; border-color: rgba(84,169,255,0.3); }
+  .cap-Mid   { background: rgba(49,212,146,0.14); color: #4fe0a8; border-color: rgba(49,212,146,0.3); }
+  .cap-Small { background: rgba(255,193,77,0.14); color: #ffcf70; border-color: rgba(255,193,77,0.3); }
+  .cap-Micro { background: rgba(255,107,118,0.14); color: #ff8a92; border-color: rgba(255,107,118,0.3); }
+  .pick-name { color: var(--muted); font-size: 12px; }
+  .chart-link {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 11px;
+    color: var(--accent); font-size: 12.5px; font-weight: 700; padding: 10px 12px;
+    text-decoration: none; transition: all 0.15s;
+  }
+  .chart-link:hover { background: rgba(84,169,255,0.12); border-color: var(--accent); transform: translateY(-1px); }
+  .avatar { cursor: pointer; transition: transform 0.15s; }
+  .avatar:hover { transform: scale(1.06); }
+  .pick-cmp { text-align: right; font-size: 16.5px; font-weight: 800; }
+  .pick-cmp small { display: block; color: var(--muted); font-size: 10px; font-weight: 500; letter-spacing: 1.2px; }
+  .flags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .flag {
+    font-size: 10.5px; font-weight: 700; padding: 3px 10px; border-radius: 12px;
+    background: rgba(84,169,255,0.1); color: var(--accent); border: 1px solid rgba(84,169,255,0.25);
+  }
+  .spark-wrap { background: var(--surface-2); border-radius: 12px; padding: 9px 7px 5px; }
+  .levels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; text-align: center; }
+  .level { background: var(--surface-2); border-radius: 11px; padding: 10px 4px 8px; border-top: 2px solid transparent; }
+  .level small { display: block; color: var(--muted); font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.7px; }
+  .level b { font-size: 14.5px; }
+  .level.pivot { border-top-color: var(--accent); } .level.pivot b { color: var(--accent); }
+  .level.sl { border-top-color: var(--red); } .level.sl b { color: var(--red); }
+  .level.target { border-top-color: var(--green); } .level.target b { color: var(--green); }
+  .pick-row { font-size: 13px; }
+  .pick-row span { color: var(--muted); }
+  .size-row {
+    background: rgba(49,212,146,0.07); border: 1px dashed rgba(49,212,146,0.3);
+    border-radius: 11px; padding: 9px 12px; font-size: 12.5px;
+  }
+  .size-row b { color: var(--green); }
+  .size-row span { color: var(--muted); }
+  .comment {
+    background: var(--surface-2); border-radius: 11px; padding: 11px 13px;
+    font-size: 13px; font-style: italic; border-left: 3px solid var(--amber); color: #d9e0ec;
+  }
+
+  /* Breakdown */
+  details.breakdown-box { background: var(--surface-2); border-radius: 11px; }
+  details.breakdown-box summary {
+    cursor: pointer; padding: 10px 13px; font-size: 12.5px; font-weight: 700; color: var(--accent);
+    list-style: none; user-select: none; transition: color 0.15s;
+  }
+  details.breakdown-box summary:hover { color: #7fc0ff; }
+  details.breakdown-box summary::-webkit-details-marker { display: none; }
+  details.breakdown-box summary::before { content: "▸ "; }
+  details.breakdown-box[open] summary::before { content: "▾ "; }
+  .bd-table { width: 100%; border-collapse: collapse; }
+  .bd-table td { padding: 7px 13px; font-size: 12px; border-top: 1px solid var(--border-soft); white-space: normal; }
+  .bd-table td:first-child { color: var(--muted); width: 45%; }
+  .scenario { display: flex; gap: 8px; padding: 10px 13px 12px; flex-wrap: wrap; }
+  .scenario span { font-size: 11.5px; padding: 5px 12px; border-radius: 16px; font-weight: 700; }
+  .scenario .sc-sl { background: rgba(255,107,118,0.13); color: var(--red); }
+  .scenario .sc-t { background: rgba(49,212,146,0.13); color: var(--green); }
+
+  /* Track record */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 13px; }
+  .stat { padding: 17px 19px; }
+  .stat small { color: var(--muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: 1.2px; display: block; font-weight: 700; }
+  .stat b { font-size: 22px; font-weight: 800; display: block; margin-top: 3px; }
+  .stat .sub { font-size: 11.5px; color: var(--muted); }
+  .equity-card { padding: 19px 21px; }
+  .equity-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .equity-head b { font-size: 15.5px; }
+  .equity-head span { color: var(--muted); font-size: 12px; }
+  .breakdown { display: flex; gap: 10px; flex-wrap: wrap; }
+  .bd-chip {
+    display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border-soft);
+    border-radius: 24px; padding: 8px 17px; font-size: 12.5px;
+  }
+  .bd-chip b { font-size: 15px; }
+  .bd-win b { color: var(--green); } .bd-sl b { color: var(--red); } .bd-fail b { color: var(--amber); }
+  .bd-nt b { color: var(--muted); } .bd-open b { color: var(--accent); }
+
+  .table-scroll { overflow-x: auto; border-radius: 15px; border: 1px solid var(--border-soft); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+  table { width: 100%; border-collapse: collapse; background: var(--surface); min-width: 760px; }
+  th, td { padding: 12px 15px; text-align: left; font-size: 13px; border-bottom: 1px solid var(--border-soft); white-space: nowrap; }
+  td.wrap-cell { white-space: normal; min-width: 240px; }
+  th { color: var(--muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: 1.4px; background: var(--surface-2); font-weight: 700; }
+  tr:last-child td { border-bottom: none; }
+  .badge { font-size: 10.5px; font-weight: 800; padding: 4px 11px; border-radius: 14px; letter-spacing: 0.4px; }
+  .badge.win { background: rgba(49,212,146,0.15); color: var(--green); }
+  .badge.sl { background: rgba(255,107,118,0.15); color: var(--red); }
+  .badge.fail { background: rgba(255,193,77,0.15); color: var(--amber); }
+  .badge.no-trigger { background: var(--surface-3); color: var(--muted); }
+  .badge.open { background: rgba(84,169,255,0.15); color: var(--accent); }
+  td .note { color: var(--muted); font-size: 12px; }
+
+  .footer {
+    margin-top: 36px; padding: 17px; background: var(--surface); border-radius: 14px;
+    color: var(--muted); font-size: 12px; text-align: center; border: 1px solid var(--border-soft);
+  }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  @media (max-width: 720px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-day { font-size: 22px; }
+    .card { padding: 18px; border-radius: 16px; }
+  }
+  @media (max-width: 480px) {
+    .levels { grid-template-columns: repeat(2, 1fr); }
+    .tab { padding: 9px 16px; font-size: 12.5px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand"><span class="logo">₹</span>TRADING&nbsp;<span class="b2">BRAIN</span></div>
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+      <span class="demo-badge" id="demoBadge" style="display:none;">DEMO DATA</span>
+      <span class="gen-time" id="genTime"></span>
+      <a class="scan-btn" href="https://github.com/GURJOTSINGH10/trading-brain-dashboard/actions/workflows/scan.yml" target="_blank" rel="noopener" title="Cloud me fresh scan — GitHub pe 'Run workflow' dabana, 3-4 min me yahan refresh.">☁️ Naya Scan</a>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-view="scan">📋 Aaj ka Scan</button>
+    <button class="tab" data-view="track">📈 Track Record</button>
+  </div>
+
+  <!-- ============ SCAN VIEW ============ -->
+  <div class="view active" id="view-scan">
+    <div class="hero">
+      <div class="card">
+        <div class="hero-label">Next Trading Day</div>
+        <div class="hero-day" id="nextDay"></div>
+        <div class="gear-row">
+          <div class="gear-bars" id="gearBars"></div>
+          <div>
+            <div class="gear-label" id="gearLabel"></div>
+            <div class="gear-sub" id="gearSize"></div>
+          </div>
+        </div>
+        <div class="verdict" id="verdict"></div>
+      </div>
+      <div class="card">
+        <div class="hero-label" style="margin-bottom:8px;">Paper Portfolio — ₹1 Lakh Challenge</div>
+        <div class="capital-stat"><span>Starting capital</span><b id="capStart"></b></div>
+        <div class="capital-stat"><span>Current capital</span><b id="capNow"></b></div>
+        <div class="capital-stat"><span>Net P&amp;L</span><b id="capPnl"></b></div>
+        <div class="capital-stat"><span>Win rate</span><b id="capWinrate"></b></div>
+        <div class="sizing-note" id="sizingNote"></div>
+      </div>
+    </div>
+
+    <h2>Market Health Check</h2>
+    <div class="checks" id="checks"></div>
+
+    <h2>Hot Sectors</h2>
+    <div class="sectors" id="sectors"></div>
+
+    <h2 id="picksHeading">Ready Stocks — High Priority List</h2>
+    <div class="picks" id="picks"></div>
+  </div>
+
+  <!-- ============ TRACK RECORD VIEW ============ -->
+  <div class="view" id="view-track">
+    <h2 style="margin-top:4px;">Portfolio Stats — ₹1 Lakh, Gear-Based Sizing (10–25%)</h2>
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <h2>Equity Curve</h2>
+    <div class="card equity-card">
+      <div class="equity-head">
+        <b id="equityTitle"></b>
+        <span>Sirf closed trades — open positions alag</span>
+      </div>
+      <div id="equityChart"></div>
+    </div>
+
+    <h2>Kya Hua Kahan — Breakdown</h2>
+    <div class="breakdown" id="breakdown"></div>
+
+    <h2>Trade Journal — Har Pick ka Hisaab</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr>
+          <th>Picked</th><th>Stock</th><th>Size</th><th>Invested</th><th>P&amp;L</th><th>Status</th><th>Kya hua</th>
+        </tr></thead>
+        <tbody id="journal"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    Framework-based view hai, financial advice nahi. Apna risk khud manage karo — I am a risk manager, remember?<br>
+    Paper portfolio hai — asli paisa nahi. SL ke bina koi trade nahi. Ye SEBI-registered advisory nahi hai.
+  </div>
+</div>
+
+<script>document.write('<script src="data.js?v=' + Date.now() + '"><\/script>');</script>
+<script>
+(function () {
+  const d = window.DASHBOARD_DATA;
+  if (!d) { document.body.innerHTML = '<p style="padding:40px;text-align:center;">Data load nahi hua — data.js check karo.</p>'; return; }
+
+  const inr = n => '₹' + Math.round(n).toLocaleString('en-IN');
+  const sizeByGear = d.portfolio.sizeByGear;
+
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('view-' + t.dataset.view).classList.add('active');
+    window.scrollTo(0, 0);
+  }));
+
+  /* ---- Portfolio simulation ---- */
+  let equity = d.portfolio.startCapital;
+  const curve = [{ label: 'Start', v: equity }];
+  const rows = [];
+  let wins = 0, losses = 0, slHits = 0, boFails = 0, noTrigs = 0, opens = 0;
+  let winSum = 0, lossSum = 0, best = null, worst = null;
+
+  d.journal.forEach(t => {
+    const sizePct = sizeByGear[(t.gear || 1) - 1];
+    let invested = 0, pnlAmt = 0, qty = 0;
+    if (t.status !== 'no-trigger') {
+      const alloc = equity * sizePct / 100;
+      qty = Math.max(1, Math.floor(alloc / t.entry));
+      invested = qty * t.entry;
+      pnlAmt = invested * t.pnlPct / 100;
+    }
+    if (t.status === 'win' || t.status === 'sl' || t.status === 'fail') {
+      equity += pnlAmt;
+      curve.push({ label: t.symbol, v: equity });
+      if (t.pnlPct > 0) { wins++; winSum += t.pnlPct; } else { losses++; lossSum += t.pnlPct; }
+      if (t.status === 'sl') slHits++;
+      if (t.status === 'fail') boFails++;
+      if (best === null || t.pnlPct > best) best = t.pnlPct;
+      if (worst === null || t.pnlPct < worst) worst = t.pnlPct;
+    } else if (t.status === 'no-trigger') { noTrigs++; }
+    else if (t.status === 'open') { opens++; }
+    rows.push({ t, sizePct, invested, pnlAmt, qty });
+  });
+
+  const closed = wins + losses;
+  const netPnl = equity - d.portfolio.startCapital;
+  const netPct = netPnl / d.portfolio.startCapital * 100;
+  const winRate = closed ? Math.round(wins / closed * 100) : 0;
+
+  /* ---- Scan view ---- */
+  document.getElementById('genTime').textContent = 'Updated: ' + d.generatedAt;
+  if (d.demo) document.getElementById('demoBadge').style.display = 'inline-block';
+  document.getElementById('nextDay').textContent = d.nextTradingDay;
+
+  const gearBars = document.getElementById('gearBars');
+  for (let i = 1; i <= 5; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'gear-bar' + (i <= d.market.gear ? ' on' : '');
+    bar.style.height = (14 + i * 7) + 'px';
+    gearBars.appendChild(bar);
+  }
+  document.getElementById('gearLabel').textContent = d.market.gearLabel;
+  // Market mood — gear se poore page ka rang: 4-5 green, 3 amber, 1-2 red
+  document.body.classList.add(d.market.gear >= 4 ? 'mood-good' : d.market.gear === 3 ? 'mood-warn' : 'mood-bad');
+  document.getElementById('gearSize').textContent = 'Position size: ' + sizeByGear[d.market.gear - 1] + '% of capital';
+  document.getElementById('verdict').textContent = '“' + d.market.verdict + '”';
+
+  document.getElementById('capStart').textContent = inr(d.portfolio.startCapital);
+  document.getElementById('capNow').textContent = inr(equity);
+  const pnlEl = document.getElementById('capPnl');
+  pnlEl.textContent = (netPnl >= 0 ? '+' : '-') + inr(Math.abs(netPnl)) + ' (' + (netPct >= 0 ? '+' : '') + netPct.toFixed(1) + '%)';
+  pnlEl.className = netPnl >= 0 ? 'pos' : 'neg';
+  document.getElementById('capWinrate').textContent = winRate + '% (' + wins + 'W / ' + losses + 'L)';
+  document.getElementById('sizingNote').textContent = d.portfolio.sizingRule + ' — abhi ' + d.market.gearLabel + ' = ' + sizeByGear[d.market.gear - 1] + '% per trade';
+
+  document.getElementById('checks').innerHTML = d.market.checks.map((c, i) =>
+    `<div class="check" style="animation-delay:${i * 0.05}s"><div class="dot ${c.status}"></div><div><b>${c.label}</b><small>${c.note}</small></div></div>`
+  ).join('');
+
+  document.getElementById('sectors').innerHTML = d.hotSectors.length
+    ? d.hotSectors.map((s, i) => `<div class="sector-chip" style="animation-delay:${i * 0.06}s"><b>${s.name}</b> · <span>${s.note}</span></div>`).join('')
+    : '<div class="sector-chip"><span>Koi hot sector nahi — action ka wait karo</span></div>';
+
+  function sparkline(values, pivot, id) {
+    const w = 300, h = 64, pad = 5;
+    const min = Math.min(...values, pivot), max = Math.max(...values, pivot);
+    const x = i => pad + i * (w - 2 * pad) / (values.length - 1);
+    const y = v => h - pad - (v - min) * (h - 2 * pad) / (max - min || 1);
+    const pts = values.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+    const areaPts = `${pad},${h - pad} ${pts} ${(w - pad).toFixed(1)},${h - pad}`;
+    const py = y(pivot).toFixed(1);
+    const up = values[values.length - 1] >= values[0];
+    const hex = up ? '#31d492' : '#ff6b76';
+    const lastX = x(values.length - 1).toFixed(1), lastY = y(values[values.length - 1]).toFixed(1);
+    return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="64" preserveAspectRatio="none">
+      <defs><linearGradient id="g${id}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="${hex}" stop-opacity="0.28"/>
+        <stop offset="1" stop-color="${hex}" stop-opacity="0"/>
+      </linearGradient></defs>
+      <polygon points="${areaPts}" fill="url(#g${id})"/>
+      <line x1="0" y1="${py}" x2="${w}" y2="${py}" stroke="#54a9ff" stroke-width="1" stroke-dasharray="4 4" opacity="0.75"/>
+      <polyline points="${pts}" fill="none" stroke="${hex}" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="${lastX}" cy="${lastY}" r="3" fill="${hex}"/>
+    </svg>`;
+  }
+
+  function breakdown(p, qty) {
+    const dt = p.detail;
+    const rows2 = [
+      ['Trend (DMAs)', `CMP ${p.cmp} vs 10D <b>${dt.dma10}</b> · 20D <b>${dt.dma20}</b> · 50D <b>${dt.dma50}</b> ${dt.dma50Rising ? '(rising ✓)' : '(flat ⚠)'}`],
+      ['52W high se doori', `${dt.dist52w}% niche (52W high: ${dt.hi52})${dt.dist52w <= 10 ? ' — LLR upar ✓' : ''}`],
+      ['Base quality', `${dt.baseDays} din, ${dt.rangePct}% range${dt.rangePct <= 7.5 ? ' — super tight ✓' : ''}`],
+      ['Pivot se doori', `${dt.proxPivot}% — ${dt.proxPivot <= 2 ? 'bilkul ready ✓' : 'ready zone me'}`],
+      ['Volume (5d vs 20d)', `${dt.volRatio}x ${dt.volRatio < 1 ? '— shrink, supply exhaust ✓' : '— elevated'}`],
+      ['Pivot ke paas shanti', `ATR ratio ${dt.atrRatio} ${dt.atrRatio <= 1.3 ? '— clean, no volatility ✓' : '— thodi halchal ⚠'}`],
+      ['Liquidity', `₹${dt.tradedValueCr} Cr avg daily — ${dt.tradedValueCr >= 5 ? 'full liquid ✓' : 'thin ⚠'}`],
+      ['5% move ki aukaat', `${dt.bigMoveDays} din me 5%+ range (last 60 din)${dt.bigMoveDays >= 3 ? ' ✓' : ''}`]
+    ];
+    const slLoss = qty * (p.pivot - p.sl);
+    const t1Gain = qty * (dt.t1 - p.pivot), t2Gain = qty * (dt.t2 - p.pivot);
+    return `<details class="breakdown-box"><summary>Full breakdown — har check ka hisaab</summary>
+      <table class="bd-table">${rows2.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table>
+      <div class="scenario">
+        <span class="sc-sl">SL hit: −₹${inr(slLoss).slice(1)} (−${p.slPct}%)</span>
+        <span class="sc-t">Target 1 (${dt.t1}): +₹${inr(t1Gain).slice(1)}</span>
+        <span class="sc-t">Target 2 (${dt.t2}): +₹${inr(t2Gain).slice(1)}</span>
+      </div>
+    </details>`;
+  }
+
+  const tvUrl = sym => `https://in.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(sym.replace(/[^A-Za-z0-9]/g, '_'))}`;
+
+  const picksEl = document.getElementById('picks');
+  const curGearPct = sizeByGear[d.market.gear - 1];
+  if (!d.picks.length) {
+    document.getElementById('picksHeading').textContent = 'Aaj Koi Setup Nahi';
+    picksEl.innerHTML = `<div class="card pick"><div class="comment">Cash bhi ek position hai bhaiya. Environment hi nahi hai to setup ka kya karna. Wait for the right opportunity.</div></div>`;
+  } else {
+    picksEl.innerHTML = d.picks.map((p, i) => {
+      const alloc = equity * curGearPct / 100;
+      const qty = Math.max(1, Math.floor(alloc / p.cmp));
+      const cap = p.cap || 'Small';
+      return `
+      <div class="card pick">
+        <div class="pick-head">
+          <div class="pick-id">
+            <a class="avatar" href="${tvUrl(p.symbol)}" target="_blank" rel="noopener" style="--h:${(i * 67 + 190) % 360}" title="${p.symbol} ka TradingView chart kholo">${p.symbol.slice(0, 2)}</a>
+            <div>
+              <div class="pick-symbol">${p.symbol} <span class="cap-badge cap-${cap}">${cap} Cap</span></div>
+              <div class="pick-name">${p.name} · ${p.sector}</div>
+            </div>
+          </div>
+          <div class="pick-cmp">₹${p.cmp.toLocaleString('en-IN')}<small>CMP</small></div>
+        </div>
+        <div class="flags">${p.flags.map(f => `<span class="flag">${f}</span>`).join('')}</div>
+        <div class="spark-wrap">${sparkline(p.spark, p.pivot, i)}</div>
+        <div class="levels">
+          <div class="level pivot"><small>Pivot</small><b>${p.pivot.toLocaleString('en-IN')}</b></div>
+          <div class="level sl"><small>SL (${p.slPct}%)</small><b>${p.sl.toLocaleString('en-IN')}</b></div>
+          <div class="level target"><small>Target</small><b>${p.target}</b></div>
+          <div class="level"><small>R : R</small><b>${p.rr}</b></div>
+        </div>
+        <div class="size-row">Position (${d.market.gearLabel}, ${curGearPct}%): <b>${qty} shares ≈ ${inr(qty * p.cmp)}</b> <span>· SL hit hua to loss ≈ ${inr(qty * (p.cmp - p.sl))}</span></div>
+        <div class="pick-row"><span>Setup:</span> ${p.setup}</div>
+        <div class="pick-row"><span>Entry:</span> ${p.entry}</div>
+        <div class="pick-row"><span>Volume:</span> ${p.volumeNote}</div>
+        ${p.detail ? breakdown(p, qty) : ''}
+        <div class="comment">${p.comment}</div>
+        <a class="chart-link" href="${tvUrl(p.symbol)}" target="_blank" rel="noopener">📈 TradingView pe chart kholo — pivot khud dekho</a>
+      </div>`;
+    }).join('');
+  }
+
+  /* ---- Track view ---- */
+  const avgWin = wins ? (winSum / wins).toFixed(1) : '0';
+  const avgLoss = losses ? (lossSum / losses).toFixed(1) : '0';
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="card stat"><small>Current capital</small><b>${inr(equity)}</b><span class="sub">start: ${inr(d.portfolio.startCapital)}</span></div>
+    <div class="card stat"><small>Net P&amp;L</small><b class="${netPnl >= 0 ? 'pos' : 'neg'}">${netPnl >= 0 ? '+' : ''}${netPct.toFixed(1)}%</b><span class="sub">${inr(Math.abs(netPnl))} ${netPnl >= 0 ? 'profit' : 'loss'}</span></div>
+    <div class="card stat"><small>Win rate</small><b>${winRate}%</b><span class="sub">${wins}W / ${losses}L (${closed} closed)</span></div>
+    <div class="card stat"><small>Avg win / loss</small><b>+${avgWin}% / ${avgLoss}%</b><span class="sub">expectancy ka game hai</span></div>
+    <div class="card stat"><small>Best / worst</small><b><span class="pos">+${(best ?? 0).toFixed(1)}%</span> / <span class="neg">${(worst ?? 0).toFixed(1)}%</span></b><span class="sub">outliers dono taraf</span></div>
+    <div class="card stat"><small>Open positions</small><b>${opens}</b><span class="sub">no-trigger: ${noTrigs} picks</span></div>`;
+
+  document.getElementById('equityTitle').textContent = inr(d.portfolio.startCapital) + ' → ' + inr(equity);
+  (function drawEquity() {
+    const w = 640, h = 180, padL = 10, padR = 52, padY = 18;
+    const vs = curve.map(c => c.v);
+    const min = Math.min(...vs), max = Math.max(...vs);
+    const x = i => padL + i * (w - padL - padR) / (curve.length - 1 || 1);
+    const y = v => h - padY - (v - min) * (h - 2 * padY) / (max - min || 1);
+    const pts = curve.map((c, i) => `${x(i).toFixed(1)},${y(c.v).toFixed(1)}`).join(' ');
+    const area = `${padL},${h - padY} ${pts} ${x(curve.length - 1).toFixed(1)},${h - padY}`;
+    const baseY = y(d.portfolio.startCapital).toFixed(1);
+    const lx = x(curve.length - 1).toFixed(1), ly = y(equity).toFixed(1);
+    const up = equity >= d.portfolio.startCapital;
+    const hex = up ? '#31d492' : '#ff6b76';
+    document.getElementById('equityChart').innerHTML = `
+    <svg viewBox="0 0 ${w} ${h}" width="100%" preserveAspectRatio="none" style="display:block;">
+      <defs><linearGradient id="geq" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="${hex}" stop-opacity="0.22"/>
+        <stop offset="1" stop-color="${hex}" stop-opacity="0"/>
+      </linearGradient></defs>
+      <line x1="${padL}" y1="${baseY}" x2="${w - padR}" y2="${baseY}" stroke="#8c96ad" stroke-width="0.8" stroke-dasharray="5 5" opacity="0.5"/>
+      <polygon points="${area}" fill="url(#geq)"/>
+      <polyline points="${pts}" fill="none" stroke="${hex}" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="${lx}" cy="${ly}" r="3.2" fill="${hex}"/>
+      <text x="${w - padR + 6}" y="${ly}" fill="${hex}" font-size="11" dominant-baseline="middle">${(netPct >= 0 ? '+' : '') + netPct.toFixed(1)}%</text>
+    </svg>`;
+  })();
+
+  document.getElementById('breakdown').innerHTML = `
+    <div class="bd-chip bd-win"><b>${wins}</b> Wins — partial book + trail</div>
+    <div class="bd-chip bd-sl"><b>${slHits}</b> SL hit — out, end of story</div>
+    <div class="bd-chip bd-fail"><b>${boFails}</b> Breakout fail — abnormal, exit</div>
+    <div class="bd-chip bd-nt"><b>${noTrigs}</b> Trigger nahi aaya — paisa nahi laga</div>
+    <div class="bd-chip bd-open"><b>${opens}</b> Open — chal rahi hai</div>`;
+
+  document.getElementById('journal').innerHTML = rows.length ? rows.map(r => {
+    const t = r.t;
+    const statusLabel = { win: 'WIN', sl: 'SL HIT', fail: 'BO FAIL', 'no-trigger': 'NO TRIGGER', open: 'OPEN' }[t.status];
+    const pnlCell = t.status === 'no-trigger' ? '<span class="note">—</span>'
+      : `<span class="${r.pnlAmt >= 0 ? 'pos' : 'neg'}">${r.pnlAmt >= 0 ? '+' : '-'}${inr(Math.abs(r.pnlAmt))} (${t.pnlPct >= 0 ? '+' : ''}${t.pnlPct}%)</span>`;
+    return `<tr>
+      <td>${t.picked}</td>
+      <td><b>${t.symbol}</b><br><span class="note">${t.sector}</span></td>
+      <td>${r.sizePct}%<br><span class="note">gear ${t.gear}</span></td>
+      <td>${t.status === 'no-trigger' ? '<span class="note">—</span>' : inr(r.invested) + '<br><span class="note">' + r.qty + ' × ₹' + t.entry.toLocaleString('en-IN') + '</span>'}</td>
+      <td>${pnlCell}</td>
+      <td><span class="badge ${t.status}">${statusLabel}</span></td>
+      <td class="wrap-cell"><span class="note">${t.reason}</span></td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="7"><span class="note">Journal Monday se banna shuru hoga — pehle picks ka result aane do.</span></td></tr>';
+})();
+</script>
+</body>
+</html>
