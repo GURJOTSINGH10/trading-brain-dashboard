@@ -59,14 +59,108 @@ async function fetchChart(ticker, range = '1y') {
         out.h.push(q.high[i]); out.l.push(q.low[i]); out.c.push(q.close[i]);
         out.v.push(q.volume[i] ?? 0);
       }
+      if (out.c.length < 30) continue;
+      // ★ CRITICAL: market-hours me Yahoo AAJ ka ADHURA (live) candle deta hai.
+      // Adhure din pe scan/journal chalana = galat SL/trigger/gear. Isliye:
+      // aaj ka bar tabhi rakho jab market band ho chuki ho (15:35 IST ke baad).
+      const clk = istClock();
+      if (istDateStr(last(out.t)) === clk.date && clk.mins < 935) {
+        out.t.pop(); out.o.pop(); out.h.pop(); out.l.pop(); out.c.pop(); out.v.pop();
+      }
       return out.c.length >= 30 ? out : null;
     } catch { /* try next host */ }
   }
   return null;
 }
 
+// IST ka asli waqt (system TZ pe depend nahi — Node ICU se)
+function istClock() {
+  const p = new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).formatToParts(new Date());
+  const g = t => p.find(x => x.type === t).value;
+  return { date: `${g('day')}/${g('month')}/${g('year')}`, mins: (+g('hour') % 24) * 60 + +g('minute') };
+}
+
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const last = a => a[a.length - 1];
+
+// ---------- NSE bhavcopy (official EOD, ~4:30 PM IST publish) ----------
+// Yahoo ka daily candle ghanton late aata hai — bhavcopy se aaj ka session
+// same-evening milta hai. Fail ho (NSE down / cloud IP block) to Yahoo fallback.
+async function fetchNSE(url) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 12000);
+  try {
+    const res = await fetch(url, {
+      signal: ctrl.signal,
+      headers: { 'User-Agent': UA, 'Referer': 'https://www.nseindia.com/', 'Accept': '*/*' }
+    });
+    if (!res.ok) return null;
+    return await res.text();
+  } catch { return null; }
+  finally { clearTimeout(timer); }
+}
+
+const MONTHS = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+
+async function fetchBhavData() {
+  // IST ke aaj se peeche 3 din try karo (weekday only) — jo pehli file mile
+  const istNow = new Date(Date.now() + 5.5 * 3600 * 1000); // UTC+5:30 shift, UTC getters use karo
+  for (let back = 0; back <= 3; back++) {
+    const d = new Date(istNow.getTime() - back * 86400000);
+    const dow = d.getUTCDay();
+    if (dow === 0 || dow === 6) continue; // Sat/Sun bhav nahi hota
+    const dd = String(d.getUTCDate()).padStart(2, '0');
+    const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+    const yyyy = d.getUTCFullYear();
+    const csv = await fetchNSE(`https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_${dd}${mm}${yyyy}.csv`);
+    if (!csv || !csv.includes('SYMBOL')) continue;
+
+    const stocks = new Map();
+    let bhavTs = null;
+    for (const line of csv.split(/\r?\n/).slice(1)) {
+      const f = line.split(',').map(x => x.trim());
+      if (f.length < 15 || f[1] !== 'EQ') continue;
+      if (!bhavTs) {
+        const [dd2, mon, yy] = f[2].split('-');
+        bhavTs = Date.UTC(+yy, MONTHS[mon], +dd2, 4, 30) / 1000; // ~10:00 IST
+      }
+      stocks.set(f[0], {
+        o: +f[4], h: +f[5], l: +f[6], c: +f[8], v: +f[10],
+        deliv: isNaN(+f[14]) ? null : +f[14]
+      });
+    }
+    if (!stocks.size) continue;
+
+    // indices closing (Nifty 50 + Smallcap 100) — same date
+    const indices = {};
+    const icsv = await fetchNSE(`https://nsearchives.nseindia.com/content/indices/ind_close_all_${dd}${mm}${yyyy}.csv`);
+    if (icsv) {
+      for (const line of icsv.split(/\r?\n/)) {
+        const f = line.split(',').map(x => x.trim());
+        const name = (f[0] || '').toLowerCase();
+        if (name === 'nifty 50') indices.nifty = { o: +f[2], h: +f[3], l: +f[4], c: +f[5] };
+        if (name === 'nifty smallcap 100') indices.smallcap = { o: +f[2], h: +f[3], l: +f[4], c: +f[5] };
+      }
+    }
+    console.log(`Bhavcopy mila: ${dd}-${mm}-${yyyy} | ${stocks.size} stocks | indices: ${Object.keys(indices).join(',') || 'nahi (Yahoo se chalega)'}`);
+    return { ts: bhavTs, stocks, indices };
+  }
+  console.log('Bhavcopy nahi mila (holiday/pending/blocked) — Yahoo fallback.');
+  return null;
+}
+
+// chart me official bar daalo: same date = replace (official jeet-ta hai), nayi date = append
+function mergeBar(ch, ts, bar) {
+  if (!ch || !bar || !isFinite(bar.c)) return;
+  const lastDate = istDateStr(last(ch.t)), barDate = istDateStr(ts);
+  if (lastDate === barDate) {
+    const i = ch.t.length - 1;
+    ch.o[i] = bar.o; ch.h[i] = bar.h; ch.l[i] = bar.l; ch.c[i] = bar.c;
+    if (bar.v) ch.v[i] = bar.v;
+  } else if (ts > last(ch.t)) {
+    ch.t.push(ts); ch.o.push(bar.o); ch.h.push(bar.h); ch.l.push(bar.l); ch.c.push(bar.c); ch.v.push(bar.v || 0);
+  }
+}
 const sma = (a, n, back = 0) => {
   const end = a.length - back;
   if (end < n) return null;
@@ -109,10 +203,18 @@ async function main() {
   // --- indices ---
   const nifty = await fetchChart('^NSEI');
   if (!nifty) { console.error('Nifty data nahi mila — abort'); process.exit(1); }
-  const smallcap = (await fetchChart('^CNXSC')) || nifty; // CNX Smallcap; fallback Nifty
+  const cnxsc = await fetchChart('^CNXSC');
+  const smallcap = cnxsc || nifty; // CNX Smallcap; fallback Nifty
   const usdinr = await fetchChart('INR=X');
 
-  const sessionTs = last(nifty.t);
+  // --- NSE bhavcopy: aaj ka official session (Yahoo late ho to bhi fresh) ---
+  const bhav = process.env.SKIP_BHAV ? null : await fetchBhavData();
+  if (bhav) {
+    if (bhav.indices.nifty) mergeBar(nifty, bhav.ts, bhav.indices.nifty);
+    if (bhav.indices.smallcap && cnxsc) mergeBar(cnxsc, bhav.ts, bhav.indices.smallcap);
+  }
+
+  const sessionTs = Math.max(last(nifty.t), bhav ? bhav.ts : 0);
   const sessionDate = istDateStr(sessionTs);
   // alreadyProcessed: journal state is session ke liye update ho chuka hai —
   // FORCE me sirf display (data.js) dobara banate hain, journal ko haath nahi lagate
@@ -130,7 +232,14 @@ async function main() {
     while (idx < universe.length) {
       const u = universe[idx++];
       const ch = await fetchChart(u.s + '.NS');
-      if (ch) charts[u.s] = ch; else failed.push(u.s);
+      if (ch) {
+        if (bhav && bhav.stocks.has(u.s)) {
+          const b = bhav.stocks.get(u.s);
+          mergeBar(ch, bhav.ts, b);           // official EOD bar (Yahoo late ho tab bhi aaj ka data)
+          if (b.deliv != null) ch.deliv = b.deliv; // delivery % (framework isko value karta hai)
+        }
+        charts[u.s] = ch;
+      } else failed.push(u.s);
       await sleep(120);
     }
   }
@@ -361,6 +470,7 @@ async function main() {
           proxPivot: round2(prox),
           atrRatio: round2(atr3 / atr20),
           bigMoveDays: big,
+          delivPct: ch.deliv ?? null,
           t1, t2
         }
       });
