@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trading Brain — Daily Scan (Glass Preview)</title>
+<title>Trading Brain — Daily Scan (New Look Preview)</title>
 <style>
   :root {
     --bg: #0a0d14;
-    --surface: rgba(255,255,255,0.05);
-    --surface-2: rgba(255,255,255,0.07);
-    --surface-3: rgba(255,255,255,0.13);
-    --border: rgba(255,255,255,0.14);
-    --border-soft: rgba(255,255,255,0.09);
+    --surface: #131926;
+    --surface-2: #1a2133;
+    --surface-3: #232d45;
+    --border: #253048;
+    --border-soft: #1e2839;
     --text: #edf1f8;
-    --muted: #97a1b6;
+    --muted: #8c96ad;
     --accent: #54a9ff;
     --green: #31d492;
     --red: #ff6b76;
@@ -23,39 +23,14 @@
   html { scroll-behavior: smooth; }
   body {
     background: var(--bg);
+    background-image: radial-gradient(ellipse 80% 40% at 50% -10%, rgba(84,169,255,0.09), transparent);
     color: var(--text);
     font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
     font-feature-settings: "tnum";
     line-height: 1.55;
     padding-bottom: 56px;
     -webkit-font-smoothing: antialiased;
-    /* default mood (blue) — JS gear se badalta hai */
-    --mood: var(--accent); --mood-rgb: 84,169,255;
   }
-  /* MARKET MOOD — gear se poora mahaul badalta hai */
-  body.mood-good { --mood: var(--green); --mood-rgb: 49,212,146; }
-  body.mood-warn { --mood: var(--amber); --mood-rgb: 255,193,77; }
-  body.mood-bad  { --mood: var(--red);   --mood-rgb: 255,107,118; }
-  /* LIQUID GLASS — glass ke peeche behti hui mood ki roshni (animated blobs) */
-  body::before, body::after {
-    content: ""; position: fixed; z-index: -1; pointer-events: none;
-    width: 70vmax; height: 70vmax; border-radius: 50%;
-    filter: blur(60px); will-change: transform;
-  }
-  body::before {
-    top: -28vmax; right: -20vmax;
-    background: radial-gradient(circle at 38% 38%, rgba(var(--mood-rgb), 0.40), transparent 62%);
-    animation: drift1 22s ease-in-out infinite alternate;
-  }
-  body::after {
-    bottom: -30vmax; left: -18vmax;
-    background:
-      radial-gradient(circle at 62% 38%, rgba(var(--mood-rgb), 0.28), transparent 58%),
-      radial-gradient(circle at 28% 72%, rgba(84,169,255,0.20), transparent 55%);
-    animation: drift2 28s ease-in-out infinite alternate;
-  }
-  @keyframes drift1 { from { transform: translate(0,0) scale(1); } to { transform: translate(-10vmax, 8vmax) scale(1.18); } }
-  @keyframes drift2 { from { transform: translate(0,0) scale(1.08); } to { transform: translate(9vmax, -7vmax) scale(0.9); } }
   .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
 
   @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
@@ -95,87 +70,37 @@
     display: flex; gap: 8px; padding: 10px 0 16px; margin-bottom: 18px;
   }
   .tab {
-    background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid rgba(255,255,255,0.10);
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    background: var(--surface); color: var(--muted); border: 1px solid var(--border);
     padding: 10px 22px; border-radius: 24px; font-size: 13.5px; font-weight: 700;
     cursor: pointer; transition: all 0.18s; font-family: inherit; letter-spacing: 0.2px;
   }
-  .tab:hover { border-color: rgba(var(--mood-rgb), 0.5); color: var(--text); transform: translateY(-1px); }
+  .tab:hover { border-color: var(--accent); color: var(--text); transform: translateY(-1px); }
   .tab.active {
-    background: rgba(var(--mood-rgb), 0.16); border-color: rgba(var(--mood-rgb), 0.5);
-    color: var(--mood);
-    box-shadow: 0 4px 18px rgba(var(--mood-rgb), 0.28);
+    background: linear-gradient(135deg, #54a9ff, #3d8ee6); border-color: transparent; color: #0a1220;
+    box-shadow: 0 4px 16px rgba(84,169,255,0.35);
   }
 
-  /* Cards — liquid glass */
+  /* Cards */
   .card {
-    position: relative; overflow: hidden;
-    background: linear-gradient(160deg, rgba(255,255,255,0.09), rgba(255,255,255,0.03));
-    backdrop-filter: blur(16px) saturate(160%);
-    -webkit-backdrop-filter: blur(16px) saturate(160%);
-    border: 1px solid rgba(255,255,255,0.11);
-    border-top-color: rgba(255,255,255,0.22);
-    border-radius: 20px;
+    background: linear-gradient(180deg, var(--surface) 0%, #111624 100%);
+    border: 1px solid var(--border-soft); border-radius: 18px;
     padding: 22px 24px;
-    box-shadow: 0 12px 36px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.06);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
     animation: fadeUp 0.45s ease both;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  /* glass ke upar ki chamak (shine line) */
-  .card::after {
-    content: ""; position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
-    pointer-events: none;
-  }
-  .card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 18px 48px rgba(0,0,0,0.5), 0 0 40px rgba(var(--mood-rgb), 0.08), inset 0 1px 0 rgba(255,255,255,0.06);
-  }
-  /* hero ka pehla card = mood banner (mood ki ring + glow) */
-  .hero .card:first-child {
-    border-color: rgba(var(--mood-rgb), 0.30);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.42), 0 0 60px rgba(var(--mood-rgb), 0.12), inset 0 1px 0 rgba(255,255,255,0.06);
-  }
-  .table-scroll {
-    backdrop-filter: blur(14px) saturate(150%);
-    -webkit-backdrop-filter: blur(14px) saturate(150%);
-  }
-  /* purane browser jisme blur nahi chalta — solid fallback */
-  @supports not ((backdrop-filter: blur(4px)) or (-webkit-backdrop-filter: blur(4px))) {
-    .card, .table-scroll { background: #141a28; }
   }
   .hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; margin-bottom: 8px; }
   .hero-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1.4px; font-weight: 700; }
   .hero-day { font-size: 27px; font-weight: 800; margin-top: 4px; letter-spacing: -0.3px; }
   .gear-row { display: flex; align-items: flex-end; gap: 16px; margin-top: 16px; }
   .gear-bars { display: flex; gap: 6px; align-items: flex-end; }
-  .gear-bar { width: 26px; border-radius: 7px 7px 3px 3px; background: rgba(255,255,255,0.09); transition: background 0.3s; }
-  .gear-bar.on {
-    background: linear-gradient(180deg, var(--mood), rgba(var(--mood-rgb), 0.55));
-    animation: barGlow 2.4s ease-in-out infinite alternate;
-  }
-  @keyframes barGlow {
-    from { box-shadow: 0 0 12px rgba(var(--mood-rgb), 0.35); }
-    to   { box-shadow: 0 0 26px rgba(var(--mood-rgb), 0.65); }
-  }
-  /* Mood status pill — dhadakta hua market ka mijaz */
-  .mood-pill {
-    display: none; align-items: center; gap: 9px; margin-top: 14px;
-    padding: 8px 16px; border-radius: 22px; font-size: 12px; font-weight: 800; letter-spacing: 0.8px;
-    color: var(--mood); background: rgba(var(--mood-rgb), 0.10);
-    border: 1px solid rgba(var(--mood-rgb), 0.38); width: fit-content;
-  }
-  .mood-pill .dot {
-    width: 9px; height: 9px; border-radius: 50%; background: var(--mood);
-    box-shadow: 0 0 12px var(--mood); animation: pulse 1.8s ease-in-out infinite;
-  }
-  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.72); } }
-  .gear-label { font-size: 20px; font-weight: 800; color: var(--mood); line-height: 1.1; }
+  .gear-bar { width: 22px; border-radius: 6px 6px 3px 3px; background: var(--surface-3); transition: background 0.3s; }
+  .gear-bar.on { background: linear-gradient(180deg, #31d492, #1da873); box-shadow: 0 0 14px rgba(49,212,146,0.4); }
+  .gear-label { font-size: 20px; font-weight: 800; color: var(--green); line-height: 1.1; }
   .gear-sub { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
   .verdict {
-    margin-top: 18px; font-size: 13.5px; color: #d3dae8;
-    border-left: 3px solid var(--mood); padding: 2px 0 2px 14px; font-style: italic;
-    background: linear-gradient(90deg, rgba(var(--mood-rgb), 0.09), transparent);
+    margin-top: 18px; font-size: 13.5px; color: #cdd6e6;
+    border-left: 3px solid var(--accent); padding: 2px 0 2px 14px; font-style: italic;
+    background: linear-gradient(90deg, rgba(84,169,255,0.06), transparent);
     border-radius: 0 8px 8px 0;
   }
   .capital-stat { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px dashed var(--border-soft); font-size: 13.5px; }
@@ -190,7 +115,7 @@
     font-size: 12.5px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted);
     margin: 30px 0 14px; font-weight: 800; display: flex; align-items: center; gap: 12px;
   }
-  h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(var(--mood-rgb), 0.35), transparent); }
+  h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
 
   /* Market checks */
   .checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(245px, 1fr)); gap: 11px; }
@@ -375,7 +300,6 @@
             <div class="gear-sub" id="gearSize"></div>
           </div>
         </div>
-        <div class="mood-pill" id="moodPill"><span class="dot"></span><span id="moodText"></span></div>
         <div class="verdict" id="verdict"></div>
       </div>
       <div class="card">
@@ -492,18 +416,10 @@
   for (let i = 1; i <= 5; i++) {
     const bar = document.createElement('div');
     bar.className = 'gear-bar' + (i <= d.market.gear ? ' on' : '');
-    bar.style.height = (16 + i * 8) + 'px';
+    bar.style.height = (14 + i * 7) + 'px';
     gearBars.appendChild(bar);
   }
   document.getElementById('gearLabel').textContent = d.market.gearLabel;
-  // Market mood — gear se poore page ka rang: 4-5 green, 3 amber, 1-2 red
-  document.body.classList.add(d.market.gear >= 4 ? 'mood-good' : d.market.gear === 3 ? 'mood-warn' : 'mood-bad');
-  const moodPill = document.getElementById('moodPill');
-  document.getElementById('moodText').textContent =
-    d.market.gear >= 4 ? 'RISK ON — attack mode, SL ke saath'
-    : d.market.gear === 3 ? 'SELECTIVE — size control me rakho'
-    : 'RISK OFF — cash bhi position hai';
-  moodPill.style.display = 'inline-flex';
   document.getElementById('gearSize').textContent = 'Position size: ' + sizeByGear[d.market.gear - 1] + '% of capital';
   document.getElementById('verdict').textContent = '“' + d.market.verdict + '”';
 
