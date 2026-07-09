@@ -322,6 +322,24 @@
     box-shadow: 0 4px 16px rgba(var(--mood-rgb), 0.22);
   }
   .bd-chip b { font-size: 15px; }
+
+  /* Watchlist rows (khali din pe) */
+  .watch-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0; border-bottom: 1px dashed var(--border-soft); font-size: 13.5px;
+  }
+  .watch-row:last-of-type { border-bottom: none; }
+
+  /* Journal search */
+  .jsearch {
+    width: 100%; margin-bottom: 12px; padding: 11px 16px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.11);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-radius: 14px; color: var(--text); font-size: 13.5px; font-family: inherit; outline: none;
+    transition: border-color 0.15s;
+  }
+  .jsearch:focus { border-color: rgba(var(--mood-rgb), 0.55); }
+  .jsearch::placeholder { color: var(--muted); }
   .bd-win b { color: var(--green); } .bd-sl b { color: var(--red); } .bd-fail b { color: var(--amber); }
   .bd-nt b { color: var(--muted); } .bd-open b { color: var(--accent); }
 
@@ -428,6 +446,7 @@
     <div class="breakdown" id="breakdown"></div>
 
     <h2>Trade Journal — Har Pick ka Hisaab</h2>
+    <input class="jsearch" id="journalSearch" type="text" placeholder="🔍 Stock dhundo — jaise DMART, TITAN..." autocomplete="off">
     <div class="table-scroll">
       <table>
         <thead><tr>
@@ -589,7 +608,22 @@
   const curGearPct = sizeByGear[d.market.gear - 1];
   if (!d.picks.length) {
     document.getElementById('picksHeading').textContent = 'Aaj Koi Setup Nahi';
-    picksEl.innerHTML = `<div class="card pick"><div class="comment">Cash bhi ek position hai bhaiya. Environment hi nahi hai to setup ka kya karna. Wait for the right opportunity.</div></div>`;
+    const wl = d.watchlist || [];
+    const wlCard = wl.length ? `
+      <div class="card pick">
+        <div class="hero-label" style="margin-bottom:4px;">👀 Nazar Me Rakho — READY NAHI, sirf tracking</div>
+        ${wl.map((w, i) => `
+        <div class="watch-row">
+          <a class="avatar" href="${tvUrl(w.symbol)}" target="_blank" rel="noopener" style="--h:${(i * 67 + 30) % 360}" title="${w.symbol} ka chart kholo">${w.symbol.slice(0, 2)}</a>
+          <div style="flex:1; min-width:0;">
+            <b>${w.symbol}</b> <span class="cap-badge cap-${w.cap || 'Small'}">${w.cap || 'Small'} Cap</span>
+            <div class="pick-name">${w.sector} · pivot ${w.pivot.toLocaleString('en-IN')} se <b>${w.prox}% door</b> · range ${w.range}%</div>
+          </div>
+          <div class="pick-cmp" style="font-size:14px;">₹${w.cmp.toLocaleString('en-IN')}</div>
+        </div>`).join('')}
+        <div class="pick-name" style="margin-top:6px;">Ye setup ke kareeb hain, par abhi trigger door hai — buy NAHI, sirf chart pe nazar. Ready honge to picks me aayenge.</div>
+      </div>` : '';
+    picksEl.innerHTML = `<div class="card pick"><div class="comment">Cash bhi ek position hai bhaiya. Environment hi nahi hai to setup ka kya karna. Wait for the right opportunity.</div></div>` + wlCard;
   } else {
     picksEl.innerHTML = d.picks.map((p, i) => {
       const alloc = equity * curGearPct / 100;
@@ -635,6 +669,14 @@
     <div class="card stat"><small>Win rate</small><b>${winRate}%</b><span class="sub">${wins}W / ${losses}L (${closed} closed)</span></div>
     <div class="card stat"><small>Avg win / loss</small><b>+${avgWin}% / ${avgLoss}%</b><span class="sub">expectancy ka game hai</span></div>
     <div class="card stat"><small>Best / worst</small><b><span class="pos">+${(best ?? 0).toFixed(1)}%</span> / <span class="neg">${(worst ?? 0).toFixed(1)}%</span></b><span class="sub">outliers dono taraf</span></div>
+    ${(() => {
+      const closedChrono = rows.filter(r => ['win', 'sl', 'fail'].includes(r.t.status));
+      const l10 = closedChrono.slice(-10);
+      if (!l10.length) return '';
+      const w10 = l10.filter(r => r.t.pnlPct > 0).length;
+      const p10 = l10.reduce((s, r) => s + r.t.pnlPct, 0);
+      return `<div class="card stat"><small>Recent form (last ${l10.length})</small><b class="${p10 >= 0 ? 'pos' : 'neg'}">${w10}W / ${l10.length - w10}L</b><span class="sub">net ${p10 >= 0 ? '+' : ''}${p10.toFixed(1)}% — abhi ki form</span></div>`;
+    })()}
     <div class="card stat"><small>Open positions</small><b>${opens}</b><span class="sub">no-trigger: ${noTrigs} picks</span></div>`;
 
   document.getElementById('equityTitle').textContent = inr(d.portfolio.startCapital) + ' → ' + inr(equity);
@@ -705,11 +747,12 @@
     </tr>`;
   }
 
-  let journalFilter = null;
+  let journalFilter = null, journalQuery = '';
   function renderJournal() {
-    const list = journalFilter ? displayRows.filter(r => r.t.status === journalFilter) : displayRows;
+    let list = journalFilter ? displayRows.filter(r => r.t.status === journalFilter) : displayRows;
+    if (journalQuery) list = list.filter(r => r.t.symbol.includes(journalQuery));
     document.getElementById('journal').innerHTML = list.length ? list.map(rowHtml).join('')
-      : `<tr><td colspan="7"><span class="note">${journalFilter ? 'Is category me abhi kuch nahi hai.' : 'Journal pehle picks ka result aane ke baad banega.'}</span></td></tr>`;
+      : `<tr><td colspan="7"><span class="note">${journalQuery ? '"' + journalQuery + '" ki koi trade nahi mili.' : journalFilter ? 'Is category me abhi kuch nahi hai.' : 'Journal pehle picks ka result aane ke baad banega.'}</span></td></tr>`;
   }
   renderJournal();
 
@@ -719,6 +762,11 @@
     document.querySelectorAll('.bd-chip').forEach(c => c.classList.toggle('active', c.dataset.status === journalFilter));
     renderJournal();
   }));
+
+  document.getElementById('journalSearch').addEventListener('input', e => {
+    journalQuery = e.target.value.trim().toUpperCase();
+    renderJournal();
+  });
 })();
 </script>
 </body>

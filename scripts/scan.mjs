@@ -369,8 +369,10 @@ async function main() {
   const hotNames = new Set(hotSectors.slice(0, 4).map(s => s.name));
 
   // --- stock scan ---
+  // noTrade din pe bhi loop chalta hai — picks nahi milte, lekin "nazar-me-rakho"
+  // watchlist ke liye relaxed candidates chahiye (ready ke KAREEB wale)
   const candidates = [];
-  if (!noTrade) {
+  {
     for (const u of universe) {
       const ch = charts[u.s]; if (!ch) continue;
       const c = ch.c, h = ch.h, l = ch.l, v = ch.v, n = c.length;
@@ -390,10 +392,10 @@ async function main() {
       const win = 15;
       const hiW = Math.max(...h.slice(-win)), loW = Math.min(...l.slice(-win));
       const rangePct = (hiW - loW) / close * 100;
-      if (rangePct > 13) continue;
+      if (rangePct > 16) continue; // relaxed cap (watchlist ke liye); ready ka bar neeche strict hai
       const pivot = hiW;
       const prox = (pivot - close) / close * 100;
-      if (prox > 4.5) continue; // pivot se door — ready nahi
+      if (prox > 8) continue; // relaxed cap — 8% se zyada door = tracking layak bhi nahi
 
       // volatility around pivot check: last 3 days avg true range vs 20d
       const tr = i => Math.max(h[i] - l[i], Math.abs(h[i] - c[i - 1]), Math.abs(l[i] - c[i - 1]));
@@ -401,7 +403,10 @@ async function main() {
       for (let i = n - 3; i < n; i++) atr3 += tr(i);
       for (let i = n - 20; i < n; i++) atr20 += tr(i);
       atr3 /= 3; atr20 /= 20;
-      if (atr3 > atr20 * 1.8) continue; // pivot ke paas wild swings — chhodo
+      if (atr3 > atr20 * 2.2) continue; // bilkul wild = bahar
+
+      // READY = asli (strict) criteria — picks sirf inme se; baaki = watch material
+      const isReady = rangePct <= 13 && prox <= 4.5 && atr3 <= atr20 * 1.8;
 
       const volShrink = sma(v, 5) < sma(v, 20);
       const hi52s = Math.max(...h.slice(-252));
@@ -457,7 +462,7 @@ async function main() {
         sl, slPct, target: `${t1} – ${t2}`, rr: `1 : ${rr}`,
         setup: superTight ? `Super tight consolidation — ${win} din, ${round2(rangePct)}% range` : `Tight base — ${win} din, ${round2(rangePct)}% range, pivot ke paas`,
         volumeNote: volShrink ? 'Base me volume shrink — classic supply exhaustion.' : 'Volume abhi normal hai — breakout pe elevated chahiye.',
-        comment, spark: c.slice(-17).map(roundPrice), flags, _score: sc2,
+        comment, spark: c.slice(-17).map(roundPrice), flags, _score: sc2, _ready: isReady,
         detail: {
           dma10: roundPrice(s10), dma20: roundPrice(sma(c, 20)), dma50: roundPrice(s50),
           dma50Rising: s50 > s50p,
@@ -478,8 +483,15 @@ async function main() {
   }
   candidates.sort((a, b) => b._score - a._score);
   const maxPicks = gear >= 3 ? 5 : 3;
-  const picks = candidates.slice(0, maxPicks).map(({ _score, ...p }) => p);
-  console.log(`Candidates: ${candidates.length}, picks: ${picks.length}, gear: ${gear}`);
+  const readyCands = candidates.filter(c => c._ready);
+  const picks = noTrade ? [] : readyCands.slice(0, maxPicks).map(({ _score, _ready, ...p }) => p);
+  // Khali din (0 picks) pe "nazar-me-rakho": ready ke sabse KAREEB wale 3 — sirf tracking, buy nahi
+  const pickSyms = new Set(picks.map(p => p.symbol));
+  const watchlist = picks.length ? [] : candidates.filter(c => !pickSyms.has(c.symbol)).slice(0, 3).map(c => ({
+    symbol: c.symbol, name: c.name, sector: c.sector, cap: c.cap,
+    cmp: c.cmp, pivot: c.pivot, prox: c.detail.proxPivot, range: c.detail.rangePct
+  }));
+  console.log(`Candidates: ${candidates.length} (ready: ${readyCands.length}), picks: ${picks.length}, watchlist: ${watchlist.length}, gear: ${gear}`);
 
   // --- journal update (paper portfolio) — sirf naye session pe, force-rerun pe nahi ---
   const sizePctFor = g => SIZE_BY_GEAR[Math.max(0, Math.min(4, g - 1))];
@@ -575,6 +587,7 @@ async function main() {
     market: { gear, gearLabel, verdict: verdicts[gear], checks },
     hotSectors: hotSectors.slice(0, 4).map(({ name, note }) => ({ name, note })),
     picks,
+    watchlist,
     journal: journalOut
   };
 
