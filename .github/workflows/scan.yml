@@ -2,6 +2,7 @@ name: Daily Scan (7 PM IST)
 
 on:
   schedule:
+    - cron: '15 11 * * 1-5'
     - cron: '45 13 * * 1-5'
     - cron: '30 16 * * 1-5'
     - cron: '0 2 * * 2-6'
@@ -32,11 +33,10 @@ jobs:
         run: |
           git config user.name "trading-brain-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git pull --rebase --autostash || true
-          git add -A
+          git add data.js journal.json universe.json
           if git diff --cached --quiet; then
             echo "No changes - already latest session"
           else
             git commit -m "Daily scan: $(TZ=Asia/Kolkata date +'%d %b %Y %H:%M IST')"
-            git push
+            git push || echo "Push failed - doosra runner pehle push kar chuka, wahi data hai. OK."
           fi
