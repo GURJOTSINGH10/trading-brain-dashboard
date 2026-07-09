@@ -314,6 +314,12 @@
   .bd-chip {
     display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border-soft);
     border-radius: 24px; padding: 8px 17px; font-size: 12.5px;
+    cursor: pointer; user-select: none; transition: all 0.15s ease;
+  }
+  .bd-chip:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.25); }
+  .bd-chip.active {
+    border-color: rgba(var(--mood-rgb), 0.6); background: rgba(var(--mood-rgb), 0.12);
+    box-shadow: 0 4px 16px rgba(var(--mood-rgb), 0.22);
   }
   .bd-chip b { font-size: 15px; }
   .bd-win b { color: var(--green); } .bd-sl b { color: var(--red); } .bd-fail b { color: var(--amber); }
@@ -658,14 +664,32 @@
     </svg>`;
   })();
 
-  document.getElementById('breakdown').innerHTML = `
-    <div class="bd-chip bd-win"><b>${wins}</b> Wins — partial book + trail</div>
-    <div class="bd-chip bd-sl"><b>${slHits}</b> SL hit — out, end of story</div>
-    <div class="bd-chip bd-fail"><b>${boFails}</b> Breakout fail — abnormal, exit</div>
-    <div class="bd-chip bd-nt"><b>${noTrigs}</b> Trigger nahi aaya — paisa nahi laga</div>
-    <div class="bd-chip bd-open"><b>${opens}</b> Open — chal rahi hai</div>`;
+  /* ---- Breakdown chips = clickable filters + journal latest-first ---- */
+  const chipDefs = [
+    { s: 'win', cls: 'bd-win', n: wins, label: 'Wins — partial book + trail' },
+    { s: 'sl', cls: 'bd-sl', n: slHits, label: 'SL hit — out, end of story' },
+    { s: 'fail', cls: 'bd-fail', n: boFails, label: 'Breakout fail — abnormal, exit' },
+    { s: 'no-trigger', cls: 'bd-nt', n: noTrigs, label: 'Trigger nahi aaya — paisa nahi laga' },
+    { s: 'open', cls: 'bd-open', n: opens, label: 'Open — chal rahi hai' }
+  ];
+  document.getElementById('breakdown').innerHTML = chipDefs.map(c =>
+    `<div class="bd-chip ${c.cls}" data-status="${c.s}" title="Sirf ye category dekhne ke liye tap karo"><b>${c.n}</b> ${c.label}</div>`
+  ).join('');
 
-  document.getElementById('journal').innerHTML = rows.length ? rows.map(r => {
+  // "4 May" jaisi date ko sortable banao (Dec→Jan wrap handle)
+  const MON = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+  const nowM = new Date().getMonth(), nowY = new Date().getFullYear();
+  function pickedTime(str) {
+    const [dd, mon] = String(str || '').split(' ');
+    if (!(mon in MON)) return 0;
+    let y = nowY;
+    if (MON[mon] > nowM + 1) y--; // e.g. abhi Jan hai aur entry "28 Dec" ki — pichhla saal
+    return new Date(y, MON[mon], +dd).getTime();
+  }
+  const displayRows = rows.map((r, i) => ({ ...r, _i: i }))
+    .sort((a, b) => (pickedTime(b.t.picked) - pickedTime(a.t.picked)) || (b._i - a._i)); // latest sabse upar
+
+  function rowHtml(r) {
     const t = r.t;
     const statusLabel = { win: 'WIN', sl: 'SL HIT', fail: 'BO FAIL', 'no-trigger': 'NO TRIGGER', open: 'OPEN' }[t.status];
     const pnlCell = t.status === 'no-trigger' ? '<span class="note">—</span>'
@@ -679,7 +703,22 @@
       <td><span class="badge ${t.status}">${statusLabel}</span></td>
       <td class="wrap-cell"><span class="note">${t.reason}</span></td>
     </tr>`;
-  }).join('') : '<tr><td colspan="7"><span class="note">Journal Monday se banna shuru hoga — pehle picks ka result aane do.</span></td></tr>';
+  }
+
+  let journalFilter = null;
+  function renderJournal() {
+    const list = journalFilter ? displayRows.filter(r => r.t.status === journalFilter) : displayRows;
+    document.getElementById('journal').innerHTML = list.length ? list.map(rowHtml).join('')
+      : `<tr><td colspan="7"><span class="note">${journalFilter ? 'Is category me abhi kuch nahi hai.' : 'Journal pehle picks ka result aane ke baad banega.'}</span></td></tr>`;
+  }
+  renderJournal();
+
+  document.querySelectorAll('.bd-chip').forEach(chip => chip.addEventListener('click', () => {
+    const s = chip.dataset.status;
+    journalFilter = (journalFilter === s) ? null : s; // dobara tap = filter hatao
+    document.querySelectorAll('.bd-chip').forEach(c => c.classList.toggle('active', c.dataset.status === journalFilter));
+    renderJournal();
+  }));
 })();
 </script>
 </body>
