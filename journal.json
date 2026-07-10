@@ -1,5 +1,5 @@
 {
-  "lastSession": "09/07/2026",
+  "lastSession": "10/07/2026",
   "equity": 101173.58,
   "positions": [
     {
@@ -10,8 +10,13 @@
       "sizePct": 14,
       "pivot": 79.7,
       "sl": 76.1,
-      "entryStatus": "pending",
-      "daysWaiting": 2
+      "entryStatus": "open",
+      "daysWaiting": 2,
+      "entry": 79.7,
+      "qty": 177,
+      "invested": 14106.9,
+      "daysSinceTrigger": 0,
+      "triggerDate": "10 Jul"
     },
     {
       "picked": "7 Jul",
@@ -22,7 +27,7 @@
       "pivot": 1718,
       "sl": 1641,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "7 Jul",
@@ -33,7 +38,7 @@
       "pivot": 1150,
       "sl": 1098,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "9 Jul",
@@ -44,7 +49,7 @@
       "pivot": 606,
       "sl": 578.7,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "9 Jul",
@@ -55,7 +60,7 @@
       "pivot": 325.9,
       "sl": 311.2,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "9 Jul",
@@ -65,6 +70,55 @@
       "sizePct": 14,
       "pivot": 1260,
       "sl": 1203,
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 1260,
+      "qty": 11,
+      "invested": 13860,
+      "daysSinceTrigger": 0,
+      "triggerDate": "10 Jul"
+    },
+    {
+      "picked": "10 Jul",
+      "symbol": "3MINDIA",
+      "sector": "Diversified",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 35500,
+      "sl": 33903,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "10 Jul",
+      "symbol": "NIVABUPA",
+      "sector": "Financial Services",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 88.4,
+      "sl": 84.4,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "10 Jul",
+      "symbol": "KAJARIACER",
+      "sector": "Consumer Durables",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 1233,
+      "sl": 1186,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "10 Jul",
+      "symbol": "NAVINFLUOR",
+      "sector": "Chemicals",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 7810,
+      "sl": 7459,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
