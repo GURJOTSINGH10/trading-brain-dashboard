@@ -482,7 +482,9 @@ async function main() {
     }
   }
   candidates.sort((a, b) => b._score - a._score);
-  const maxPicks = gear >= 3 ? 5 : 3;
+  // Picks gear ke saath scale hote hain — jitna strong market, utne zyada mauke
+  // gear 2 = 3 (test trades) | 3 = 5 | 4 = 6 | 5 = 8 (attack mode)
+  const maxPicks = gear >= 5 ? 8 : gear === 4 ? 6 : gear >= 3 ? 5 : 3;
   const readyCands = candidates.filter(c => c._ready);
   const picks = noTrade ? [] : readyCands.slice(0, maxPicks).map(({ _score, _ready, ...p }) => p);
   // Khali din (0 picks) pe "nazar-me-rakho": ready ke sabse KAREEB wale 3 — sirf tracking, buy nahi

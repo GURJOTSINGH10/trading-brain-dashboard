@@ -88,7 +88,7 @@ C:\Users\gk379\Projects\trading-brain\
 4. Session naya hai? Nahi → skip (idempotent). Haan →
 5. **Market health → GEAR (1-5)**: smallcap 10/50 DMA, breadth, adv/dec, 52W highs, USDINR, aur **"Breakouts Working?"** (creator ka #1 signal — recent breakouts me traction% ; kam ho to gear hard-cap)
 6. Hot sectors (5-din return + participation + volume)
-7. Stock scan: liquid (₹5Cr+), rising 50 DMA ke upar, tight base (≤13%), pivot ke paas (≤4.5%), shaant (ATR check) = **READY** → top 5 picks (gear<3 to 3; gear 1 = 0 picks). 0 picks ho to relaxed "watchlist" (nazar-me-rakho) deta hai
+7. Stock scan: liquid (₹5Cr+), rising 50 DMA ke upar, tight base (≤13%), pivot ke paas (≤4.5%), shaant (ATR check) = **READY** → picks gear se scale: gear2=3, gear3=5, gear4=6, gear5=8 (gear 1 = 0 picks). 0 picks ho to relaxed "watchlist" (nazar-me-rakho) deta hai
 8. **Journal**: pending pick → pivot cross + 1.2x volume = trigger (entry) → phir SL hit / +8% book / 10DMA trail / 3-din squat fail — sab automatic. Gear-based sizing: gear1=10% ... gear5=25% of capital
 9. data.js + journal.json likho → runner commit+push → Pages update
 
