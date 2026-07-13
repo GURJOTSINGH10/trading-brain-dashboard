@@ -1,5 +1,5 @@
 {
-  "lastSession": "10/07/2026",
+  "lastSession": "13/07/2026",
   "equity": 101173.58,
   "positions": [
     {
@@ -15,30 +15,9 @@
       "entry": 79.7,
       "qty": 177,
       "invested": 14106.9,
-      "daysSinceTrigger": 0,
-      "triggerDate": "10 Jul"
-    },
-    {
-      "picked": "7 Jul",
-      "symbol": "LALPATHLAB",
-      "sector": "Healthcare",
-      "gear": 2,
-      "sizePct": 14,
-      "pivot": 1718,
-      "sl": 1641,
-      "entryStatus": "pending",
-      "daysWaiting": 3
-    },
-    {
-      "picked": "7 Jul",
-      "symbol": "STAR",
-      "sector": "Healthcare",
-      "gear": 2,
-      "sizePct": 14,
-      "pivot": 1150,
-      "sl": 1098,
-      "entryStatus": "pending",
-      "daysWaiting": 3
+      "daysSinceTrigger": 1,
+      "triggerDate": "10 Jul",
+      "curPnlPct": 4.23
     },
     {
       "picked": "9 Jul",
@@ -49,7 +28,7 @@
       "pivot": 606,
       "sl": 578.7,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "9 Jul",
@@ -60,7 +39,7 @@
       "pivot": 325.9,
       "sl": 311.2,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "9 Jul",
@@ -75,8 +54,9 @@
       "entry": 1260,
       "qty": 11,
       "invested": 13860,
-      "daysSinceTrigger": 0,
-      "triggerDate": "10 Jul"
+      "daysSinceTrigger": 1,
+      "triggerDate": "10 Jul",
+      "curPnlPct": 0.96
     },
     {
       "picked": "10 Jul",
@@ -86,8 +66,13 @@
       "sizePct": 21,
       "pivot": 35500,
       "sl": 33903,
-      "entryStatus": "pending",
-      "daysWaiting": 0
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 35500,
+      "qty": 1,
+      "invested": 35500,
+      "daysSinceTrigger": 0,
+      "triggerDate": "13 Jul"
     },
     {
       "picked": "10 Jul",
@@ -97,8 +82,13 @@
       "sizePct": 21,
       "pivot": 88.4,
       "sl": 84.4,
-      "entryStatus": "pending",
-      "daysWaiting": 0
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 88.4,
+      "qty": 240,
+      "invested": 21216,
+      "daysSinceTrigger": 0,
+      "triggerDate": "13 Jul"
     },
     {
       "picked": "10 Jul",
@@ -108,8 +98,13 @@
       "sizePct": 21,
       "pivot": 1233,
       "sl": 1186,
-      "entryStatus": "pending",
-      "daysWaiting": 0
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 1233,
+      "qty": 17,
+      "invested": 20961,
+      "daysSinceTrigger": 0,
+      "triggerDate": "13 Jul"
     },
     {
       "picked": "10 Jul",
@@ -119,6 +114,39 @@
       "sizePct": 21,
       "pivot": 7810,
       "sl": 7459,
+      "entryStatus": "pending",
+      "daysWaiting": 1
+    },
+    {
+      "picked": "13 Jul",
+      "symbol": "LALPATHLAB",
+      "sector": "Healthcare",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 1738,
+      "sl": 1660,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "13 Jul",
+      "symbol": "PIRAMALFIN",
+      "sector": "Financial Services",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 2220,
+      "sl": 2120,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "13 Jul",
+      "symbol": "ABCAPITAL",
+      "sector": "Financial Services",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 410.7,
+      "sl": 392.2,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
@@ -2231,6 +2259,26 @@
       "pnlPct": -0.19,
       "exitDate": "7 Jul",
       "reason": "Breakout fail — 3 din squat, move nahi aaya, abnormal = out"
+    },
+    {
+      "picked": "7 Jul",
+      "symbol": "LALPATHLAB",
+      "sector": "Healthcare",
+      "gear": 2,
+      "entry": 1718,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "7 Jul",
+      "symbol": "STAR",
+      "sector": "Healthcare",
+      "gear": 2,
+      "entry": 1150,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
     }
   ],
   "backtestedAt": "2026-07-07T16:10:12.258Z"
