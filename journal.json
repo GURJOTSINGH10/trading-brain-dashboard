@@ -1,5 +1,5 @@
 {
-  "lastSession": "13/07/2026",
+  "lastSession": "14/07/2026",
   "equity": 101173.58,
   "positions": [
     {
@@ -15,9 +15,9 @@
       "entry": 79.7,
       "qty": 177,
       "invested": 14106.9,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "10 Jul",
-      "curPnlPct": 4.23
+      "curPnlPct": 0.3
     },
     {
       "picked": "9 Jul",
@@ -27,8 +27,13 @@
       "sizePct": 14,
       "pivot": 606,
       "sl": 578.7,
-      "entryStatus": "pending",
-      "daysWaiting": 2
+      "entryStatus": "open",
+      "daysWaiting": 2,
+      "entry": 606,
+      "qty": 23,
+      "invested": 13938,
+      "daysSinceTrigger": 0,
+      "triggerDate": "14 Jul"
     },
     {
       "picked": "9 Jul",
@@ -39,7 +44,7 @@
       "pivot": 325.9,
       "sl": 311.2,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "9 Jul",
@@ -54,9 +59,9 @@
       "entry": 1260,
       "qty": 11,
       "invested": 13860,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "10 Jul",
-      "curPnlPct": 0.96
+      "curPnlPct": 0.7
     },
     {
       "picked": "10 Jul",
@@ -71,8 +76,9 @@
       "entry": 35500,
       "qty": 1,
       "invested": 35500,
-      "daysSinceTrigger": 0,
-      "triggerDate": "13 Jul"
+      "daysSinceTrigger": 1,
+      "triggerDate": "13 Jul",
+      "curPnlPct": 2.93
     },
     {
       "picked": "10 Jul",
@@ -87,8 +93,9 @@
       "entry": 88.4,
       "qty": 240,
       "invested": 21216,
-      "daysSinceTrigger": 0,
-      "triggerDate": "13 Jul"
+      "daysSinceTrigger": 1,
+      "triggerDate": "13 Jul",
+      "curPnlPct": -2.52
     },
     {
       "picked": "10 Jul",
@@ -103,8 +110,9 @@
       "entry": 1233,
       "qty": 17,
       "invested": 20961,
-      "daysSinceTrigger": 0,
-      "triggerDate": "13 Jul"
+      "daysSinceTrigger": 1,
+      "triggerDate": "13 Jul",
+      "curPnlPct": 0.12
     },
     {
       "picked": "10 Jul",
@@ -115,7 +123,7 @@
       "pivot": 7810,
       "sl": 7459,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "13 Jul",
@@ -126,7 +134,7 @@
       "pivot": 1738,
       "sl": 1660,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "13 Jul",
@@ -137,7 +145,7 @@
       "pivot": 2220,
       "sl": 2120,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "13 Jul",
@@ -148,7 +156,7 @@
       "pivot": 410.7,
       "sl": 392.2,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     }
   ],
   "closed": [
