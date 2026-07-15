@@ -1,5 +1,5 @@
 {
-  "lastSession": "14/07/2026",
+  "lastSession": "15/07/2026",
   "equity": 101173.58,
   "positions": [
     {
@@ -15,9 +15,9 @@
       "entry": 79.7,
       "qty": 177,
       "invested": 14106.9,
-      "daysSinceTrigger": 2,
+      "daysSinceTrigger": 3,
       "triggerDate": "10 Jul",
-      "curPnlPct": 0.3
+      "curPnlPct": 0.24
     },
     {
       "picked": "9 Jul",
@@ -32,19 +32,9 @@
       "entry": 606,
       "qty": 23,
       "invested": 13938,
-      "daysSinceTrigger": 0,
-      "triggerDate": "14 Jul"
-    },
-    {
-      "picked": "9 Jul",
-      "symbol": "NYKAA",
-      "sector": "New Age / Internet",
-      "gear": 2,
-      "sizePct": 14,
-      "pivot": 325.9,
-      "sl": 311.2,
-      "entryStatus": "pending",
-      "daysWaiting": 3
+      "daysSinceTrigger": 1,
+      "triggerDate": "14 Jul",
+      "curPnlPct": -1.72
     },
     {
       "picked": "9 Jul",
@@ -59,9 +49,9 @@
       "entry": 1260,
       "qty": 11,
       "invested": 13860,
-      "daysSinceTrigger": 2,
+      "daysSinceTrigger": 3,
       "triggerDate": "10 Jul",
-      "curPnlPct": 0.7
+      "curPnlPct": 0.25
     },
     {
       "picked": "10 Jul",
@@ -76,9 +66,9 @@
       "entry": 35500,
       "qty": 1,
       "invested": 35500,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "13 Jul",
-      "curPnlPct": 2.93
+      "curPnlPct": 1.21
     },
     {
       "picked": "10 Jul",
@@ -93,9 +83,9 @@
       "entry": 88.4,
       "qty": 240,
       "invested": 21216,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "13 Jul",
-      "curPnlPct": -2.52
+      "curPnlPct": -0.05
     },
     {
       "picked": "10 Jul",
@@ -110,9 +100,9 @@
       "entry": 1233,
       "qty": 17,
       "invested": 20961,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "13 Jul",
-      "curPnlPct": 0.12
+      "curPnlPct": 0.32
     },
     {
       "picked": "10 Jul",
@@ -123,7 +113,7 @@
       "pivot": 7810,
       "sl": 7459,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "13 Jul",
@@ -134,7 +124,7 @@
       "pivot": 1738,
       "sl": 1660,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "13 Jul",
@@ -145,7 +135,7 @@
       "pivot": 2220,
       "sl": 2120,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "13 Jul",
@@ -156,7 +146,29 @@
       "pivot": 410.7,
       "sl": 392.2,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
+    },
+    {
+      "picked": "15 Jul",
+      "symbol": "CCL",
+      "sector": "Fast Moving Consumer Goods",
+      "gear": 2,
+      "sizePct": 14,
+      "pivot": 1242,
+      "sl": 1186,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "15 Jul",
+      "symbol": "PRIVISCL",
+      "sector": "Chemicals",
+      "gear": 2,
+      "sizePct": 14,
+      "pivot": 3760,
+      "sl": 3591,
+      "entryStatus": "pending",
+      "daysWaiting": 0
     }
   ],
   "closed": [
@@ -2284,6 +2296,16 @@
       "sector": "Healthcare",
       "gear": 2,
       "entry": 1150,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "9 Jul",
+      "symbol": "NYKAA",
+      "sector": "New Age / Internet",
+      "gear": 2,
+      "entry": 325.9,
       "status": "no-trigger",
       "pnlPct": 0,
       "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
