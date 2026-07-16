@@ -1,24 +1,7 @@
 {
-  "lastSession": "15/07/2026",
-  "equity": 101173.58,
+  "lastSession": "16/07/2026",
+  "equity": 100313.77,
   "positions": [
-    {
-      "picked": "7 Jul",
-      "symbol": "EQUITASBNK",
-      "sector": "Financial Services",
-      "gear": 2,
-      "sizePct": 14,
-      "pivot": 79.7,
-      "sl": 76.1,
-      "entryStatus": "open",
-      "daysWaiting": 2,
-      "entry": 79.7,
-      "qty": 177,
-      "invested": 14106.9,
-      "daysSinceTrigger": 3,
-      "triggerDate": "10 Jul",
-      "curPnlPct": 0.24
-    },
     {
       "picked": "9 Jul",
       "symbol": "STARHEALTH",
@@ -32,9 +15,9 @@
       "entry": 606,
       "qty": 23,
       "invested": 13938,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "14 Jul",
-      "curPnlPct": -1.72
+      "curPnlPct": -0.51
     },
     {
       "picked": "9 Jul",
@@ -49,43 +32,9 @@
       "entry": 1260,
       "qty": 11,
       "invested": 13860,
-      "daysSinceTrigger": 3,
+      "daysSinceTrigger": 4,
       "triggerDate": "10 Jul",
-      "curPnlPct": 0.25
-    },
-    {
-      "picked": "10 Jul",
-      "symbol": "3MINDIA",
-      "sector": "Diversified",
-      "gear": 4,
-      "sizePct": 21,
-      "pivot": 35500,
-      "sl": 33903,
-      "entryStatus": "open",
-      "daysWaiting": 0,
-      "entry": 35500,
-      "qty": 1,
-      "invested": 35500,
-      "daysSinceTrigger": 2,
-      "triggerDate": "13 Jul",
-      "curPnlPct": 1.21
-    },
-    {
-      "picked": "10 Jul",
-      "symbol": "NIVABUPA",
-      "sector": "Financial Services",
-      "gear": 4,
-      "sizePct": 21,
-      "pivot": 88.4,
-      "sl": 84.4,
-      "entryStatus": "open",
-      "daysWaiting": 0,
-      "entry": 88.4,
-      "qty": 240,
-      "invested": 21216,
-      "daysSinceTrigger": 2,
-      "triggerDate": "13 Jul",
-      "curPnlPct": -0.05
+      "curPnlPct": 2.77
     },
     {
       "picked": "10 Jul",
@@ -100,20 +49,9 @@
       "entry": 1233,
       "qty": 17,
       "invested": 20961,
-      "daysSinceTrigger": 2,
+      "daysSinceTrigger": 3,
       "triggerDate": "13 Jul",
-      "curPnlPct": 0.32
-    },
-    {
-      "picked": "10 Jul",
-      "symbol": "NAVINFLUOR",
-      "sector": "Chemicals",
-      "gear": 4,
-      "sizePct": 21,
-      "pivot": 7810,
-      "sl": 7459,
-      "entryStatus": "pending",
-      "daysWaiting": 3
+      "curPnlPct": 0.71
     },
     {
       "picked": "13 Jul",
@@ -124,7 +62,7 @@
       "pivot": 1738,
       "sl": 1660,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "13 Jul",
@@ -135,7 +73,7 @@
       "pivot": 2220,
       "sl": 2120,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "13 Jul",
@@ -146,7 +84,7 @@
       "pivot": 410.7,
       "sl": 392.2,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "15 Jul",
@@ -157,7 +95,7 @@
       "pivot": 1242,
       "sl": 1186,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "15 Jul",
@@ -167,6 +105,17 @@
       "sizePct": 14,
       "pivot": 3760,
       "sl": 3591,
+      "entryStatus": "pending",
+      "daysWaiting": 1
+    },
+    {
+      "picked": "16 Jul",
+      "symbol": "SYRMA",
+      "sector": "Electronics / EMS",
+      "gear": 2,
+      "sizePct": 14,
+      "pivot": 1457,
+      "sl": 1391,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
@@ -2306,6 +2255,49 @@
       "sector": "New Age / Internet",
       "gear": 2,
       "entry": 325.9,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "7 Jul",
+      "symbol": "EQUITASBNK",
+      "sector": "Financial Services",
+      "gear": 2,
+      "entry": 79.7,
+      "status": "fail",
+      "pnlPct": -2.86,
+      "exitDate": "16 Jul",
+      "reason": "10 DMA break = story over. 10 me se 10 baar yahi decision."
+    },
+    {
+      "picked": "10 Jul",
+      "symbol": "3MINDIA",
+      "sector": "Diversified",
+      "gear": 4,
+      "entry": 35500,
+      "status": "fail",
+      "pnlPct": -0.15,
+      "exitDate": "16 Jul",
+      "reason": "Breakout fail — 3 din squat, move nahi aaya. Abnormal behavior = out."
+    },
+    {
+      "picked": "10 Jul",
+      "symbol": "NIVABUPA",
+      "sector": "Financial Services",
+      "gear": 4,
+      "entry": 88.4,
+      "status": "fail",
+      "pnlPct": -1.9,
+      "exitDate": "16 Jul",
+      "reason": "Breakout fail — 3 din squat, move nahi aaya. Abnormal behavior = out."
+    },
+    {
+      "picked": "10 Jul",
+      "symbol": "NAVINFLUOR",
+      "sector": "Chemicals",
+      "gear": 4,
+      "entry": 7810,
       "status": "no-trigger",
       "pnlPct": 0,
       "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
