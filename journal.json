@@ -1,24 +1,7 @@
 {
-  "lastSession": "16/07/2026",
-  "equity": 100313.77,
+  "lastSession": "17/07/2026",
+  "equity": 99784.13,
   "positions": [
-    {
-      "picked": "9 Jul",
-      "symbol": "STARHEALTH",
-      "sector": "Financial Services",
-      "gear": 2,
-      "sizePct": 14,
-      "pivot": 606,
-      "sl": 578.7,
-      "entryStatus": "open",
-      "daysWaiting": 2,
-      "entry": 606,
-      "qty": 23,
-      "invested": 13938,
-      "daysSinceTrigger": 2,
-      "triggerDate": "14 Jul",
-      "curPnlPct": -0.51
-    },
     {
       "picked": "9 Jul",
       "symbol": "SAILIFE",
@@ -32,9 +15,9 @@
       "entry": 1260,
       "qty": 11,
       "invested": 13860,
-      "daysSinceTrigger": 4,
+      "daysSinceTrigger": 5,
       "triggerDate": "10 Jul",
-      "curPnlPct": 2.77
+      "curPnlPct": 0.95
     },
     {
       "picked": "10 Jul",
@@ -49,42 +32,9 @@
       "entry": 1233,
       "qty": 17,
       "invested": 20961,
-      "daysSinceTrigger": 3,
+      "daysSinceTrigger": 4,
       "triggerDate": "13 Jul",
-      "curPnlPct": 0.71
-    },
-    {
-      "picked": "13 Jul",
-      "symbol": "LALPATHLAB",
-      "sector": "Healthcare",
-      "gear": 4,
-      "sizePct": 21,
-      "pivot": 1738,
-      "sl": 1660,
-      "entryStatus": "pending",
-      "daysWaiting": 3
-    },
-    {
-      "picked": "13 Jul",
-      "symbol": "PIRAMALFIN",
-      "sector": "Financial Services",
-      "gear": 4,
-      "sizePct": 21,
-      "pivot": 2220,
-      "sl": 2120,
-      "entryStatus": "pending",
-      "daysWaiting": 3
-    },
-    {
-      "picked": "13 Jul",
-      "symbol": "ABCAPITAL",
-      "sector": "Financial Services",
-      "gear": 4,
-      "sizePct": 21,
-      "pivot": 410.7,
-      "sl": 392.2,
-      "entryStatus": "pending",
-      "daysWaiting": 3
+      "curPnlPct": 0.53
     },
     {
       "picked": "15 Jul",
@@ -95,7 +45,7 @@
       "pivot": 1242,
       "sl": 1186,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "15 Jul",
@@ -106,7 +56,7 @@
       "pivot": 3760,
       "sl": 3591,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "16 Jul",
@@ -116,6 +66,28 @@
       "sizePct": 14,
       "pivot": 1457,
       "sl": 1391,
+      "entryStatus": "pending",
+      "daysWaiting": 1
+    },
+    {
+      "picked": "17 Jul",
+      "symbol": "KARURVYSYA",
+      "sector": "Financial Services",
+      "gear": 2,
+      "sizePct": 14,
+      "pivot": 312,
+      "sl": 298,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "17 Jul",
+      "symbol": "KTKBANK",
+      "sector": "Financial Services",
+      "gear": 2,
+      "sizePct": 14,
+      "pivot": 280,
+      "sl": 267.4,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
@@ -2298,6 +2270,47 @@
       "sector": "Chemicals",
       "gear": 4,
       "entry": 7810,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "9 Jul",
+      "symbol": "STARHEALTH",
+      "sector": "Financial Services",
+      "gear": 2,
+      "entry": 606,
+      "status": "fail",
+      "pnlPct": -3.8,
+      "exitDate": "17 Jul",
+      "reason": "10 DMA break = story over. 10 me se 10 baar yahi decision."
+    },
+    {
+      "picked": "13 Jul",
+      "symbol": "LALPATHLAB",
+      "sector": "Healthcare",
+      "gear": 4,
+      "entry": 1738,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "13 Jul",
+      "symbol": "PIRAMALFIN",
+      "sector": "Financial Services",
+      "gear": 4,
+      "entry": 2220,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "13 Jul",
+      "symbol": "ABCAPITAL",
+      "sector": "Financial Services",
+      "gear": 4,
+      "entry": 410.7,
       "status": "no-trigger",
       "pnlPct": 0,
       "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
