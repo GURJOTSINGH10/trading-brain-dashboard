@@ -1,5 +1,5 @@
 {
-  "lastSession": "17/07/2026",
+  "lastSession": "20/07/2026",
   "equity": 99784.13,
   "positions": [
     {
@@ -15,9 +15,9 @@
       "entry": 1260,
       "qty": 11,
       "invested": 13860,
-      "daysSinceTrigger": 5,
+      "daysSinceTrigger": 6,
       "triggerDate": "10 Jul",
-      "curPnlPct": 0.95
+      "curPnlPct": 2.94
     },
     {
       "picked": "10 Jul",
@@ -32,9 +32,9 @@
       "entry": 1233,
       "qty": 17,
       "invested": 20961,
-      "daysSinceTrigger": 4,
+      "daysSinceTrigger": 5,
       "triggerDate": "13 Jul",
-      "curPnlPct": 0.53
+      "curPnlPct": 0.75
     },
     {
       "picked": "15 Jul",
@@ -45,7 +45,7 @@
       "pivot": 1242,
       "sl": 1186,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "15 Jul",
@@ -56,7 +56,7 @@
       "pivot": 3760,
       "sl": 3591,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "16 Jul",
@@ -67,7 +67,7 @@
       "pivot": 1457,
       "sl": 1391,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "17 Jul",
@@ -77,8 +77,13 @@
       "sizePct": 14,
       "pivot": 312,
       "sl": 298,
-      "entryStatus": "pending",
-      "daysWaiting": 0
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 312,
+      "qty": 44,
+      "invested": 13728,
+      "daysSinceTrigger": 0,
+      "triggerDate": "20 Jul"
     },
     {
       "picked": "17 Jul",
@@ -88,6 +93,28 @@
       "sizePct": 14,
       "pivot": 280,
       "sl": 267.4,
+      "entryStatus": "pending",
+      "daysWaiting": 1
+    },
+    {
+      "picked": "20 Jul",
+      "symbol": "BHARATFORG",
+      "sector": "Auto Ancillaries",
+      "gear": 3,
+      "sizePct": 17,
+      "pivot": 2215,
+      "sl": 2116,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "20 Jul",
+      "symbol": "EMCURE",
+      "sector": "Healthcare",
+      "gear": 3,
+      "sizePct": 17,
+      "pivot": 1875,
+      "sl": 1791,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
