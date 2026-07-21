@@ -1,6 +1,6 @@
 {
-  "lastSession": "20/07/2026",
-  "equity": 99784.13,
+  "lastSession": "21/07/2026",
+  "equity": 100966.38,
   "positions": [
     {
       "picked": "9 Jul",
@@ -15,48 +15,9 @@
       "entry": 1260,
       "qty": 11,
       "invested": 13860,
-      "daysSinceTrigger": 6,
+      "daysSinceTrigger": 7,
       "triggerDate": "10 Jul",
-      "curPnlPct": 2.94
-    },
-    {
-      "picked": "10 Jul",
-      "symbol": "KAJARIACER",
-      "sector": "Consumer Durables",
-      "gear": 4,
-      "sizePct": 21,
-      "pivot": 1233,
-      "sl": 1186,
-      "entryStatus": "open",
-      "daysWaiting": 0,
-      "entry": 1233,
-      "qty": 17,
-      "invested": 20961,
-      "daysSinceTrigger": 5,
-      "triggerDate": "13 Jul",
-      "curPnlPct": 0.75
-    },
-    {
-      "picked": "15 Jul",
-      "symbol": "CCL",
-      "sector": "Fast Moving Consumer Goods",
-      "gear": 2,
-      "sizePct": 14,
-      "pivot": 1242,
-      "sl": 1186,
-      "entryStatus": "pending",
-      "daysWaiting": 3
-    },
-    {
-      "picked": "15 Jul",
-      "symbol": "PRIVISCL",
-      "sector": "Chemicals",
-      "gear": 2,
-      "sizePct": 14,
-      "pivot": 3760,
-      "sl": 3591,
-      "entryStatus": "pending",
-      "daysWaiting": 3
+      "curPnlPct": 2.28
     },
     {
       "picked": "16 Jul",
@@ -67,23 +28,7 @@
       "pivot": 1457,
       "sl": 1391,
       "entryStatus": "pending",
-      "daysWaiting": 2
-    },
-    {
-      "picked": "17 Jul",
-      "symbol": "KARURVYSYA",
-      "sector": "Financial Services",
-      "gear": 2,
-      "sizePct": 14,
-      "pivot": 312,
-      "sl": 298,
-      "entryStatus": "open",
-      "daysWaiting": 0,
-      "entry": 312,
-      "qty": 44,
-      "invested": 13728,
-      "daysSinceTrigger": 0,
-      "triggerDate": "20 Jul"
+      "daysWaiting": 3
     },
     {
       "picked": "17 Jul",
@@ -93,8 +38,13 @@
       "sizePct": 14,
       "pivot": 280,
       "sl": 267.4,
-      "entryStatus": "pending",
-      "daysWaiting": 1
+      "entryStatus": "open",
+      "daysWaiting": 1,
+      "entry": 280,
+      "qty": 50,
+      "invested": 14000,
+      "daysSinceTrigger": 0,
+      "triggerDate": "21 Jul"
     },
     {
       "picked": "20 Jul",
@@ -105,7 +55,7 @@
       "pivot": 2215,
       "sl": 2116,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "20 Jul",
@@ -115,6 +65,44 @@
       "sizePct": 17,
       "pivot": 1875,
       "sl": 1791,
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 1879,
+      "qty": 9,
+      "invested": 16911,
+      "daysSinceTrigger": 0,
+      "triggerDate": "21 Jul"
+    },
+    {
+      "picked": "21 Jul",
+      "symbol": "PRIVISCL",
+      "sector": "Chemicals",
+      "gear": 3,
+      "sizePct": 17,
+      "pivot": 3760,
+      "sl": 3591,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "21 Jul",
+      "symbol": "NAVINFLUOR",
+      "sector": "Chemicals",
+      "gear": 3,
+      "sizePct": 17,
+      "pivot": 7936,
+      "sl": 7579,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "21 Jul",
+      "symbol": "HINDPETRO",
+      "sector": "Oil Gas & Consumable Fuels",
+      "gear": 3,
+      "sizePct": 17,
+      "pivot": 410,
+      "sl": 391.5,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
@@ -2341,6 +2329,48 @@
       "status": "no-trigger",
       "pnlPct": 0,
       "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "10 Jul",
+      "symbol": "KAJARIACER",
+      "sector": "Consumer Durables",
+      "gear": 4,
+      "entry": 1233,
+      "status": "fail",
+      "pnlPct": -0.3,
+      "exitDate": "21 Jul",
+      "reason": "Breakout fail — 6 din squat, move nahi aaya. Abnormal behavior = out."
+    },
+    {
+      "picked": "15 Jul",
+      "symbol": "CCL",
+      "sector": "Fast Moving Consumer Goods",
+      "gear": 2,
+      "entry": 1242,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "15 Jul",
+      "symbol": "PRIVISCL",
+      "sector": "Chemicals",
+      "gear": 2,
+      "entry": 3760,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "17 Jul",
+      "symbol": "KARURVYSYA",
+      "sector": "Financial Services",
+      "gear": 2,
+      "entry": 312,
+      "status": "win",
+      "pnlPct": 9.07,
+      "exitDate": "21 Jul",
+      "reason": "+9.07% — partial book zone, profit liya. Exact top nahi milega, 8-9% realistic hai."
     }
   ],
   "backtestedAt": "2026-07-07T16:10:12.258Z"
