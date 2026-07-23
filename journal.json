@@ -1,6 +1,6 @@
 {
-  "lastSession": "22/07/2026",
-  "equity": 100862.43,
+  "lastSession": "23/07/2026",
+  "equity": 100146.13,
   "positions": [
     {
       "picked": "17 Jul",
@@ -15,9 +15,9 @@
       "entry": 280,
       "qty": 50,
       "invested": 14000,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "21 Jul",
-      "curPnlPct": -1.34
+      "curPnlPct": 0.64
     },
     {
       "picked": "20 Jul",
@@ -28,7 +28,7 @@
       "pivot": 2215,
       "sl": 2116,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "20 Jul",
@@ -43,25 +43,9 @@
       "entry": 1879,
       "qty": 9,
       "invested": 16911,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "21 Jul",
-      "curPnlPct": 0.54
-    },
-    {
-      "picked": "21 Jul",
-      "symbol": "PRIVISCL",
-      "sector": "Chemicals",
-      "gear": 3,
-      "sizePct": 17,
-      "pivot": 3760,
-      "sl": 3591,
-      "entryStatus": "open",
-      "daysWaiting": 0,
-      "entry": 3770,
-      "qty": 4,
-      "invested": 15080,
-      "daysSinceTrigger": 0,
-      "triggerDate": "22 Jul"
+      "curPnlPct": -0.51
     },
     {
       "picked": "21 Jul",
@@ -72,7 +56,7 @@
       "pivot": 7936,
       "sl": 7579,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "21 Jul",
@@ -83,7 +67,7 @@
       "pivot": 410,
       "sl": 391.5,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "22 Jul",
@@ -94,7 +78,7 @@
       "pivot": 873,
       "sl": 833.7,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "22 Jul",
@@ -105,7 +89,7 @@
       "pivot": 1242,
       "sl": 1186,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     }
   ],
   "closed": [
@@ -2393,6 +2377,17 @@
       "status": "no-trigger",
       "pnlPct": 0,
       "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "21 Jul",
+      "symbol": "PRIVISCL",
+      "sector": "Chemicals",
+      "gear": 3,
+      "entry": 3770,
+      "status": "sl",
+      "pnlPct": -4.75,
+      "exitDate": "23 Jul",
+      "reason": "SL hit 3591 pe — out, end of story. Sell is a sell."
     }
   ],
   "backtestedAt": "2026-07-07T16:10:12.258Z"
