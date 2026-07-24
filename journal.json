@@ -1,35 +1,7 @@
 {
-  "lastSession": "23/07/2026",
-  "equity": 100146.13,
+  "lastSession": "24/07/2026",
+  "equity": 100130.73,
   "positions": [
-    {
-      "picked": "17 Jul",
-      "symbol": "KTKBANK",
-      "sector": "Financial Services",
-      "gear": 2,
-      "sizePct": 14,
-      "pivot": 280,
-      "sl": 267.4,
-      "entryStatus": "open",
-      "daysWaiting": 1,
-      "entry": 280,
-      "qty": 50,
-      "invested": 14000,
-      "daysSinceTrigger": 2,
-      "triggerDate": "21 Jul",
-      "curPnlPct": 0.64
-    },
-    {
-      "picked": "20 Jul",
-      "symbol": "BHARATFORG",
-      "sector": "Auto Ancillaries",
-      "gear": 3,
-      "sizePct": 17,
-      "pivot": 2215,
-      "sl": 2116,
-      "entryStatus": "pending",
-      "daysWaiting": 3
-    },
     {
       "picked": "20 Jul",
       "symbol": "EMCURE",
@@ -43,9 +15,9 @@
       "entry": 1879,
       "qty": 9,
       "invested": 16911,
-      "daysSinceTrigger": 2,
+      "daysSinceTrigger": 3,
       "triggerDate": "21 Jul",
-      "curPnlPct": -0.51
+      "curPnlPct": 0.11
     },
     {
       "picked": "21 Jul",
@@ -56,7 +28,7 @@
       "pivot": 7936,
       "sl": 7579,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "21 Jul",
@@ -67,7 +39,7 @@
       "pivot": 410,
       "sl": 391.5,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "22 Jul",
@@ -78,7 +50,7 @@
       "pivot": 873,
       "sl": 833.7,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "22 Jul",
@@ -89,7 +61,7 @@
       "pivot": 1242,
       "sl": 1186,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     }
   ],
   "closed": [
@@ -2388,6 +2360,27 @@
       "pnlPct": -4.75,
       "exitDate": "23 Jul",
       "reason": "SL hit 3591 pe — out, end of story. Sell is a sell."
+    },
+    {
+      "picked": "17 Jul",
+      "symbol": "KTKBANK",
+      "sector": "Financial Services",
+      "gear": 2,
+      "entry": 280,
+      "status": "fail",
+      "pnlPct": -0.11,
+      "exitDate": "24 Jul",
+      "reason": "Breakout fail — 3 din squat, move nahi aaya. Abnormal behavior = out."
+    },
+    {
+      "picked": "20 Jul",
+      "symbol": "BHARATFORG",
+      "sector": "Auto Ancillaries",
+      "gear": 3,
+      "entry": 2215,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
     }
   ],
   "backtestedAt": "2026-07-07T16:10:12.258Z"
