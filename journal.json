@@ -1,5 +1,5 @@
 {
-  "lastSession": "24/07/2026",
+  "lastSession": "27/07/2026",
   "equity": 100130.73,
   "positions": [
     {
@@ -15,31 +15,9 @@
       "entry": 1879,
       "qty": 9,
       "invested": 16911,
-      "daysSinceTrigger": 3,
+      "daysSinceTrigger": 4,
       "triggerDate": "21 Jul",
-      "curPnlPct": 0.11
-    },
-    {
-      "picked": "21 Jul",
-      "symbol": "NAVINFLUOR",
-      "sector": "Chemicals",
-      "gear": 3,
-      "sizePct": 17,
-      "pivot": 7936,
-      "sl": 7579,
-      "entryStatus": "pending",
-      "daysWaiting": 3
-    },
-    {
-      "picked": "21 Jul",
-      "symbol": "HINDPETRO",
-      "sector": "Oil Gas & Consumable Fuels",
-      "gear": 3,
-      "sizePct": 17,
-      "pivot": 410,
-      "sl": 391.5,
-      "entryStatus": "pending",
-      "daysWaiting": 3
+      "curPnlPct": 2.44
     },
     {
       "picked": "22 Jul",
@@ -50,7 +28,7 @@
       "pivot": 873,
       "sl": 833.7,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "22 Jul",
@@ -61,7 +39,62 @@
       "pivot": 1242,
       "sl": 1186,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
+    },
+    {
+      "picked": "27 Jul",
+      "symbol": "RADICO",
+      "sector": "Fast Moving Consumer Goods",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 4201,
+      "sl": 4039,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "27 Jul",
+      "symbol": "GRWRHITECH",
+      "sector": "Capital Goods",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 7199,
+      "sl": 6875,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "27 Jul",
+      "symbol": "CRAFTSMAN",
+      "sector": "Automobile and Auto Components",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 9535,
+      "sl": 9106,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "27 Jul",
+      "symbol": "VARROC",
+      "sector": "Automobile and Auto Components",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 677.3,
+      "sl": 646.8,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "27 Jul",
+      "symbol": "LENSKART",
+      "sector": "Consumer Services",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 574.7,
+      "sl": 548.8,
+      "entryStatus": "pending",
+      "daysWaiting": 0
     }
   ],
   "closed": [
@@ -2378,6 +2411,26 @@
       "sector": "Auto Ancillaries",
       "gear": 3,
       "entry": 2215,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "21 Jul",
+      "symbol": "NAVINFLUOR",
+      "sector": "Chemicals",
+      "gear": 3,
+      "entry": 7936,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "21 Jul",
+      "symbol": "HINDPETRO",
+      "sector": "Oil Gas & Consumable Fuels",
+      "gear": 3,
+      "entry": 410,
       "status": "no-trigger",
       "pnlPct": 0,
       "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"

@@ -1,6 +1,6 @@
 {
- "note": "NSE universe — Nifty 500 + Microcap 250 + curated momentum list (749 stocks) with cap tags. SME/T2T excluded. Rebuild: node scripts/build-universe.mjs",
- "builtAt": "2026-07-15T12:42:03.287Z",
+ "note": "NSE universe — Nifty 500 + Microcap 250 + curated momentum list (752 stocks) with cap tags. SME/T2T excluded. Rebuild: node scripts/build-universe.mjs",
+ "builtAt": "2026-07-27T13:44:14.556Z",
  "stocks": [
   {
    "s": "360ONE",
@@ -1197,6 +1197,12 @@
    "cap": "Large"
   },
   {
+   "s": "DUMMYTRVN",
+   "n": "Dummy Triveni",
+   "sec": "Capital Goods",
+   "cap": "Micro"
+  },
+  {
    "s": "DYNAMATECH",
    "n": "Dynamatic Technologies",
    "sec": "Capital Goods",
@@ -1619,6 +1625,12 @@
   {
    "s": "GREAVESCOT",
    "n": "Greaves Cotton",
+   "sec": "Capital Goods",
+   "cap": "Micro"
+  },
+  {
+   "s": "GRINDWELL",
+   "n": "Grindwell Norton",
    "sec": "Capital Goods",
    "cap": "Micro"
   },
@@ -3096,6 +3108,12 @@
    "s": "PFIZER",
    "n": "Pfizer",
    "sec": "Healthcare",
+   "cap": "Small"
+  },
+  {
+   "s": "PFOCUS",
+   "n": "Prime Focus",
+   "sec": "Media Entertainment & Publication",
    "cap": "Small"
   },
   {
