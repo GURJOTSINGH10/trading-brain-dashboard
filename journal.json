@@ -1,5 +1,5 @@
 {
-  "lastSession": "27/07/2026",
+  "lastSession": "28/07/2026",
   "equity": 100130.73,
   "positions": [
     {
@@ -15,9 +15,9 @@
       "entry": 1879,
       "qty": 9,
       "invested": 16911,
-      "daysSinceTrigger": 4,
+      "daysSinceTrigger": 5,
       "triggerDate": "21 Jul",
-      "curPnlPct": 2.44
+      "curPnlPct": 0.7
     },
     {
       "picked": "22 Jul",
@@ -27,19 +27,13 @@
       "sizePct": 14,
       "pivot": 873,
       "sl": 833.7,
-      "entryStatus": "pending",
-      "daysWaiting": 3
-    },
-    {
-      "picked": "22 Jul",
-      "symbol": "CCL",
-      "sector": "Fast Moving Consumer Goods",
-      "gear": 2,
-      "sizePct": 14,
-      "pivot": 1242,
-      "sl": 1186,
-      "entryStatus": "pending",
-      "daysWaiting": 3
+      "entryStatus": "open",
+      "daysWaiting": 3,
+      "entry": 873,
+      "qty": 16,
+      "invested": 13968,
+      "daysSinceTrigger": 0,
+      "triggerDate": "28 Jul"
     },
     {
       "picked": "27 Jul",
@@ -49,8 +43,13 @@
       "sizePct": 21,
       "pivot": 4201,
       "sl": 4039,
-      "entryStatus": "pending",
-      "daysWaiting": 0
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 4201,
+      "qty": 5,
+      "invested": 21005,
+      "daysSinceTrigger": 0,
+      "triggerDate": "28 Jul"
     },
     {
       "picked": "27 Jul",
@@ -61,7 +60,7 @@
       "pivot": 7199,
       "sl": 6875,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "27 Jul",
@@ -72,7 +71,7 @@
       "pivot": 9535,
       "sl": 9106,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "27 Jul",
@@ -83,7 +82,7 @@
       "pivot": 677.3,
       "sl": 646.8,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "27 Jul",
@@ -93,6 +92,17 @@
       "sizePct": 21,
       "pivot": 574.7,
       "sl": 548.8,
+      "entryStatus": "pending",
+      "daysWaiting": 1
+    },
+    {
+      "picked": "28 Jul",
+      "symbol": "ALKEM",
+      "sector": "Pharma",
+      "gear": 2,
+      "sizePct": 14,
+      "pivot": 5736,
+      "sl": 5503,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
@@ -2431,6 +2441,16 @@
       "sector": "Oil Gas & Consumable Fuels",
       "gear": 3,
       "entry": 410,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "22 Jul",
+      "symbol": "CCL",
+      "sector": "Fast Moving Consumer Goods",
+      "gear": 2,
+      "entry": 1242,
       "status": "no-trigger",
       "pnlPct": 0,
       "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
