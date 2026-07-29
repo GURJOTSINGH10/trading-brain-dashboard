@@ -1,5 +1,5 @@
 {
-  "lastSession": "28/07/2026",
+  "lastSession": "29/07/2026",
   "equity": 100130.73,
   "positions": [
     {
@@ -15,9 +15,9 @@
       "entry": 1879,
       "qty": 9,
       "invested": 16911,
-      "daysSinceTrigger": 5,
+      "daysSinceTrigger": 6,
       "triggerDate": "21 Jul",
-      "curPnlPct": 0.7
+      "curPnlPct": 1.31
     },
     {
       "picked": "22 Jul",
@@ -32,8 +32,9 @@
       "entry": 873,
       "qty": 16,
       "invested": 13968,
-      "daysSinceTrigger": 0,
-      "triggerDate": "28 Jul"
+      "daysSinceTrigger": 1,
+      "triggerDate": "28 Jul",
+      "curPnlPct": 0.65
     },
     {
       "picked": "27 Jul",
@@ -48,8 +49,9 @@
       "entry": 4201,
       "qty": 5,
       "invested": 21005,
-      "daysSinceTrigger": 0,
-      "triggerDate": "28 Jul"
+      "daysSinceTrigger": 1,
+      "triggerDate": "28 Jul",
+      "curPnlPct": 4.11
     },
     {
       "picked": "27 Jul",
@@ -60,7 +62,7 @@
       "pivot": 7199,
       "sl": 6875,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "27 Jul",
@@ -70,8 +72,13 @@
       "sizePct": 21,
       "pivot": 9535,
       "sl": 9106,
-      "entryStatus": "pending",
-      "daysWaiting": 1
+      "entryStatus": "open",
+      "daysWaiting": 1,
+      "entry": 9535,
+      "qty": 2,
+      "invested": 19070,
+      "daysSinceTrigger": 0,
+      "triggerDate": "29 Jul"
     },
     {
       "picked": "27 Jul",
@@ -82,7 +89,7 @@
       "pivot": 677.3,
       "sl": 646.8,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "27 Jul",
@@ -93,7 +100,7 @@
       "pivot": 574.7,
       "sl": 548.8,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "28 Jul",
@@ -103,6 +110,50 @@
       "sizePct": 14,
       "pivot": 5736,
       "sl": 5503,
+      "entryStatus": "pending",
+      "daysWaiting": 1
+    },
+    {
+      "picked": "29 Jul",
+      "symbol": "NYKAA",
+      "sector": "New Age / Internet",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 335,
+      "sl": 319.9,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "29 Jul",
+      "symbol": "QUESS",
+      "sector": "Services",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 310,
+      "sl": 296.1,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "29 Jul",
+      "symbol": "RAINBOW",
+      "sector": "Healthcare",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 1512,
+      "sl": 1444,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "29 Jul",
+      "symbol": "GLAND",
+      "sector": "Healthcare",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 2565,
+      "sl": 2449,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
