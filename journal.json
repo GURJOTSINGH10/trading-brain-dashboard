@@ -1,5 +1,5 @@
 {
-  "lastSession": "29/07/2026",
+  "lastSession": "30/07/2026",
   "equity": 100130.73,
   "positions": [
     {
@@ -15,9 +15,9 @@
       "entry": 1879,
       "qty": 9,
       "invested": 16911,
-      "daysSinceTrigger": 6,
+      "daysSinceTrigger": 7,
       "triggerDate": "21 Jul",
-      "curPnlPct": 1.31
+      "curPnlPct": 1.7
     },
     {
       "picked": "22 Jul",
@@ -32,9 +32,9 @@
       "entry": 873,
       "qty": 16,
       "invested": 13968,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "28 Jul",
-      "curPnlPct": 0.65
+      "curPnlPct": 1.41
     },
     {
       "picked": "27 Jul",
@@ -49,9 +49,9 @@
       "entry": 4201,
       "qty": 5,
       "invested": 21005,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "28 Jul",
-      "curPnlPct": 4.11
+      "curPnlPct": 3.94
     },
     {
       "picked": "27 Jul",
@@ -62,7 +62,7 @@
       "pivot": 7199,
       "sl": 6875,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "27 Jul",
@@ -77,8 +77,9 @@
       "entry": 9535,
       "qty": 2,
       "invested": 19070,
-      "daysSinceTrigger": 0,
-      "triggerDate": "29 Jul"
+      "daysSinceTrigger": 1,
+      "triggerDate": "29 Jul",
+      "curPnlPct": 5.37
     },
     {
       "picked": "27 Jul",
@@ -89,7 +90,7 @@
       "pivot": 677.3,
       "sl": 646.8,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "27 Jul",
@@ -100,7 +101,7 @@
       "pivot": 574.7,
       "sl": 548.8,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "28 Jul",
@@ -110,8 +111,13 @@
       "sizePct": 14,
       "pivot": 5736,
       "sl": 5503,
-      "entryStatus": "pending",
-      "daysWaiting": 1
+      "entryStatus": "open",
+      "daysWaiting": 1,
+      "entry": 5736,
+      "qty": 2,
+      "invested": 11472,
+      "daysSinceTrigger": 0,
+      "triggerDate": "30 Jul"
     },
     {
       "picked": "29 Jul",
@@ -122,7 +128,7 @@
       "pivot": 335,
       "sl": 319.9,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "29 Jul",
@@ -132,8 +138,13 @@
       "sizePct": 21,
       "pivot": 310,
       "sl": 296.1,
-      "entryStatus": "pending",
-      "daysWaiting": 0
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 315.2,
+      "qty": 66,
+      "invested": 20803.2,
+      "daysSinceTrigger": 0,
+      "triggerDate": "30 Jul"
     },
     {
       "picked": "29 Jul",
@@ -143,8 +154,13 @@
       "sizePct": 21,
       "pivot": 1512,
       "sl": 1444,
-      "entryStatus": "pending",
-      "daysWaiting": 0
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 1512,
+      "qty": 13,
+      "invested": 19656,
+      "daysSinceTrigger": 0,
+      "triggerDate": "30 Jul"
     },
     {
       "picked": "29 Jul",
@@ -154,6 +170,33 @@
       "sizePct": 21,
       "pivot": 2565,
       "sl": 2449,
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 2565,
+      "qty": 8,
+      "invested": 20520,
+      "daysSinceTrigger": 0,
+      "triggerDate": "30 Jul"
+    },
+    {
+      "picked": "30 Jul",
+      "symbol": "NAZARA",
+      "sector": "Media Entertainment & Publication",
+      "gear": 2,
+      "sizePct": 14,
+      "pivot": 315,
+      "sl": 300.8,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "30 Jul",
+      "symbol": "SAILIFE",
+      "sector": "Healthcare",
+      "gear": 2,
+      "sizePct": 14,
+      "pivot": 1321,
+      "sl": 1261,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
