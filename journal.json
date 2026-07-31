@@ -1,6 +1,6 @@
 {
-  "lastSession": "30/07/2026",
-  "equity": 100130.73,
+  "lastSession": "31/07/2026",
+  "equity": 100093.02,
   "positions": [
     {
       "picked": "20 Jul",
@@ -15,26 +15,9 @@
       "entry": 1879,
       "qty": 9,
       "invested": 16911,
-      "daysSinceTrigger": 7,
+      "daysSinceTrigger": 8,
       "triggerDate": "21 Jul",
-      "curPnlPct": 1.7
-    },
-    {
-      "picked": "22 Jul",
-      "symbol": "MARICO",
-      "sector": "FMCG",
-      "gear": 2,
-      "sizePct": 14,
-      "pivot": 873,
-      "sl": 833.7,
-      "entryStatus": "open",
-      "daysWaiting": 3,
-      "entry": 873,
-      "qty": 16,
-      "invested": 13968,
-      "daysSinceTrigger": 2,
-      "triggerDate": "28 Jul",
-      "curPnlPct": 1.41
+      "curPnlPct": 4.32
     },
     {
       "picked": "27 Jul",
@@ -49,20 +32,9 @@
       "entry": 4201,
       "qty": 5,
       "invested": 21005,
-      "daysSinceTrigger": 2,
+      "daysSinceTrigger": 3,
       "triggerDate": "28 Jul",
-      "curPnlPct": 3.94
-    },
-    {
-      "picked": "27 Jul",
-      "symbol": "GRWRHITECH",
-      "sector": "Capital Goods",
-      "gear": 4,
-      "sizePct": 21,
-      "pivot": 7199,
-      "sl": 6875,
-      "entryStatus": "pending",
-      "daysWaiting": 3
+      "curPnlPct": 3.33
     },
     {
       "picked": "27 Jul",
@@ -77,9 +49,9 @@
       "entry": 9535,
       "qty": 2,
       "invested": 19070,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "29 Jul",
-      "curPnlPct": 5.37
+      "curPnlPct": 3.55
     },
     {
       "picked": "27 Jul",
@@ -89,19 +61,13 @@
       "sizePct": 21,
       "pivot": 677.3,
       "sl": 646.8,
-      "entryStatus": "pending",
-      "daysWaiting": 3
-    },
-    {
-      "picked": "27 Jul",
-      "symbol": "LENSKART",
-      "sector": "Consumer Services",
-      "gear": 4,
-      "sizePct": 21,
-      "pivot": 574.7,
-      "sl": 548.8,
-      "entryStatus": "pending",
-      "daysWaiting": 3
+      "entryStatus": "open",
+      "daysWaiting": 3,
+      "entry": 677.3,
+      "qty": 31,
+      "invested": 20996.3,
+      "daysSinceTrigger": 0,
+      "triggerDate": "31 Jul"
     },
     {
       "picked": "28 Jul",
@@ -116,8 +82,9 @@
       "entry": 5736,
       "qty": 2,
       "invested": 11472,
-      "daysSinceTrigger": 0,
-      "triggerDate": "30 Jul"
+      "daysSinceTrigger": 1,
+      "triggerDate": "30 Jul",
+      "curPnlPct": 0.27
     },
     {
       "picked": "29 Jul",
@@ -128,7 +95,7 @@
       "pivot": 335,
       "sl": 319.9,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "29 Jul",
@@ -143,8 +110,9 @@
       "entry": 315.2,
       "qty": 66,
       "invested": 20803.2,
-      "daysSinceTrigger": 0,
-      "triggerDate": "30 Jul"
+      "daysSinceTrigger": 1,
+      "triggerDate": "30 Jul",
+      "curPnlPct": 5.5
     },
     {
       "picked": "29 Jul",
@@ -159,8 +127,9 @@
       "entry": 1512,
       "qty": 13,
       "invested": 19656,
-      "daysSinceTrigger": 0,
-      "triggerDate": "30 Jul"
+      "daysSinceTrigger": 1,
+      "triggerDate": "30 Jul",
+      "curPnlPct": 0.89
     },
     {
       "picked": "29 Jul",
@@ -175,8 +144,9 @@
       "entry": 2565,
       "qty": 8,
       "invested": 20520,
-      "daysSinceTrigger": 0,
-      "triggerDate": "30 Jul"
+      "daysSinceTrigger": 1,
+      "triggerDate": "30 Jul",
+      "curPnlPct": -2.42
     },
     {
       "picked": "30 Jul",
@@ -186,8 +156,13 @@
       "sizePct": 14,
       "pivot": 315,
       "sl": 300.8,
-      "entryStatus": "pending",
-      "daysWaiting": 0
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 315,
+      "qty": 44,
+      "invested": 13860,
+      "daysSinceTrigger": 0,
+      "triggerDate": "31 Jul"
     },
     {
       "picked": "30 Jul",
@@ -197,6 +172,61 @@
       "sizePct": 14,
       "pivot": 1321,
       "sl": 1261,
+      "entryStatus": "pending",
+      "daysWaiting": 1
+    },
+    {
+      "picked": "31 Jul",
+      "symbol": "CHOICEIN",
+      "sector": "Financial Services",
+      "gear": 3,
+      "sizePct": 17,
+      "pivot": 831,
+      "sl": 793.6,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "31 Jul",
+      "symbol": "BHARATFORG",
+      "sector": "Auto Ancillaries",
+      "gear": 3,
+      "sizePct": 17,
+      "pivot": 2223,
+      "sl": 2128,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "31 Jul",
+      "symbol": "ANANDRATHI",
+      "sector": "Financial Services",
+      "gear": 3,
+      "sizePct": 17,
+      "pivot": 2143,
+      "sl": 2047,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "31 Jul",
+      "symbol": "ESCORTS",
+      "sector": "Auto",
+      "gear": 3,
+      "sizePct": 17,
+      "pivot": 3099,
+      "sl": 2960,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "31 Jul",
+      "symbol": "BELRISE",
+      "sector": "Automobile and Auto Components",
+      "gear": 3,
+      "sizePct": 17,
+      "pivot": 243.1,
+      "sl": 232.2,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
@@ -2545,6 +2575,37 @@
       "sector": "Fast Moving Consumer Goods",
       "gear": 2,
       "entry": 1242,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "22 Jul",
+      "symbol": "MARICO",
+      "sector": "FMCG",
+      "gear": 2,
+      "entry": 873,
+      "status": "fail",
+      "pnlPct": -0.27,
+      "exitDate": "31 Jul",
+      "reason": "Breakout fail — 3 din squat, move nahi aaya. Abnormal behavior = out."
+    },
+    {
+      "picked": "27 Jul",
+      "symbol": "GRWRHITECH",
+      "sector": "Capital Goods",
+      "gear": 4,
+      "entry": 7199,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "27 Jul",
+      "symbol": "LENSKART",
+      "sector": "Consumer Services",
+      "gear": 4,
+      "entry": 574.7,
       "status": "no-trigger",
       "pnlPct": 0,
       "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
