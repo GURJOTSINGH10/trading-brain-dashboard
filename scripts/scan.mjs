@@ -450,17 +450,19 @@ async function main() {
       // me 601 ka), to wo poore base ko "25% wild range" dikha deta tha aur asli base
       // (jo spike ke BAAD bana) miss ho jaata tha. Creator aankh se asli base dekhta hai.
       // Ab 6-30 din me se sabse LAMBA valid base chunte hain (lamba base = behtar).
-      const bestBase = (maxRange, maxProx) => {
+      const bestBase = (maxRange, maxProx, minWin = 6) => {
         let r = null;
-        for (let w = 6; w <= 30 && w < n; w++) {
+        for (let w = minWin; w <= 30 && w < n; w++) {
           const hh = Math.max(...h.slice(-w)), ll = Math.min(...l.slice(-w));
           const rp = (hh - ll) / close * 100, px = (hh - close) / close * 100;
           if (rp <= maxRange && px <= maxProx) r = { win: w, hiW: hh, loW: ll, rangePct: rp, prox: px };
         }
         return r;
       };
-      const strictBase = bestBase(13, 4.5);          // pick-worthy
-      const base = strictBase || bestBase(16, 8);    // warna watchlist material
+      // Pick ke liye kam se kam 8 din ka base — ek hafta shanti "supply khatam" ka
+      // saboot nahi hai. Watchlist ka bar 6 din (tracking ke liye theek hai).
+      const strictBase = bestBase(13, 4.5, 8);       // pick-worthy
+      const base = strictBase || bestBase(16, 8, 6); // warna watchlist material
       if (!base) continue;
       const { win, hiW, rangePct, prox } = base;
       const pivot = hiW;
@@ -563,6 +565,17 @@ async function main() {
         }
       });
     }
+  }
+  // diagnostic: base-length ka bantwara (adaptive window dheela to nahi?)
+  {
+    const rd = candidates.filter(c => c._ready);
+    const bins = { '6-7': 0, '8-9': 0, '10-14': 0, '15-19': 0, '20-30': 0 };
+    for (const c of rd) {
+      const w = c.detail.baseDays;
+      if (w <= 7) bins['6-7']++; else if (w <= 9) bins['8-9']++;
+      else if (w <= 14) bins['10-14']++; else if (w <= 19) bins['15-19']++; else bins['20-30']++;
+    }
+    console.log('Ready base-length bantwara:', JSON.stringify(bins));
   }
   candidates.sort((a, b) => b._score - a._score);
   // Picks gear ke saath scale hote hain — jitna strong market, utne zyada mauke
