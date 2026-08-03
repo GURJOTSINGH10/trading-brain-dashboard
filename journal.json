@@ -1,6 +1,6 @@
 {
-  "lastSession": "31/07/2026",
-  "equity": 100093.02,
+  "lastSession": "03/08/2026",
+  "equity": 103670.68,
   "positions": [
     {
       "picked": "20 Jul",
@@ -15,9 +15,9 @@
       "entry": 1879,
       "qty": 9,
       "invested": 16911,
-      "daysSinceTrigger": 8,
+      "daysSinceTrigger": 9,
       "triggerDate": "21 Jul",
-      "curPnlPct": 4.32
+      "curPnlPct": 4.83
     },
     {
       "picked": "27 Jul",
@@ -32,26 +32,9 @@
       "entry": 4201,
       "qty": 5,
       "invested": 21005,
-      "daysSinceTrigger": 3,
+      "daysSinceTrigger": 4,
       "triggerDate": "28 Jul",
-      "curPnlPct": 3.33
-    },
-    {
-      "picked": "27 Jul",
-      "symbol": "CRAFTSMAN",
-      "sector": "Automobile and Auto Components",
-      "gear": 4,
-      "sizePct": 21,
-      "pivot": 9535,
-      "sl": 9106,
-      "entryStatus": "open",
-      "daysWaiting": 1,
-      "entry": 9535,
-      "qty": 2,
-      "invested": 19070,
-      "daysSinceTrigger": 2,
-      "triggerDate": "29 Jul",
-      "curPnlPct": 3.55
+      "curPnlPct": 6.14
     },
     {
       "picked": "27 Jul",
@@ -66,8 +49,9 @@
       "entry": 677.3,
       "qty": 31,
       "invested": 20996.3,
-      "daysSinceTrigger": 0,
-      "triggerDate": "31 Jul"
+      "daysSinceTrigger": 1,
+      "triggerDate": "31 Jul",
+      "curPnlPct": 1.42
     },
     {
       "picked": "28 Jul",
@@ -82,9 +66,9 @@
       "entry": 5736,
       "qty": 2,
       "invested": 11472,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "30 Jul",
-      "curPnlPct": 0.27
+      "curPnlPct": -0.51
     },
     {
       "picked": "29 Jul",
@@ -95,24 +79,7 @@
       "pivot": 335,
       "sl": 319.9,
       "entryStatus": "pending",
-      "daysWaiting": 2
-    },
-    {
-      "picked": "29 Jul",
-      "symbol": "QUESS",
-      "sector": "Services",
-      "gear": 4,
-      "sizePct": 21,
-      "pivot": 310,
-      "sl": 296.1,
-      "entryStatus": "open",
-      "daysWaiting": 0,
-      "entry": 315.2,
-      "qty": 66,
-      "invested": 20803.2,
-      "daysSinceTrigger": 1,
-      "triggerDate": "30 Jul",
-      "curPnlPct": 5.5
+      "daysWaiting": 3
     },
     {
       "picked": "29 Jul",
@@ -127,9 +94,9 @@
       "entry": 1512,
       "qty": 13,
       "invested": 19656,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "30 Jul",
-      "curPnlPct": 0.89
+      "curPnlPct": 2.22
     },
     {
       "picked": "29 Jul",
@@ -144,9 +111,9 @@
       "entry": 2565,
       "qty": 8,
       "invested": 20520,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "30 Jul",
-      "curPnlPct": -2.42
+      "curPnlPct": 0.55
     },
     {
       "picked": "30 Jul",
@@ -161,8 +128,9 @@
       "entry": 315,
       "qty": 44,
       "invested": 13860,
-      "daysSinceTrigger": 0,
-      "triggerDate": "31 Jul"
+      "daysSinceTrigger": 1,
+      "triggerDate": "31 Jul",
+      "curPnlPct": 7.79
     },
     {
       "picked": "30 Jul",
@@ -173,7 +141,7 @@
       "pivot": 1321,
       "sl": 1261,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "31 Jul",
@@ -184,7 +152,7 @@
       "pivot": 831,
       "sl": 793.6,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "31 Jul",
@@ -195,7 +163,7 @@
       "pivot": 2223,
       "sl": 2128,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "31 Jul",
@@ -206,7 +174,7 @@
       "pivot": 2143,
       "sl": 2047,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "31 Jul",
@@ -216,8 +184,13 @@
       "sizePct": 17,
       "pivot": 3099,
       "sl": 2960,
-      "entryStatus": "pending",
-      "daysWaiting": 0
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 3110,
+      "qty": 5,
+      "invested": 15550,
+      "daysSinceTrigger": 0,
+      "triggerDate": "3 Aug"
     },
     {
       "picked": "31 Jul",
@@ -227,6 +200,77 @@
       "sizePct": 17,
       "pivot": 243.1,
       "sl": 232.2,
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 243.1,
+      "qty": 72,
+      "invested": 17503.2,
+      "daysSinceTrigger": 0,
+      "triggerDate": "3 Aug"
+    },
+    {
+      "picked": "3 Aug",
+      "symbol": "SHRIPISTON",
+      "sector": "Automobile and Auto Components",
+      "gear": 5,
+      "sizePct": 25,
+      "pivot": 4547,
+      "sl": 4342,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "3 Aug",
+      "symbol": "SANSERA",
+      "sector": "Automobile and Auto Components",
+      "gear": 5,
+      "sizePct": 25,
+      "pivot": 3471,
+      "sl": 3315,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "3 Aug",
+      "symbol": "APOLLOTYRE",
+      "sector": "Automobile and Auto Components",
+      "gear": 5,
+      "sizePct": 25,
+      "pivot": 438.4,
+      "sl": 418.6,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "3 Aug",
+      "symbol": "JAMNAAUTO",
+      "sector": "Automobile and Auto Components",
+      "gear": 5,
+      "sizePct": 25,
+      "pivot": 141.6,
+      "sl": 135.2,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "3 Aug",
+      "symbol": "MRF",
+      "sector": "Automobile and Auto Components",
+      "gear": 5,
+      "sizePct": 25,
+      "pivot": 135550,
+      "sl": 130300,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "3 Aug",
+      "symbol": "WELCORP",
+      "sector": "Capital Goods",
+      "gear": 5,
+      "sizePct": 25,
+      "pivot": 1722,
+      "sl": 1644,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
@@ -2609,6 +2653,28 @@
       "status": "no-trigger",
       "pnlPct": 0,
       "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "27 Jul",
+      "symbol": "CRAFTSMAN",
+      "sector": "Automobile and Auto Components",
+      "gear": 4,
+      "entry": 9535,
+      "status": "win",
+      "pnlPct": 8.43,
+      "exitDate": "3 Aug",
+      "reason": "+8.43% — partial book zone, profit liya. Exact top nahi milega, 8-9% realistic hai."
+    },
+    {
+      "picked": "29 Jul",
+      "symbol": "QUESS",
+      "sector": "Services",
+      "gear": 4,
+      "entry": 315.2,
+      "status": "win",
+      "pnlPct": 9.47,
+      "exitDate": "3 Aug",
+      "reason": "+9.47% — partial book zone, profit liya. Exact top nahi milega, 8-9% realistic hai."
     }
   ],
   "backtestedAt": "2026-07-07T16:10:12.258Z"
