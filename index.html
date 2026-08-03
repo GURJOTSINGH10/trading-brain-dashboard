@@ -275,6 +275,21 @@
     background: rgba(49,212,146,0.07); border: 1px dashed rgba(49,212,146,0.3);
     border-radius: 11px; padding: 9px 12px; font-size: 12.5px;
   }
+  /* Result Calendar card (Hot Sectors ke baad) */
+  .earn-row {
+    display: flex; align-items: center; gap: 12px; padding: 11px 0;
+    border-bottom: 1px dashed var(--border-soft); font-size: 13.5px;
+  }
+  .earn-row:last-of-type { border-bottom: none; }
+  .earn-when { text-align: right; white-space: nowrap; }
+  .earn-when b { font-size: 14.5px; display: block; }
+  .epill {
+    display: inline-block; margin-top: 4px; font-size: 10.5px; font-weight: 700;
+    padding: 3px 10px; border-radius: 12px; letter-spacing: 0.3px;
+  }
+  .e-danger { background: rgba(255,107,118,0.16); color: var(--red); }
+  .e-warn { background: rgba(255,193,77,0.16); color: var(--amber); }
+  .e-ok { background: rgba(49,212,146,0.14); color: var(--green); }
   .earn-warn {
     background: rgba(255,107,118,0.12); border: 1px solid rgba(255,107,118,0.42);
     border-radius: 11px; padding: 10px 12px; font-size: 12.5px; color: #ffc2c7;
@@ -297,7 +312,9 @@
   details.breakdown-box summary::-webkit-details-marker { display: none; }
   details.breakdown-box summary::before { content: "▸ "; }
   details.breakdown-box[open] summary::before { content: "▾ "; }
-  .bd-table { width: 100%; border-collapse: collapse; }
+  /* min-width: 0 zaroori hai — global `table` rule me min-width 760px hai (journal
+     ke liye), aur wo yahan bhi lag ke card ke bahar nikal jaati thi → text kat jaata tha */
+  .bd-table { width: 100%; border-collapse: collapse; min-width: 0; table-layout: fixed; }
   .bd-table td { padding: 7px 13px; font-size: 12px; border-top: 1px solid var(--border-soft); white-space: normal; }
   .bd-table td:first-child { color: var(--muted); width: 45%; }
   .scenario { display: flex; gap: 8px; padding: 10px 13px 12px; flex-wrap: wrap; }
@@ -429,6 +446,9 @@
     <h2>Hot Sectors</h2>
     <div class="sectors" id="sectors"></div>
 
+    <h2>Result Calendar — kis pick ka result kab</h2>
+    <div id="earnCal"></div>
+
     <h2 id="picksHeading">Ready Stocks — High Priority List</h2>
     <div class="picks" id="picks"></div>
   </div>
@@ -559,6 +579,36 @@
     ? d.hotSectors.map((s, i) => `<div class="sector-chip" style="animation-delay:${i * 0.06}s"><b>${s.name}</b> · <span>${s.note}</span></div>`).join('')
     : '<div class="sector-chip"><span>Koi hot sector nahi — action ka wait karo</span></div>';
 
+  /* ---- Result Calendar — kis pick ka result kab (NSE board meetings) ---- */
+  (function () {
+    const el = document.getElementById('earnCal');
+    if (!el) return;
+    const list = (d.picks || [])
+      .filter(p => p.detail && p.detail.earnOn)
+      .sort((a, b) => a.detail.earnIn - b.detail.earnIn);
+
+    if (!list.length) {
+      el.innerHTML = `<div class="card"><div class="pick-name" style="font-size:13px;">
+        Aaj ke kisi bhi pick ka result agle 3 hafte me scheduled nahi — is taraf se raasta saaf hai ✓</div></div>`;
+      return;
+    }
+    const rows = list.map(p => {
+      const n = p.detail.earnIn;
+      const cls = n <= 3 ? 'e-danger' : n <= 7 ? 'e-warn' : 'e-ok';
+      const msg = n <= 3 ? 'entry mat lo' : n <= 7 ? 'is hafte' : 'abhi door';
+      return `<div class="earn-row">
+        <div style="flex:1; min-width:0;">
+          <b>${p.symbol}</b> <span class="cap-badge cap-${p.cap || 'Small'}">${p.cap || 'Small'} Cap</span>
+          <div class="pick-name">${p.sector}</div>
+        </div>
+        <div class="earn-when"><b>${p.detail.earnOn}</b><span class="epill ${cls}">${n} din · ${msg}</span></div>
+      </div>`;
+    }).join('');
+    el.innerHTML = `<div class="card">${rows}
+      <div class="pick-name" style="margin-top:10px;">Result ke aar-paar fresh breakout mat lo — numbers coin toss hai, setup nahi.</div>
+    </div>`;
+  })();
+
   function sparkline(values, pivot, id) {
     const w = 300, h = 64, pad = 5;
     const min = Math.min(...values, pivot), max = Math.max(...values, pivot);
@@ -595,9 +645,8 @@
       ['5% move ki aukaat', `${dt.bigMoveDays} din me 5%+ range (last 60 din)${dt.bigMoveDays >= 3 ? ' ✓' : ''}`]
     ];
     if (dt.delivPct != null) rows2.push(['Delivery % (aaj, NSE)', `${dt.delivPct}% ${dt.delivPct >= 50 ? '— strong haath, asli buying ✓' : dt.delivPct >= 35 ? '— theek-thaak' : '— zyada intraday khela ⚠'}`]);
-    rows2.push(['Result (NSE board meeting)', dt.earnOn
-      ? `<b>${dt.earnOn}</b> (${dt.earnIn} din) — ${dt.earnIn <= 3 ? 'sar pe hai ⚠ entry mat lo' : dt.earnIn <= 7 ? 'is hafte — dhyan rakho' : 'abhi door hai ✓'}`
-      : 'Agle 3 hafte me koi result scheduled nahi ✓']);
+    // Result ki jaankari ab alag "Result Calendar" card me hai (Hot Sectors ke baad) —
+    // yahan se hata di taaki breakdown cluttered na ho.
     const slLoss = qty * (p.pivot - p.sl);
     const t1Gain = qty * (dt.t1 - p.pivot), t2Gain = qty * (dt.t2 - p.pivot);
     return `<details class="breakdown-box"><summary>Full breakdown — har check ka hisaab</summary>
