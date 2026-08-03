@@ -595,7 +595,9 @@
       ['5% move ki aukaat', `${dt.bigMoveDays} din me 5%+ range (last 60 din)${dt.bigMoveDays >= 3 ? ' ✓' : ''}`]
     ];
     if (dt.delivPct != null) rows2.push(['Delivery % (aaj, NSE)', `${dt.delivPct}% ${dt.delivPct >= 50 ? '— strong haath, asli buying ✓' : dt.delivPct >= 35 ? '— theek-thaak' : '— zyada intraday khela ⚠'}`]);
-    if (dt.earnOn) rows2.push(['Result (NSE board meeting)', `<b>${dt.earnOn}</b> — ${dt.earnIn <= 3 ? 'sar pe hai ⚠ entry mat lo' : dt.earnIn <= 7 ? 'is hafte — dhyan rakho' : 'abhi door hai ✓'}`]);
+    rows2.push(['Result (NSE board meeting)', dt.earnOn
+      ? `<b>${dt.earnOn}</b> (${dt.earnIn} din) — ${dt.earnIn <= 3 ? 'sar pe hai ⚠ entry mat lo' : dt.earnIn <= 7 ? 'is hafte — dhyan rakho' : 'abhi door hai ✓'}`
+      : 'Agle 3 hafte me koi result scheduled nahi ✓']);
     const slLoss = qty * (p.pivot - p.sl);
     const t1Gain = qty * (dt.t1 - p.pivot), t2Gain = qty * (dt.t2 - p.pivot);
     return `<details class="breakdown-box"><summary>Full breakdown — har check ka hisaab</summary>

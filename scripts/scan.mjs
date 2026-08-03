@@ -164,7 +164,7 @@ async function fetchEarningsDates() {
     if (!cookie) return new Map();
 
     const istNow = new Date(Date.now() + 5.5 * 3600 * 1000);
-    const from = dd(istNow), to = dd(new Date(istNow.getTime() + 12 * 86400000));
+    const from = dd(istNow), to = dd(new Date(istNow.getTime() + 21 * 86400000));
     const ctrl2 = new AbortController();
     const t2 = setTimeout(() => ctrl2.abort(), 15000);
     const res = await fetch(`https://www.nseindia.com/api/corporate-board-meetings?index=equities&from_date=${from}&to_date=${to}`, {
@@ -185,7 +185,7 @@ async function fetchEarningsDates() {
       // sabse KAREEB wali date rakho
       if (!map.has(sym) || parsed < map.get(sym)) map.set(sym, parsed);
     }
-    console.log(`Earnings calendar: ${map.size} stocks ke results agle 12 din me`);
+    console.log(`Earnings calendar: ${map.size} stocks ke results agle 21 din me`);
     return map;
   } catch { console.log('Earnings calendar nahi mila (skip) — baaki scan chalega.'); return new Map(); }
 }
