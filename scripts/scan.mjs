@@ -445,14 +445,25 @@ async function main() {
       const s50 = sma(c, 50), s50p = sma(c, 50, 10), s10 = sma(c, 10);
       if (!(close > s50 && s50 > s50p)) continue;
 
-      // consolidation + pivot
-      const win = 15;
-      const hiW = Math.max(...h.slice(-win)), loW = Math.min(...l.slice(-win));
-      const rangePct = (hiW - loW) / close * 100;
-      if (rangePct > 16) continue; // relaxed cap (watchlist ke liye); ready ka bar neeche strict hai
+      // consolidation + pivot — ADAPTIVE base window
+      // BUG THA: fix 15-din window. Agar 12 din pehle ek spike hua ho (jaise GNA Axles
+      // me 601 ka), to wo poore base ko "25% wild range" dikha deta tha aur asli base
+      // (jo spike ke BAAD bana) miss ho jaata tha. Creator aankh se asli base dekhta hai.
+      // Ab 6-30 din me se sabse LAMBA valid base chunte hain (lamba base = behtar).
+      const bestBase = (maxRange, maxProx) => {
+        let r = null;
+        for (let w = 6; w <= 30 && w < n; w++) {
+          const hh = Math.max(...h.slice(-w)), ll = Math.min(...l.slice(-w));
+          const rp = (hh - ll) / close * 100, px = (hh - close) / close * 100;
+          if (rp <= maxRange && px <= maxProx) r = { win: w, hiW: hh, loW: ll, rangePct: rp, prox: px };
+        }
+        return r;
+      };
+      const strictBase = bestBase(13, 4.5);          // pick-worthy
+      const base = strictBase || bestBase(16, 8);    // warna watchlist material
+      if (!base) continue;
+      const { win, hiW, rangePct, prox } = base;
       const pivot = hiW;
-      const prox = (pivot - close) / close * 100;
-      if (prox > 8) continue; // relaxed cap — 8% se zyada door = tracking layak bhi nahi
 
       // volatility around pivot check: last 3 days avg true range vs 20d
       const tr = i => Math.max(h[i] - l[i], Math.abs(h[i] - c[i - 1]), Math.abs(l[i] - c[i - 1]));
@@ -463,7 +474,7 @@ async function main() {
       if (atr3 > atr20 * 2.2) continue; // bilkul wild = bahar
 
       // READY = asli (strict) criteria — picks sirf inme se; baaki = watch material
-      const isReady = rangePct <= 13 && prox <= 4.5 && atr3 <= atr20 * 1.8;
+      const isReady = !!strictBase && atr3 <= atr20 * 1.8;
 
       const volShrink = sma(v, 5) < sma(v, 20);
       const hi52s = Math.max(...h.slice(-252));
@@ -475,6 +486,7 @@ async function main() {
 
       let sc2 = 0;
       sc2 += (13 - rangePct) * 0.8;           // tighter = better
+      sc2 += Math.min(3, (win - 6) * 0.15);   // lamba base = zyada safai ho chuki
       sc2 += Math.max(0, 4.5 - prox);          // pivot ke paas
       if (volShrink) sc2 += 2.5;
       if (near52) sc2 += 3;
