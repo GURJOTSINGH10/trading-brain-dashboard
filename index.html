@@ -275,6 +275,11 @@
     background: rgba(49,212,146,0.07); border: 1px dashed rgba(49,212,146,0.3);
     border-radius: 11px; padding: 9px 12px; font-size: 12.5px;
   }
+  .earn-warn {
+    background: rgba(255,107,118,0.12); border: 1px solid rgba(255,107,118,0.42);
+    border-radius: 11px; padding: 10px 12px; font-size: 12.5px; color: #ffc2c7;
+  }
+  .earn-warn b { color: var(--red); }
   .size-row b { color: var(--green); }
   .size-row span { color: var(--muted); }
   .comment {
@@ -590,6 +595,7 @@
       ['5% move ki aukaat', `${dt.bigMoveDays} din me 5%+ range (last 60 din)${dt.bigMoveDays >= 3 ? ' ✓' : ''}`]
     ];
     if (dt.delivPct != null) rows2.push(['Delivery % (aaj, NSE)', `${dt.delivPct}% ${dt.delivPct >= 50 ? '— strong haath, asli buying ✓' : dt.delivPct >= 35 ? '— theek-thaak' : '— zyada intraday khela ⚠'}`]);
+    if (dt.earnOn) rows2.push(['Result (NSE board meeting)', `<b>${dt.earnOn}</b> — ${dt.earnIn <= 3 ? 'sar pe hai ⚠ entry mat lo' : dt.earnIn <= 7 ? 'is hafte — dhyan rakho' : 'abhi door hai ✓'}`]);
     const slLoss = qty * (p.pivot - p.sl);
     const t1Gain = qty * (dt.t1 - p.pivot), t2Gain = qty * (dt.t2 - p.pivot);
     return `<details class="breakdown-box"><summary>Full breakdown — har check ka hisaab</summary>
@@ -649,6 +655,7 @@
           <div class="level target"><small>Target</small><b>${p.target}</b></div>
           <div class="level"><small>R : R</small><b>${p.rr}</b></div>
         </div>
+        ${p.detail && p.detail.earnIn != null && p.detail.earnIn <= 3 ? `<div class="earn-warn"><b>⚠️ Result ${p.detail.earnOn} ko</b> — is breakout pe abhi entry mat lo. Numbers coin toss hai, setup nahi. Result nikalne do.</div>` : ''}
         <div class="size-row">Position (${d.market.gearLabel}, ${curGearPct}%): <b>${qty} shares ≈ ${inr(qty * p.cmp)}</b> <span>· SL hit hua to loss ≈ ${inr(qty * (p.cmp - p.sl))}</span></div>
         <div class="pick-row"><span>Setup:</span> ${p.setup}</div>
         <div class="pick-row"><span>Entry:</span> ${p.entry}</div>

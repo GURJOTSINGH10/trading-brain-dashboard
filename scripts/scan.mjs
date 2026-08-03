@@ -126,6 +126,7 @@ async function fetchBhavData() {
       }
       stocks.set(f[0], {
         o: +f[4], h: +f[5], l: +f[6], c: +f[8], v: +f[10],
+        tv: (+f[11] || 0) * 1e5,                  // TURNOVER_LACS → rupees (prefilter ke liye)
         deliv: isNaN(+f[14]) ? null : +f[14]
       });
     }
@@ -147,6 +148,46 @@ async function fetchBhavData() {
   }
   console.log('Bhavcopy nahi mila (holiday/pending/blocked) — Yahoo fallback.');
   return null;
+}
+
+// ---------- NSE board meetings = earnings dates ----------
+// Creator ka sabak: fresh breakout ko RESULT ke aar-paar hold mat karo — wo coin toss hai.
+// Cookie-gated API hai; cloud IP block ho jaye to chup-chaap skip (baaki scan chalta rahe).
+async function fetchEarningsDates() {
+  const dd = d => String(d.getUTCDate()).padStart(2, '0') + '-' + String(d.getUTCMonth() + 1).padStart(2, '0') + '-' + d.getUTCFullYear();
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 15000);
+    const home = await fetch('https://www.nseindia.com/', { headers: { 'User-Agent': UA }, signal: ctrl.signal });
+    const cookie = (home.headers.getSetCookie?.() || []).map(c => c.split(';')[0]).join('; ');
+    clearTimeout(timer);
+    if (!cookie) return new Map();
+
+    const istNow = new Date(Date.now() + 5.5 * 3600 * 1000);
+    const from = dd(istNow), to = dd(new Date(istNow.getTime() + 12 * 86400000));
+    const ctrl2 = new AbortController();
+    const t2 = setTimeout(() => ctrl2.abort(), 15000);
+    const res = await fetch(`https://www.nseindia.com/api/corporate-board-meetings?index=equities&from_date=${from}&to_date=${to}`, {
+      headers: { 'User-Agent': UA, 'Cookie': cookie, 'Accept': 'application/json', 'Referer': 'https://www.nseindia.com/companies-listing/corporate-filings-board-meetings' },
+      signal: ctrl2.signal
+    });
+    clearTimeout(t2);
+    if (!res.ok) return new Map();
+    const j = await res.json();
+    const arr = Array.isArray(j) ? j : (j.data || []);
+    const map = new Map();
+    for (const row of arr) {
+      const sym = row.bm_symbol, dt = row.bm_date;
+      if (!sym || !dt) continue;
+      if (!/financial result/i.test((row.bm_purpose || '') + ' ' + (row.bm_desc || ''))) continue;
+      const parsed = new Date(dt + ' UTC');
+      if (isNaN(parsed)) continue;
+      // sabse KAREEB wali date rakho
+      if (!map.has(sym) || parsed < map.get(sym)) map.set(sym, parsed);
+    }
+    console.log(`Earnings calendar: ${map.size} stocks ke results agle 12 din me`);
+    return map;
+  } catch { console.log('Earnings calendar nahi mila (skip) — baaki scan chalega.'); return new Map(); }
 }
 
 // chart me official bar daalo: same date = replace (official jeet-ta hai), nayi date = append
@@ -225,7 +266,22 @@ async function main() {
   }
 
   // --- universe fetch (concurrency 4) ---
-  const universe = JSON.parse(readFileSync(join(ROOT, 'universe.json'), 'utf8')).stocks;
+  const fullUniverse = JSON.parse(readFileSync(join(ROOT, 'universe.json'), 'utf8')).stocks;
+  // Universe ab poori NSE list (~2000) hai. Har roz sabki 1-saal history laana bhaari hai,
+  // isliye bhavcopy ke AAJ ke turnover se prefilter: jo aaj ₹2 Cr bhi nahi hue, wo
+  // ₹5 Cr ka 20-din average kabhi paas nahi karega. Bhavcopy na mile to index-tagged
+  // stocks pe wapas (purana behaviour) — scan kabhi ruke nahi.
+  let universe = fullUniverse;
+  if (bhav) {
+    const liquid = fullUniverse.filter(u => (bhav.stocks.get(u.s)?.tv || 0) >= 2e7);
+    if (liquid.length >= 300) universe = liquid;
+  } else {
+    const tagged = fullUniverse.filter(u => u.cap !== 'Micro' || u.sec !== 'Other');
+    if (tagged.length >= 300) universe = tagged;
+  }
+  console.log(`Universe: ${fullUniverse.length} listed → ${universe.length} scan ke liye (liquidity prefilter)`);
+
+  const earningsMap = await fetchEarningsDates();
   const charts = {};
   let idx = 0, failed = [];
   async function worker() {
@@ -240,10 +296,11 @@ async function main() {
         }
         charts[u.s] = ch;
       } else failed.push(u.s);
-      await sleep(120);
+      await sleep(80);
     }
   }
-  await Promise.all(Array.from({ length: 6 }, () => worker()));
+  // Universe ~2000 ka ho gaya hai — 9 workers taaki cloud ke 20-min timeout me aaram se aa jaye
+  await Promise.all(Array.from({ length: 9 }, () => worker()));
   console.log(`Universe: ${Object.keys(charts).length}/${universe.length} fetched (fail: ${failed.length})`);
 
   // --- market health ---
@@ -349,7 +406,7 @@ async function main() {
   }
   const hotSectors = [];
   for (const [name, list] of Object.entries(sectors)) {
-    if (list.length < 3) continue;
+    if (name === 'Other' || list.length < 3) continue; // 'Other' = sector pata nahi, heat ka matlab nahi
     let ret5 = 0, up = 0, volR = 0, vn = 0;
     for (const ch of list) {
       const c = ch.c, n = c.length;
@@ -440,7 +497,17 @@ async function main() {
       const t1 = roundPrice(pivot + 2 * risk), t2 = roundPrice(pivot + 2.6 * risk);
       const rr = round2((((t1 + t2) / 2) - pivot) / risk);
 
+      // ★ Earnings guard — creator: "numbers pe leke chale gaye, loss ho gaya"
+      // Fresh breakout ko result ke aar-paar hold karna coin toss hai, setup nahi.
+      const earnDate = earningsMap.get(u.s);
+      const earnDays = earnDate ? Math.round((earnDate - new Date(sessionTs * 1000)) / 86400000) : null;
+      const earnInfo = earnDate
+        ? { earnIn: earnDays, earnOn: earnDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short' }) }
+        : {};
+      const earnRisk = earnDays !== null && earnDays >= 0 && earnDays <= 3;
+
       const flags = [];
+      if (earnRisk) flags.push('⚠️ Result ' + earnInfo.earnOn);
       if (hot) flags.push('Hot sector');
       if (superTight) flags.push('Super tight'); else flags.push('Tight base');
       if (volShrink) flags.push('Volume shrink');
@@ -453,7 +520,10 @@ async function main() {
       if (hot) commentBits.push(`${u.sec} sector me in dino nonstop action hai — money flow yahi hai`);
       if (near52) commentBits.push('52-week high zone me hai — upar supply nahi, line of least resistance upar');
       if (volShrink) commentBits.push('base me volume shrink — supply exhaust ho rahi hai');
-      const comment = commentBits.join('. ') + '. Breakout aaye tabhi entry bhaiya — usse pehle jo bhi hai, sirf indication hai.';
+      let comment = commentBits.join('. ') + '. Breakout aaye tabhi entry bhaiya — usse pehle jo bhi hai, sirf indication hai.';
+      if (earnRisk) comment = `⚠️ RESULT ${earnInfo.earnOn} ko aa raha hai — is breakout pe abhi entry MAT lo. Numbers ek coin toss hai, setup nahi. Result nikal jaane do, phir setup dobara bane to dekhenge. ` + comment;
+      // Result sar pe ho to ranking me neeche — takki wo pick hi na bane
+      if (earnRisk) sc2 -= 8;
 
       candidates.push({
         symbol: u.s, name: u.n, sector: u.sec, cap: u.cap || 'Small',
@@ -476,6 +546,7 @@ async function main() {
           atrRatio: round2(atr3 / atr20),
           bigMoveDays: big,
           delivPct: ch.deliv ?? null,
+          ...earnInfo,
           t1, t2
         }
       });
