@@ -45,7 +45,8 @@ C:\Users\gk379\Projects\trading-brain\
 ├── SCANNERS.md               ← Chartink scan queries (manual scan ka purana tarika)
 ├── TRADING_BRAIN_CHAT_LOG.txt← project banne ki poori kahani (4-9 Jul 2026)
 ├── PROGRESS.md, CLAUDE.md, CHATGPT_SETUP.md, README.md — chhoti support files
-├── run-scan.bat              ← LOCAL automation runner (Task Scheduler isse chalata hai) — MAT HATANA/MOVE KARNA
+├── run-scan.bat              ← LOCAL automation runner — MAT HATANA/MOVE KARNA
+├── run-scan-hidden.vbs       ← Task Scheduler isse chalata hai (bat ko hidden window me run karta hai) — MAT HATANA
 ├── scan.log                  ← local runs ka log (debugging ke liye pehle yahan dekho)
 ├── trade-skill-v2.zip        ← claude.ai wali skill ka package (re-upload ke liye)
 ├── workflow-backup\scan.yml  ← cloud workflow ki local copy (repo wala asli hai)
@@ -55,7 +56,7 @@ C:\Users\gk379\Projects\trading-brain\
     ├── index.html            ← dashboard UI (liquid glass + market mood)
     ├── data.js               ← AUTO-GENERATED har scan pe (haath mat lagana)
     ├── journal.json          ← paper portfolio ka state (positions + 186 backtest trades)
-    ├── universe.json         ← 749 NSE stocks + cap tags (AUTO-refresh har 10 din)
+    ├── universe.json         ← POORI NSE EQ list ~2080 + cap tags (AUTO-refresh har 10 din)
     ├── index-flat-backup.html, index-old-backup.html ← purane UI designs
     ├── .github\workflows\scan.yml ← CLOUD automation (4 crons)
     └── scripts\
@@ -83,11 +84,12 @@ C:\Users\gk379\Projects\trading-brain\
 
 **scan.mjs ka flow (har run):**
 1. Universe 10 din purana ho → khud rebuild (NSE lists se)
-2. Yahoo se 749 stocks + indices ki 1-saal history — **market-hours me aaj ka ADHURA candle DROP hota hai** (15:35 IST se pehle aaj ka bar use nahi hota — ye critical guard hai)
+2. Universe ~2080 (poori NSE EQ list) → bhavcopy ke aaj ke turnover se prefilter (₹2Cr+) → ~1333 scan hote hain. Yahoo se unki + indices ki 1-saal history — **market-hours me aaj ka ADHURA candle DROP hota hai** (15:35 IST se pehle aaj ka bar use nahi hota — ye critical guard hai)
 3. NSE **bhavcopy** (sec_bhavdata_full_DDMMYYYY.csv, ~4:30 PM publish) + indices (ind_close_all) → aaj ka OFFICIAL bar merge (delivery % bhi)
 4. Session naya hai? Nahi → skip (idempotent). Haan →
 5. **Market health → GEAR (1-5)**: smallcap 10/50 DMA, breadth, adv/dec, 52W highs, USDINR, aur **"Breakouts Working?"** (creator ka #1 signal — recent breakouts me traction% ; kam ho to gear hard-cap)
 6. Hot sectors (5-din return + participation + volume)
+6b. **Earnings guard**: NSE board-meetings API se agle 12 din ke result dates. Jis pick ka result 3 din me hai — score -8, flag, aur card pe warning (creator: "numbers pe leke chale gaye, loss ho gaya"). API cookie-gated hai — fail ho to chup-chaap skip.
 7. Stock scan: liquid (₹5Cr+), rising 50 DMA ke upar, tight base (≤13%), pivot ke paas (≤4.5%), shaant (ATR check) = **READY** → picks gear se scale: gear2=3, gear3=5, gear4=6, gear5=8 (gear 1 = 0 picks). 0 picks ho to relaxed "watchlist" (nazar-me-rakho) deta hai
 8. **Journal**: pending pick → pivot cross + 1.2x volume = trigger (entry) → phir SL hit / +8% book / 10DMA trail / 3-din squat fail — sab automatic. Gear-based sizing: gear1=10% ... gear5=25% of capital
 9. data.js + journal.json likho → runner commit+push → Pages update
@@ -110,7 +112,7 @@ full breakdown (DMAs, 52W, delivery%, SL/target ₹ scenarios).
 | 0 2 * * 2-6 | 7:30 AM | final guarantee (market 9:15 se pehle) |
 ⚠️ GitHub cron 1-3 ghante LATE chalta hai (unki free-tier aadat) — isliye 4 crons. Jo pehla naya session dekhe, wahi update karta hai.
 
-**Local (Task Scheduler "TradingBrainDailyScan" — PC on ho to):** 5-11 PM har ghanta (Mon-Fri) + 8 AM (Tue-Sat) = 12 triggers, StartWhenAvailable on. `run-scan.bat` chalata hai jo **pehle `git fetch + reset --hard origin/main`** karta hai (KABHI pull/rebase nahi — niche "bugs" dekho), phir scan, phir commit+push.
+**Local (Task Scheduler "TradingBrainDailyScan" — PC on ho to):** 5-11 PM har ghanta (Mon-Fri) + 8 AM (Tue-Sat) = 12 triggers, StartWhenAvailable on. Task `run-scan-hidden.vbs` chalata hai (16 Jul 2026 se — cmd window flash na ho isliye), jo `run-scan.bat` ko hidden run karta hai. Bat **pehle `git fetch + reset --hard origin/main`** karta hai (KABHI pull/rebase nahi — niche "bugs" dekho), phir scan, phir commit+push.
 
 Dono idempotent — same session dobara process nahi hota. Expectation: **same evening update (usually 5-7 PM); worst case agli subah 8 baje.**
 
