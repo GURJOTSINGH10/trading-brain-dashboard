@@ -1,6 +1,6 @@
 {
-  "lastSession": "03/08/2026",
-  "equity": 103670.68,
+  "lastSession": "04/08/2026",
+  "equity": 104932.52,
   "positions": [
     {
       "picked": "20 Jul",
@@ -15,9 +15,9 @@
       "entry": 1879,
       "qty": 9,
       "invested": 16911,
-      "daysSinceTrigger": 9,
+      "daysSinceTrigger": 10,
       "triggerDate": "21 Jul",
-      "curPnlPct": 4.83
+      "curPnlPct": 5.27
     },
     {
       "picked": "27 Jul",
@@ -32,9 +32,9 @@
       "entry": 4201,
       "qty": 5,
       "invested": 21005,
-      "daysSinceTrigger": 4,
+      "daysSinceTrigger": 5,
       "triggerDate": "28 Jul",
-      "curPnlPct": 6.14
+      "curPnlPct": 5.93
     },
     {
       "picked": "27 Jul",
@@ -49,37 +49,9 @@
       "entry": 677.3,
       "qty": 31,
       "invested": 20996.3,
-      "daysSinceTrigger": 1,
-      "triggerDate": "31 Jul",
-      "curPnlPct": 1.42
-    },
-    {
-      "picked": "28 Jul",
-      "symbol": "ALKEM",
-      "sector": "Pharma",
-      "gear": 2,
-      "sizePct": 14,
-      "pivot": 5736,
-      "sl": 5503,
-      "entryStatus": "open",
-      "daysWaiting": 1,
-      "entry": 5736,
-      "qty": 2,
-      "invested": 11472,
       "daysSinceTrigger": 2,
-      "triggerDate": "30 Jul",
-      "curPnlPct": -0.51
-    },
-    {
-      "picked": "29 Jul",
-      "symbol": "NYKAA",
-      "sector": "New Age / Internet",
-      "gear": 4,
-      "sizePct": 21,
-      "pivot": 335,
-      "sl": 319.9,
-      "entryStatus": "pending",
-      "daysWaiting": 3
+      "triggerDate": "31 Jul",
+      "curPnlPct": 0.51
     },
     {
       "picked": "29 Jul",
@@ -94,9 +66,9 @@
       "entry": 1512,
       "qty": 13,
       "invested": 19656,
-      "daysSinceTrigger": 2,
+      "daysSinceTrigger": 3,
       "triggerDate": "30 Jul",
-      "curPnlPct": 2.22
+      "curPnlPct": 4.43
     },
     {
       "picked": "29 Jul",
@@ -111,26 +83,9 @@
       "entry": 2565,
       "qty": 8,
       "invested": 20520,
-      "daysSinceTrigger": 2,
+      "daysSinceTrigger": 3,
       "triggerDate": "30 Jul",
-      "curPnlPct": 0.55
-    },
-    {
-      "picked": "30 Jul",
-      "symbol": "NAZARA",
-      "sector": "Media Entertainment & Publication",
-      "gear": 2,
-      "sizePct": 14,
-      "pivot": 315,
-      "sl": 300.8,
-      "entryStatus": "open",
-      "daysWaiting": 0,
-      "entry": 315,
-      "qty": 44,
-      "invested": 13860,
-      "daysSinceTrigger": 1,
-      "triggerDate": "31 Jul",
-      "curPnlPct": 7.79
+      "curPnlPct": 0.71
     },
     {
       "picked": "30 Jul",
@@ -141,7 +96,7 @@
       "pivot": 1321,
       "sl": 1261,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "31 Jul",
@@ -152,7 +107,7 @@
       "pivot": 831,
       "sl": 793.6,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "31 Jul",
@@ -163,7 +118,7 @@
       "pivot": 2223,
       "sl": 2128,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "31 Jul",
@@ -174,7 +129,7 @@
       "pivot": 2143,
       "sl": 2047,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "31 Jul",
@@ -189,8 +144,9 @@
       "entry": 3110,
       "qty": 5,
       "invested": 15550,
-      "daysSinceTrigger": 0,
-      "triggerDate": "3 Aug"
+      "daysSinceTrigger": 1,
+      "triggerDate": "3 Aug",
+      "curPnlPct": -0.28
     },
     {
       "picked": "31 Jul",
@@ -205,8 +161,9 @@
       "entry": 243.1,
       "qty": 72,
       "invested": 17503.2,
-      "daysSinceTrigger": 0,
-      "triggerDate": "3 Aug"
+      "daysSinceTrigger": 1,
+      "triggerDate": "3 Aug",
+      "curPnlPct": -1.14
     },
     {
       "picked": "3 Aug",
@@ -217,7 +174,7 @@
       "pivot": 4547,
       "sl": 4342,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "3 Aug",
@@ -228,7 +185,7 @@
       "pivot": 3471,
       "sl": 3315,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "3 Aug",
@@ -239,7 +196,7 @@
       "pivot": 438.4,
       "sl": 418.6,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "3 Aug",
@@ -249,8 +206,13 @@
       "sizePct": 25,
       "pivot": 141.6,
       "sl": 135.2,
-      "entryStatus": "pending",
-      "daysWaiting": 0
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 142,
+      "qty": 184,
+      "invested": 26128,
+      "daysSinceTrigger": 0,
+      "triggerDate": "4 Aug"
     },
     {
       "picked": "3 Aug",
@@ -261,7 +223,7 @@
       "pivot": 135550,
       "sl": 130300,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "3 Aug",
@@ -271,6 +233,72 @@
       "sizePct": 25,
       "pivot": 1722,
       "sl": 1644,
+      "entryStatus": "pending",
+      "daysWaiting": 1
+    },
+    {
+      "picked": "4 Aug",
+      "symbol": "TVSSCS",
+      "sector": "Services",
+      "gear": 5,
+      "sizePct": 25,
+      "pivot": 140.9,
+      "sl": 134.6,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "4 Aug",
+      "symbol": "JUBLINGREA",
+      "sector": "Chemicals",
+      "gear": 5,
+      "sizePct": 25,
+      "pivot": 765.9,
+      "sl": 731.4,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "4 Aug",
+      "symbol": "CEATLTD",
+      "sector": "Automobile and Auto Components",
+      "gear": 5,
+      "sizePct": 25,
+      "pivot": 3654,
+      "sl": 3490,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "4 Aug",
+      "symbol": "MINDACORP",
+      "sector": "Automobile and Auto Components",
+      "gear": 5,
+      "sizePct": 25,
+      "pivot": 735.9,
+      "sl": 702.8,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "4 Aug",
+      "symbol": "RELIGARE",
+      "sector": "Financial Services",
+      "gear": 5,
+      "sizePct": 25,
+      "pivot": 263.7,
+      "sl": 251.8,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "4 Aug",
+      "symbol": "TVSHLTD",
+      "sector": "Other",
+      "gear": 5,
+      "sizePct": 25,
+      "pivot": 15231,
+      "sl": 14546,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
@@ -2675,6 +2703,38 @@
       "pnlPct": 9.47,
       "exitDate": "3 Aug",
       "reason": "+9.47% — partial book zone, profit liya. Exact top nahi milega, 8-9% realistic hai."
+    },
+    {
+      "picked": "28 Jul",
+      "symbol": "ALKEM",
+      "sector": "Pharma",
+      "gear": 2,
+      "entry": 5736,
+      "status": "fail",
+      "pnlPct": -2.23,
+      "exitDate": "4 Aug",
+      "reason": "10 DMA break = story over. 10 me se 10 baar yahi decision."
+    },
+    {
+      "picked": "29 Jul",
+      "symbol": "NYKAA",
+      "sector": "New Age / Internet",
+      "gear": 4,
+      "entry": 335,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "30 Jul",
+      "symbol": "NAZARA",
+      "sector": "Media Entertainment & Publication",
+      "gear": 2,
+      "entry": 315,
+      "status": "win",
+      "pnlPct": 10.95,
+      "exitDate": "4 Aug",
+      "reason": "+10.95% — partial book zone, profit liya. Exact top nahi milega, 8-9% realistic hai."
     }
   ],
   "backtestedAt": "2026-07-07T16:10:12.258Z"
