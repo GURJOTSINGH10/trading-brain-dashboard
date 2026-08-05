@@ -636,7 +636,12 @@ async function main() {
         pos.invested = round2(pos.qty * pos.entry);
         pos.daysSinceTrigger = 0;
         pos.triggerDate = fmtShort(sessionTs);
-        stillOpen.push(pos);
+        // ★ SAME-DAY SL — breakout aur stop-loss ek hi din me ho sakte hain.
+        // GNA Axles (4 Aug): high 563 pe entry bani, phir low 505 — SL 523 usi din hit.
+        // Pehle `continue` kar dete the, to ye loss AGLE din darj hota tha (galat bhaav pe)
+        // aur track record jhoothi optimistic ban jaati thi.
+        if (lo <= pos.sl) closeTrade('sl', pos.sl, `Entry ke din hi SL ${pos.sl} hit — breakout turant fail, same-day out`);
+        else stillOpen.push(pos);
       } else {
         pos.daysWaiting = (pos.daysWaiting || 0) + 1;
         if (pos.daysWaiting >= 4) {

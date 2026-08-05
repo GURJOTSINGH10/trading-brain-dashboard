@@ -126,6 +126,13 @@ async function main() {
         const v20 = avg(ch.v, di - 19, di);
         if (hi > p.pivot && ch.v[di] > v20 * 1.2) {
           p.status = 'open'; p.entry = roundPrice(Math.max(o, p.pivot)); p.entryDi = di; p.tDays = 0;
+          // ★ SAME-DAY SL — breakout aur stop ek hi din me ho sakte hain (GNA 4 Aug).
+          // Pehle ye chhoot jaata tha, jisse backtest ke numbers optimistic ho rahe the.
+          if (lo <= p.sl) {
+            const pnl = round2((p.sl - p.entry) / p.entry * 100);
+            closed.push({ picked: fmtShort(T[p.pickDi]), symbol: sym, sector: p.sector, cap: p.cap, gear: p.gear, entry: p.entry, status: 'sl', pnlPct: pnl, exitDate: fmtShort(T[di]), reason: `Entry ke din hi SL ${p.sl} hit — breakout turant fail, same-day out` });
+            active.delete(sym); cooldown.set(sym, di + 5);
+          }
         } else if (++p.wait >= 4) {
           closed.push({ picked: fmtShort(T[p.pickDi]), symbol: sym, sector: p.sector, cap: p.cap, gear: p.gear, entry: p.pivot, status: 'no-trigger', pnlPct: 0, reason: 'Pivot cross nahi hua 4 session me — paisa laga hi nahi' });
           active.delete(sym); cooldown.set(sym, di + 5);
