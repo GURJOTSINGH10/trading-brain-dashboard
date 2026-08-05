@@ -1,6 +1,6 @@
 {
-  "lastSession": "03/08/2026",
-  "equity": 104932.52,
+  "lastSession": "05/08/2026",
+  "equity": 106298.28,
   "positions": [
     {
       "picked": "20 Jul",
@@ -15,26 +15,9 @@
       "entry": 1879,
       "qty": 9,
       "invested": 16911,
-      "daysSinceTrigger": 11,
+      "daysSinceTrigger": 12,
       "triggerDate": "21 Jul",
-      "curPnlPct": 5.27
-    },
-    {
-      "picked": "27 Jul",
-      "symbol": "RADICO",
-      "sector": "Fast Moving Consumer Goods",
-      "gear": 4,
-      "sizePct": 21,
-      "pivot": 4201,
-      "sl": 4039,
-      "entryStatus": "open",
-      "daysWaiting": 0,
-      "entry": 4201,
-      "qty": 5,
-      "invested": 21005,
-      "daysSinceTrigger": 6,
-      "triggerDate": "28 Jul",
-      "curPnlPct": 5.93
+      "curPnlPct": 4.26
     },
     {
       "picked": "27 Jul",
@@ -49,9 +32,9 @@
       "entry": 677.3,
       "qty": 31,
       "invested": 20996.3,
-      "daysSinceTrigger": 3,
+      "daysSinceTrigger": 4,
       "triggerDate": "31 Jul",
-      "curPnlPct": 1.42
+      "curPnlPct": 5.95
     },
     {
       "picked": "29 Jul",
@@ -66,93 +49,9 @@
       "entry": 1512,
       "qty": 13,
       "invested": 19656,
-      "daysSinceTrigger": 4,
+      "daysSinceTrigger": 5,
       "triggerDate": "30 Jul",
-      "curPnlPct": 4.43
-    },
-    {
-      "picked": "29 Jul",
-      "symbol": "GLAND",
-      "sector": "Healthcare",
-      "gear": 4,
-      "sizePct": 21,
-      "pivot": 2565,
-      "sl": 2449,
-      "entryStatus": "open",
-      "daysWaiting": 0,
-      "entry": 2565,
-      "qty": 8,
-      "invested": 20520,
-      "daysSinceTrigger": 4,
-      "triggerDate": "30 Jul",
-      "curPnlPct": 0.55
-    },
-    {
-      "picked": "31 Jul",
-      "symbol": "CHOICEIN",
-      "sector": "Financial Services",
-      "gear": 3,
-      "sizePct": 17,
-      "pivot": 831,
-      "sl": 793.6,
-      "entryStatus": "pending",
-      "daysWaiting": 3
-    },
-    {
-      "picked": "31 Jul",
-      "symbol": "BHARATFORG",
-      "sector": "Auto Ancillaries",
-      "gear": 3,
-      "sizePct": 17,
-      "pivot": 2223,
-      "sl": 2128,
-      "entryStatus": "pending",
-      "daysWaiting": 3
-    },
-    {
-      "picked": "31 Jul",
-      "symbol": "ANANDRATHI",
-      "sector": "Financial Services",
-      "gear": 3,
-      "sizePct": 17,
-      "pivot": 2143,
-      "sl": 2047,
-      "entryStatus": "pending",
-      "daysWaiting": 3
-    },
-    {
-      "picked": "31 Jul",
-      "symbol": "ESCORTS",
-      "sector": "Auto",
-      "gear": 3,
-      "sizePct": 17,
-      "pivot": 3099,
-      "sl": 2960,
-      "entryStatus": "open",
-      "daysWaiting": 0,
-      "entry": 3110,
-      "qty": 5,
-      "invested": 15550,
-      "daysSinceTrigger": 2,
-      "triggerDate": "3 Aug",
-      "curPnlPct": -0.28
-    },
-    {
-      "picked": "31 Jul",
-      "symbol": "BELRISE",
-      "sector": "Automobile and Auto Components",
-      "gear": 3,
-      "sizePct": 17,
-      "pivot": 243.1,
-      "sl": 232.2,
-      "entryStatus": "open",
-      "daysWaiting": 0,
-      "entry": 243.1,
-      "qty": 72,
-      "invested": 17503.2,
-      "daysSinceTrigger": 2,
-      "triggerDate": "3 Aug",
-      "curPnlPct": -1.14
+      "curPnlPct": 5.73
     },
     {
       "picked": "3 Aug",
@@ -163,7 +62,7 @@
       "pivot": 4547,
       "sl": 4342,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "3 Aug",
@@ -173,8 +72,13 @@
       "sizePct": 25,
       "pivot": 3471,
       "sl": 3315,
-      "entryStatus": "pending",
-      "daysWaiting": 2
+      "entryStatus": "open",
+      "daysWaiting": 2,
+      "entry": 3545,
+      "qty": 7,
+      "invested": 24815,
+      "daysSinceTrigger": 0,
+      "triggerDate": "5 Aug"
     },
     {
       "picked": "3 Aug",
@@ -189,8 +93,9 @@
       "entry": 441.1,
       "qty": 59,
       "invested": 26024.9,
-      "daysSinceTrigger": 0,
-      "triggerDate": "3 Aug"
+      "daysSinceTrigger": 1,
+      "triggerDate": "3 Aug",
+      "curPnlPct": 0.86
     },
     {
       "picked": "3 Aug",
@@ -205,9 +110,9 @@
       "entry": 142,
       "qty": 184,
       "invested": 26128,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "4 Aug",
-      "curPnlPct": 0.19
+      "curPnlPct": 0.89
     },
     {
       "picked": "3 Aug",
@@ -218,7 +123,7 @@
       "pivot": 135550,
       "sl": 130300,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "3 Aug",
@@ -228,8 +133,13 @@
       "sizePct": 25,
       "pivot": 1722,
       "sl": 1644,
-      "entryStatus": "pending",
-      "daysWaiting": 2
+      "entryStatus": "open",
+      "daysWaiting": 2,
+      "entry": 1739,
+      "qty": 15,
+      "invested": 26085,
+      "daysSinceTrigger": 0,
+      "triggerDate": "5 Aug"
     },
     {
       "picked": "4 Aug",
@@ -240,7 +150,7 @@
       "pivot": 140.9,
       "sl": 134.6,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "4 Aug",
@@ -251,7 +161,7 @@
       "pivot": 765.9,
       "sl": 731.4,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "4 Aug",
@@ -261,8 +171,13 @@
       "sizePct": 25,
       "pivot": 3654,
       "sl": 3490,
-      "entryStatus": "pending",
-      "daysWaiting": 1
+      "entryStatus": "open",
+      "daysWaiting": 1,
+      "entry": 3654,
+      "qty": 7,
+      "invested": 25578,
+      "daysSinceTrigger": 0,
+      "triggerDate": "5 Aug"
     },
     {
       "picked": "4 Aug",
@@ -277,8 +192,9 @@
       "entry": 735.9,
       "qty": 35,
       "invested": 25756.5,
-      "daysSinceTrigger": 0,
-      "triggerDate": "3 Aug"
+      "daysSinceTrigger": 1,
+      "triggerDate": "3 Aug",
+      "curPnlPct": -1.75
     },
     {
       "picked": "4 Aug",
@@ -289,7 +205,7 @@
       "pivot": 263.7,
       "sl": 251.8,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "4 Aug",
@@ -300,7 +216,7 @@
       "pivot": 15231,
       "sl": 14546,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "3 Aug",
@@ -311,7 +227,7 @@
       "pivot": 754,
       "sl": 720.1,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "3 Aug",
@@ -322,7 +238,7 @@
       "pivot": 7249,
       "sl": 6923,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "3 Aug",
@@ -332,6 +248,55 @@
       "sizePct": 25,
       "pivot": 188.9,
       "sl": 183.6,
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 190.9,
+      "qty": 139,
+      "invested": 26535.1,
+      "daysSinceTrigger": 0,
+      "triggerDate": "5 Aug"
+    },
+    {
+      "picked": "5 Aug",
+      "symbol": "BHARATFORG",
+      "sector": "Auto Ancillaries",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 2238,
+      "sl": 2137,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "5 Aug",
+      "symbol": "OLECTRA",
+      "sector": "Automobile and Auto Components",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 1418,
+      "sl": 1354,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "5 Aug",
+      "symbol": "WSTCSTPAPR",
+      "sector": "Other",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 592,
+      "sl": 565.4,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "5 Aug",
+      "symbol": "BELRISE",
+      "sector": "Automobile and Auto Components",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 246.4,
+      "sl": 235.4,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
@@ -2778,6 +2743,80 @@
       "status": "no-trigger",
       "pnlPct": 0,
       "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "27 Jul",
+      "symbol": "RADICO",
+      "sector": "Fast Moving Consumer Goods",
+      "gear": 4,
+      "entry": 4201,
+      "status": "win",
+      "pnlPct": 8.31,
+      "exitDate": "5 Aug",
+      "reason": "+8.31% — partial book zone, profit liya. Exact top nahi milega, 8-9% realistic hai."
+    },
+    {
+      "picked": "29 Jul",
+      "symbol": "GLAND",
+      "sector": "Healthcare",
+      "gear": 4,
+      "entry": 2565,
+      "status": "fail",
+      "pnlPct": -0.78,
+      "exitDate": "5 Aug",
+      "reason": "Breakout fail — 5 din squat, move nahi aaya. Abnormal behavior = out."
+    },
+    {
+      "picked": "31 Jul",
+      "symbol": "CHOICEIN",
+      "sector": "Financial Services",
+      "gear": 3,
+      "entry": 831,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "31 Jul",
+      "symbol": "BHARATFORG",
+      "sector": "Auto Ancillaries",
+      "gear": 3,
+      "entry": 2223,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "31 Jul",
+      "symbol": "ANANDRATHI",
+      "sector": "Financial Services",
+      "gear": 3,
+      "entry": 2143,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "31 Jul",
+      "symbol": "ESCORTS",
+      "sector": "Auto",
+      "gear": 3,
+      "entry": 3110,
+      "status": "fail",
+      "pnlPct": -0.67,
+      "exitDate": "5 Aug",
+      "reason": "Breakout fail — 3 din squat, move nahi aaya. Abnormal behavior = out."
+    },
+    {
+      "picked": "31 Jul",
+      "symbol": "BELRISE",
+      "sector": "Automobile and Auto Components",
+      "gear": 3,
+      "entry": 243.1,
+      "status": "fail",
+      "pnlPct": -0.66,
+      "exitDate": "5 Aug",
+      "reason": "Breakout fail — 3 din squat, move nahi aaya. Abnormal behavior = out."
     }
   ],
   "backtestedAt": "2026-07-07T16:10:12.258Z"
