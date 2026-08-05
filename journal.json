@@ -1,5 +1,5 @@
 {
-  "lastSession": "04/08/2026",
+  "lastSession": "03/08/2026",
   "equity": 104932.52,
   "positions": [
     {
@@ -15,7 +15,7 @@
       "entry": 1879,
       "qty": 9,
       "invested": 16911,
-      "daysSinceTrigger": 10,
+      "daysSinceTrigger": 11,
       "triggerDate": "21 Jul",
       "curPnlPct": 5.27
     },
@@ -32,7 +32,7 @@
       "entry": 4201,
       "qty": 5,
       "invested": 21005,
-      "daysSinceTrigger": 5,
+      "daysSinceTrigger": 6,
       "triggerDate": "28 Jul",
       "curPnlPct": 5.93
     },
@@ -49,9 +49,9 @@
       "entry": 677.3,
       "qty": 31,
       "invested": 20996.3,
-      "daysSinceTrigger": 2,
+      "daysSinceTrigger": 3,
       "triggerDate": "31 Jul",
-      "curPnlPct": 0.51
+      "curPnlPct": 1.42
     },
     {
       "picked": "29 Jul",
@@ -66,7 +66,7 @@
       "entry": 1512,
       "qty": 13,
       "invested": 19656,
-      "daysSinceTrigger": 3,
+      "daysSinceTrigger": 4,
       "triggerDate": "30 Jul",
       "curPnlPct": 4.43
     },
@@ -83,20 +83,9 @@
       "entry": 2565,
       "qty": 8,
       "invested": 20520,
-      "daysSinceTrigger": 3,
+      "daysSinceTrigger": 4,
       "triggerDate": "30 Jul",
-      "curPnlPct": 0.71
-    },
-    {
-      "picked": "30 Jul",
-      "symbol": "SAILIFE",
-      "sector": "Healthcare",
-      "gear": 2,
-      "sizePct": 14,
-      "pivot": 1321,
-      "sl": 1261,
-      "entryStatus": "pending",
-      "daysWaiting": 3
+      "curPnlPct": 0.55
     },
     {
       "picked": "31 Jul",
@@ -107,7 +96,7 @@
       "pivot": 831,
       "sl": 793.6,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "31 Jul",
@@ -118,7 +107,7 @@
       "pivot": 2223,
       "sl": 2128,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "31 Jul",
@@ -129,7 +118,7 @@
       "pivot": 2143,
       "sl": 2047,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "31 Jul",
@@ -144,7 +133,7 @@
       "entry": 3110,
       "qty": 5,
       "invested": 15550,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "3 Aug",
       "curPnlPct": -0.28
     },
@@ -161,7 +150,7 @@
       "entry": 243.1,
       "qty": 72,
       "invested": 17503.2,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "3 Aug",
       "curPnlPct": -1.14
     },
@@ -174,7 +163,7 @@
       "pivot": 4547,
       "sl": 4342,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "3 Aug",
@@ -185,7 +174,7 @@
       "pivot": 3471,
       "sl": 3315,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "3 Aug",
@@ -195,8 +184,13 @@
       "sizePct": 25,
       "pivot": 438.4,
       "sl": 418.6,
-      "entryStatus": "pending",
-      "daysWaiting": 1
+      "entryStatus": "open",
+      "daysWaiting": 1,
+      "entry": 441.1,
+      "qty": 59,
+      "invested": 26024.9,
+      "daysSinceTrigger": 0,
+      "triggerDate": "3 Aug"
     },
     {
       "picked": "3 Aug",
@@ -211,8 +205,9 @@
       "entry": 142,
       "qty": 184,
       "invested": 26128,
-      "daysSinceTrigger": 0,
-      "triggerDate": "4 Aug"
+      "daysSinceTrigger": 1,
+      "triggerDate": "4 Aug",
+      "curPnlPct": 0.19
     },
     {
       "picked": "3 Aug",
@@ -223,7 +218,7 @@
       "pivot": 135550,
       "sl": 130300,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "3 Aug",
@@ -234,7 +229,7 @@
       "pivot": 1722,
       "sl": 1644,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "4 Aug",
@@ -245,7 +240,7 @@
       "pivot": 140.9,
       "sl": 134.6,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "4 Aug",
@@ -256,7 +251,7 @@
       "pivot": 765.9,
       "sl": 731.4,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "4 Aug",
@@ -267,7 +262,7 @@
       "pivot": 3654,
       "sl": 3490,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "4 Aug",
@@ -277,8 +272,13 @@
       "sizePct": 25,
       "pivot": 735.9,
       "sl": 702.8,
-      "entryStatus": "pending",
-      "daysWaiting": 0
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 735.9,
+      "qty": 35,
+      "invested": 25756.5,
+      "daysSinceTrigger": 0,
+      "triggerDate": "3 Aug"
     },
     {
       "picked": "4 Aug",
@@ -289,7 +289,7 @@
       "pivot": 263.7,
       "sl": 251.8,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "4 Aug",
@@ -299,6 +299,39 @@
       "sizePct": 25,
       "pivot": 15231,
       "sl": 14546,
+      "entryStatus": "pending",
+      "daysWaiting": 1
+    },
+    {
+      "picked": "3 Aug",
+      "symbol": "WEWORK",
+      "sector": "Services",
+      "gear": 5,
+      "sizePct": 25,
+      "pivot": 754,
+      "sl": 720.1,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "3 Aug",
+      "symbol": "GRWRHITECH",
+      "sector": "Capital Goods",
+      "gear": 5,
+      "sizePct": 25,
+      "pivot": 7249,
+      "sl": 6923,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "3 Aug",
+      "symbol": "CASTROLIND",
+      "sector": "Oil Gas & Consumable Fuels",
+      "gear": 5,
+      "sizePct": 25,
+      "pivot": 188.9,
+      "sl": 183.6,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
@@ -2735,6 +2768,16 @@
       "pnlPct": 10.95,
       "exitDate": "4 Aug",
       "reason": "+10.95% — partial book zone, profit liya. Exact top nahi milega, 8-9% realistic hai."
+    },
+    {
+      "picked": "30 Jul",
+      "symbol": "SAILIFE",
+      "sector": "Healthcare",
+      "gear": 2,
+      "entry": 1321,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
     }
   ],
   "backtestedAt": "2026-07-07T16:10:12.258Z"
