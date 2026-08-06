@@ -128,6 +128,7 @@ Dono idempotent — same session dobara process nahi hota. Expectation: **same e
 5. **GitHub OAuth token me `workflow` scope NAHI hai** — scan.yml ko gh/git se push NAHI kar sakte. Edit karna ho to: github.com pe web editor (browser automation se content daal do, COMMIT BUTTON user se dabwana — CDP click us button pe renderer FREEZE karta hai is machine pe; 2-3 attempt me kabhi chal jata hai).
 6. **Git-bash me `TZ=Asia/Kolkata date` UTC dikhata hai is PC pe** — IST chahiye to PowerShell `Get-Date` ya Node Intl use karo.
 7. Journal kabhi corrupt ho jaye → git history me pichhla achha version hota hai (`git log -- journal.json`).
+8. **(6 Aug 2026) "pages build and deployment" deploy job 10-min timeout** ("Timeout reached, aborting!") — GitHub-side degradation thi, repo ki galti nahi. Pehchaan: kal tak deploys <1 min, achanak sab 10-min timeout, PAR live site phir bhi naya data dikha rahi thi (content CDN pahunch jata hai, sirf status-check hang hota hai). FIX: kuch mat chhedo — pehle `curl data.js` se check karo site fresh hai ya nahi; recover hone pe `gh api -X POST repos/GURJOTSINGH10/trading-brain-dashboard/pages/builds` se rebuild trigger karo, green ho jayega. (.nojekyll bhi tab add hua tha — wo cause nahi tha, par rakha hai, Jekyll skip karta hai.)
 
 ## 7. USER KE WORKING RULES (inka paalan karna)
 
