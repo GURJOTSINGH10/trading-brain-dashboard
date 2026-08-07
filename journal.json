@@ -1,6 +1,6 @@
 {
-  "lastSession": "06/08/2026",
-  "equity": 116495.26,
+  "lastSession": "07/08/2026",
+  "equity": 115716.77,
   "positions": [
     {
       "picked": "20 Jul",
@@ -15,9 +15,9 @@
       "entry": 1879,
       "qty": 9,
       "invested": 16911,
-      "daysSinceTrigger": 13,
+      "daysSinceTrigger": 14,
       "triggerDate": "21 Jul",
-      "curPnlPct": 3.07
+      "curPnlPct": 5.29
     },
     {
       "picked": "29 Jul",
@@ -32,26 +32,9 @@
       "entry": 1512,
       "qty": 13,
       "invested": 19656,
-      "daysSinceTrigger": 6,
+      "daysSinceTrigger": 7,
       "triggerDate": "30 Jul",
-      "curPnlPct": 4.05
-    },
-    {
-      "picked": "3 Aug",
-      "symbol": "SANSERA",
-      "sector": "Automobile and Auto Components",
-      "gear": 5,
-      "sizePct": 25,
-      "pivot": 3471,
-      "sl": 3315,
-      "entryStatus": "open",
-      "daysWaiting": 2,
-      "entry": 3545,
-      "qty": 7,
-      "invested": 24815,
-      "daysSinceTrigger": 1,
-      "triggerDate": "5 Aug",
-      "curPnlPct": 6.83
+      "curPnlPct": 2.96
     },
     {
       "picked": "3 Aug",
@@ -66,9 +49,9 @@
       "entry": 441.1,
       "qty": 59,
       "invested": 26024.9,
-      "daysSinceTrigger": 2,
+      "daysSinceTrigger": 3,
       "triggerDate": "3 Aug",
-      "curPnlPct": 1.95
+      "curPnlPct": 0.88
     },
     {
       "picked": "3 Aug",
@@ -83,9 +66,9 @@
       "entry": 142,
       "qty": 184,
       "invested": 26128,
-      "daysSinceTrigger": 3,
+      "daysSinceTrigger": 4,
       "triggerDate": "4 Aug",
-      "curPnlPct": 1.39
+      "curPnlPct": 1.9
     },
     {
       "picked": "3 Aug",
@@ -100,31 +83,9 @@
       "entry": 1739,
       "qty": 15,
       "invested": 26085,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "5 Aug",
-      "curPnlPct": 4.63
-    },
-    {
-      "picked": "4 Aug",
-      "symbol": "TVSSCS",
-      "sector": "Services",
-      "gear": 5,
-      "sizePct": 25,
-      "pivot": 140.9,
-      "sl": 134.6,
-      "entryStatus": "pending",
-      "daysWaiting": 3
-    },
-    {
-      "picked": "4 Aug",
-      "symbol": "JUBLINGREA",
-      "sector": "Chemicals",
-      "gear": 5,
-      "sizePct": 25,
-      "pivot": 765.9,
-      "sl": 731.4,
-      "entryStatus": "pending",
-      "daysWaiting": 3
+      "curPnlPct": 5.8
     },
     {
       "picked": "4 Aug",
@@ -139,48 +100,9 @@
       "entry": 3654,
       "qty": 7,
       "invested": 25578,
-      "daysSinceTrigger": 1,
-      "triggerDate": "5 Aug",
-      "curPnlPct": 2.78
-    },
-    {
-      "picked": "4 Aug",
-      "symbol": "MINDACORP",
-      "sector": "Automobile and Auto Components",
-      "gear": 5,
-      "sizePct": 25,
-      "pivot": 735.9,
-      "sl": 702.8,
-      "entryStatus": "open",
-      "daysWaiting": 0,
-      "entry": 735.9,
-      "qty": 35,
-      "invested": 25756.5,
       "daysSinceTrigger": 2,
-      "triggerDate": "3 Aug",
-      "curPnlPct": -2.58
-    },
-    {
-      "picked": "4 Aug",
-      "symbol": "RELIGARE",
-      "sector": "Financial Services",
-      "gear": 5,
-      "sizePct": 25,
-      "pivot": 263.7,
-      "sl": 251.8,
-      "entryStatus": "pending",
-      "daysWaiting": 3
-    },
-    {
-      "picked": "4 Aug",
-      "symbol": "TVSHLTD",
-      "sector": "Other",
-      "gear": 5,
-      "sizePct": 25,
-      "pivot": 15231,
-      "sl": 14546,
-      "entryStatus": "pending",
-      "daysWaiting": 3
+      "triggerDate": "5 Aug",
+      "curPnlPct": 1.89
     },
     {
       "picked": "3 Aug",
@@ -195,24 +117,9 @@
       "entry": 754,
       "qty": 38,
       "invested": 28652,
-      "daysSinceTrigger": 0,
-      "triggerDate": "6 Aug"
-    },
-    {
-      "picked": "3 Aug",
-      "symbol": "GRWRHITECH",
-      "sector": "Capital Goods",
-      "gear": 5,
-      "sizePct": 25,
-      "pivot": 7249,
-      "sl": 6923,
-      "entryStatus": "open",
-      "daysWaiting": 1,
-      "entry": 7540,
-      "qty": 3,
-      "invested": 22620,
-      "daysSinceTrigger": 0,
-      "triggerDate": "6 Aug"
+      "daysSinceTrigger": 1,
+      "triggerDate": "6 Aug",
+      "curPnlPct": 0.19
     },
     {
       "picked": "3 Aug",
@@ -227,9 +134,9 @@
       "entry": 190.9,
       "qty": 139,
       "invested": 26535.1,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "5 Aug",
-      "curPnlPct": 1.71
+      "curPnlPct": 0.62
     },
     {
       "picked": "5 Aug",
@@ -239,8 +146,13 @@
       "sizePct": 21,
       "pivot": 2238,
       "sl": 2137,
-      "entryStatus": "pending",
-      "daysWaiting": 1
+      "entryStatus": "open",
+      "daysWaiting": 1,
+      "entry": 2238,
+      "qty": 10,
+      "invested": 22380,
+      "daysSinceTrigger": 0,
+      "triggerDate": "7 Aug"
     },
     {
       "picked": "5 Aug",
@@ -255,8 +167,9 @@
       "entry": 1418,
       "qty": 17,
       "invested": 24106,
-      "daysSinceTrigger": 0,
-      "triggerDate": "6 Aug"
+      "daysSinceTrigger": 1,
+      "triggerDate": "6 Aug",
+      "curPnlPct": -2.33
     },
     {
       "picked": "5 Aug",
@@ -267,7 +180,7 @@
       "pivot": 592,
       "sl": 565.4,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "5 Aug",
@@ -277,8 +190,13 @@
       "sizePct": 21,
       "pivot": 246.4,
       "sl": 235.4,
-      "entryStatus": "pending",
-      "daysWaiting": 1
+      "entryStatus": "open",
+      "daysWaiting": 1,
+      "entry": 246.4,
+      "qty": 98,
+      "invested": 24147.2,
+      "daysSinceTrigger": 0,
+      "triggerDate": "7 Aug"
     },
     {
       "picked": "6 Aug",
@@ -289,7 +207,7 @@
       "pivot": 1045,
       "sl": 1009,
       "entryStatus": "pending",
-      "daysWaiting": 0
+      "daysWaiting": 1
     },
     {
       "picked": "6 Aug",
@@ -299,6 +217,50 @@
       "sizePct": 21,
       "pivot": 95.8,
       "sl": 91.4,
+      "entryStatus": "pending",
+      "daysWaiting": 1
+    },
+    {
+      "picked": "7 Aug",
+      "symbol": "LENSKART",
+      "sector": "Consumer Services",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 575.7,
+      "sl": 549.8,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "7 Aug",
+      "symbol": "POLYPLEX",
+      "sector": "Other",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 1142,
+      "sl": 1091,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "7 Aug",
+      "symbol": "MINDACORP",
+      "sector": "Automobile and Auto Components",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 735.9,
+      "sl": 702.8,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "7 Aug",
+      "symbol": "PRIVISCL",
+      "sector": "Chemicals",
+      "gear": 4,
+      "sizePct": 21,
+      "pivot": 3785,
+      "sl": 3615,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
@@ -2497,8 +2459,81 @@
       "status": "no-trigger",
       "pnlPct": 0,
       "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "3 Aug",
+      "symbol": "SANSERA",
+      "sector": "Automobile and Auto Components",
+      "gear": 5,
+      "entry": 3545,
+      "status": "win",
+      "pnlPct": 8.99,
+      "exitDate": "7 Aug",
+      "reason": "+8.99% — partial book zone, profit liya. Exact top nahi milega, 8-9% realistic hai."
+    },
+    {
+      "picked": "4 Aug",
+      "symbol": "TVSSCS",
+      "sector": "Services",
+      "gear": 5,
+      "entry": 140.9,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "4 Aug",
+      "symbol": "JUBLINGREA",
+      "sector": "Chemicals",
+      "gear": 5,
+      "entry": 765.9,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "4 Aug",
+      "symbol": "MINDACORP",
+      "sector": "Automobile and Auto Components",
+      "gear": 5,
+      "entry": 735.9,
+      "status": "sl",
+      "pnlPct": -4.5,
+      "exitDate": "7 Aug",
+      "reason": "SL hit 702.8 pe — out, end of story. Sell is a sell."
+    },
+    {
+      "picked": "4 Aug",
+      "symbol": "RELIGARE",
+      "sector": "Financial Services",
+      "gear": 5,
+      "entry": 263.7,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "4 Aug",
+      "symbol": "TVSHLTD",
+      "sector": "Other",
+      "gear": 5,
+      "entry": 15231,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi"
+    },
+    {
+      "picked": "3 Aug",
+      "symbol": "GRWRHITECH",
+      "sector": "Capital Goods",
+      "gear": 5,
+      "entry": 7540,
+      "status": "sl",
+      "pnlPct": -8.18,
+      "exitDate": "7 Aug",
+      "reason": "SL hit 6923 pe — out, end of story. Sell is a sell."
     }
   ],
   "backtestedAt": "2026-08-05T15:14:46.000Z",
-  "lastBhav": "06/08/2026"
+  "lastBhav": "07/08/2026"
 }
