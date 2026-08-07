@@ -1,0 +1,2 @@
+# backtest ka chart cache (2 saal ki history, ~20 MB) — regenerate ho jaata hai
+.cache/

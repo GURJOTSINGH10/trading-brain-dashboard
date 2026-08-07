@@ -4,15 +4,20 @@
 // se BAHAR hote hain (Marine Electricals, Nelco, Laser Power type). Sirf index lists
 // se scan karne se wo saare miss ho rahe the.
 // Cap tags NSE ki 4 official lists se; jo kisi me nahi = 'Micro'.
-// Sector Nifty500 list se; unknown = 'Other' (hot-sector calc me skip hota hai).
+// Sector: pehle NSE index lists (~750), phir Yahoo industry cache (baaki ~1330).
+// Sab naam ek hi canonical vocabulary me aate hain (scripts/sector-map.mjs) —
+// warna 'Auto' aur 'Automobile and Auto Components' alag buckets ban jaate the.
 // Scan me bhavcopy turnover se prefilter hota hai, isliye badi list se dikkat nahi.
-// Rebuild: node scripts/build-universe.mjs
+// Rebuild: node scripts/build-universe.mjs   (--no-fetch = Yahoo call skip)
 
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { execFileSync } from 'child_process';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
+import { INDUSTRY_MAP, canon } from './sector-map.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+const HERE = dirname(fileURLToPath(import.meta.url));
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36';
 
 const EQUITY_LIST = 'https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv';
@@ -90,24 +95,67 @@ async function main() {
     const [symbol, name, series] = f;
     if (series !== 'EQ') continue;             // sirf normal equity (T2T/BE nahi)
     if (!symbol || NOT_A_STOCK.test(name)) continue;
+    const nseSec = curated.get(symbol) || secMap.get(symbol);
     stocks.push({
       s: symbol,
       n: name.replace(/\s+(Limited|Ltd\.?)$/i, ''),
-      sec: curated.get(symbol) || secMap.get(symbol) || 'Other',
+      sec: nseSec ? canon(nseSec) : 'Other',
       cap: capMap.get(symbol) || 'Micro',
       ...(curated.has(symbol) ? { curated: true } : {})
     });
   }
   stocks.sort((a, b) => a.s.localeCompare(b.s));
-
-  const capCounts = stocks.reduce((m, s) => (m[s.cap] = (m[s.cap] || 0) + 1, m), {});
-  const withSector = stocks.filter(s => s.sec !== 'Other').length;
-  writeFileSync(join(ROOT, 'universe.json'), JSON.stringify({
+  const write = () => writeFileSync(join(ROOT, 'universe.json'), JSON.stringify({
     note: `POORI NSE EQ list (${stocks.length} stocks) — cap tags + sector jahan mile. Scan me bhavcopy turnover se prefilter hota hai. Rebuild: node scripts/build-universe.mjs`,
     builtAt: new Date().toISOString(),
     stocks
   }, null, 1));
-  console.log(`universe.json: ${stocks.length} stocks | caps:`, capCounts, `| sector tagged: ${withSector}`);
+  write();   // pass 1: NSE tags — fetch-industries.mjs ko is file ki zarurat hai
+
+  // 5) 'Other' bacho ka sector Yahoo industry cache se bharo.
+  // Cache me jo symbols nahi hain unhe fetch kar lo (best-effort — Yahoo block
+  // ho jaye ya crumb na mile to chup-chaap aage badho, purana behaviour safe hai).
+  const CACHE = join(ROOT, 'industry-cache.json');
+  let cachedMap = {};
+  try { if (existsSync(CACHE)) cachedMap = JSON.parse(readFileSync(CACHE, 'utf8')).map || {}; } catch { }
+  // sirf wo 'Other' jo cache me hai hi nahi (naye listings) — count precise rakho,
+  // warna delisting/listing ka hisaab galat ho ke naye stocks bina sector reh jaate hain
+  const uncached = stocks.filter(s => s.sec === 'Other' && !(s.s in cachedMap)).length;
+  if (uncached && !process.argv.includes('--no-fetch')) {
+    // Roz ka scan build-universe ko auto-call karta hai (10 din purana hone pe).
+    // Us raste pe 1300-request Yahoo crawl kabhi nahi chalna chahiye — job timeout
+    // ho jayega. Chhota gap (naye listings) hi apne aap bharo; bada gap = manual.
+    if (uncached > 150) {
+      console.log(`\n⚠ ${uncached} stocks cache me nahi — bada gap hai, auto-fetch skip.`);
+      console.log('  Manually chalao: node scripts/fetch-industries.mjs');
+    } else {
+      try {
+        console.log(`${uncached} naye stocks ka industry chahiye — Yahoo se laa rahe...`);
+        execFileSync(process.execPath, [join(HERE, 'fetch-industries.mjs')], { stdio: 'inherit', timeout: 240000 });
+      } catch (e) { console.error('Industry fetch skip (purane cache se chal rahe):', e.message); }
+    }
+  }
+  let filled = 0, unmapped = new Map();
+  try {
+    const map = JSON.parse(readFileSync(CACHE, 'utf8')).map || {};
+    for (const s of stocks) {
+      if (s.sec !== 'Other') continue;
+      const ind = map[s.s]?.industry;
+      if (!ind) continue;
+      const sec = INDUSTRY_MAP[ind];
+      if (sec) { s.sec = sec; filled++; }
+      else unmapped.set(ind, (unmapped.get(ind) || 0) + 1);
+    }
+  } catch { console.log('industry-cache.json nahi mila — sirf NSE tags se chal rahe.'); }
+  write();   // pass 2: Yahoo se bhare hue sectors
+
+  const capCounts = stocks.reduce((m, s) => (m[s.cap] = (m[s.cap] || 0) + 1, m), {});
+  const secCounts = stocks.reduce((m, s) => (m[s.sec] = (m[s.sec] || 0) + 1, m), {});
+  const withSector = stocks.length - (secCounts['Other'] || 0);
+  console.log(`\nuniverse.json: ${stocks.length} stocks | caps:`, capCounts);
+  console.log(`Sector tagged: ${withSector}/${stocks.length} (${Math.round(withSector / stocks.length * 100)}%) — Yahoo se ${filled} bhare, ab bhi Other: ${secCounts['Other'] || 0}`);
+  console.log(`Sectors (${Object.keys(secCounts).length}):`, Object.entries(secCounts).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k}=${v}`).join(' | '));
+  if (unmapped.size) console.log(`\nINDUSTRY_MAP me nahi (sector-map.mjs me jodo):`, [...unmapped.entries()].sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k}=${v}`).join(' | '));
 }
 
 main().catch(e => { console.error(e); process.exit(1); });

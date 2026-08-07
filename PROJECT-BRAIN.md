@@ -55,14 +55,18 @@ C:\Users\gk379\Projects\trading-brain\
 └── dashboard\                ← GIT REPO (GitHub se synced) — asli engine yahan hai
     ├── index.html            ← dashboard UI (liquid glass + market mood)
     ├── data.js               ← AUTO-GENERATED har scan pe (haath mat lagana)
-    ├── journal.json          ← paper portfolio ka state (positions + 186 backtest trades)
-    ├── universe.json         ← POORI NSE EQ list ~2080 + cap tags (AUTO-refresh har 10 din)
+    ├── journal.json          ← paper portfolio ka state (positions + ~370 backtest + live trades)
+    ├── universe.json         ← POORI NSE EQ list ~2075 + cap + sector tags (AUTO-refresh har 10 din)
+    ├── industry-cache.json   ← Yahoo se laaya har stock ka industry (sector fill ke liye) — commit hota hai
     ├── index-flat-backup.html, index-old-backup.html ← purane UI designs
+    ├── .cache\               ← gitignored: backtest ka 2-saal chart cache + report
     ├── .github\workflows\scan.yml ← CLOUD automation (4 crons)
     └── scripts\
         ├── scan.mjs          ← MAIN ENGINE (data fetch → gear → picks → journal → data.js)
-        ├── build-universe.mjs← NSE lists se universe banata hai (cap tags ke saath)
-        └── backtest.mjs      ← historical replay (journal.closed bharta hai)
+        ├── build-universe.mjs← NSE lists + industry cache se universe banata hai
+        ├── sector-map.mjs    ← sector vocabulary (alias + Yahoo industry → sector)
+        ├── fetch-industries.mjs ← Yahoo assetProfile se industry cache bharta hai
+        └── backtest.mjs      ← 12-mahine ka historical replay (live rules ke barabar)
 ```
 
 **Is folder ke BAHAR wali cheezein:**
@@ -88,7 +92,10 @@ C:\Users\gk379\Projects\trading-brain\
 3. NSE **bhavcopy** (sec_bhavdata_full_DDMMYYYY.csv, ~4:30 PM publish) + indices (ind_close_all) → aaj ka OFFICIAL bar merge (delivery % bhi)
 4. Session naya hai? Nahi → skip (idempotent). Haan →
 5. **Market health → GEAR (1-5)**: smallcap 10/50 DMA, breadth, adv/dec, 52W highs, USDINR, aur **"Breakouts Working?"** (creator ka #1 signal — recent breakouts me traction% ; kam ho to gear hard-cap)
-6. Hot sectors (5-din return + participation + volume)
+6. Hot sectors (5-din return + participation + volume). Sector tags universe.json me hain —
+   **96% stocks tagged** (NSE index lists se ~750, baaki Yahoo industry cache se; 33 canonical
+   sectors, `scripts/sector-map.mjs`). `Other` aur `Diversified` heat calc me SKIP hote hain —
+   pehla matlab "pata nahi", doosra conglomerates ka jhola jisme koi common driver hota hi nahi.
 6b. **Earnings guard**: NSE board-meetings API se agle 12 din ke result dates. Jis pick ka result 3 din me hai — score -8, flag, aur card pe warning (creator: "numbers pe leke chale gaye, loss ho gaya"). API cookie-gated hai — fail ho to chup-chaap skip.
 7. Stock scan: liquid (₹5Cr+), rising 50 DMA ke upar, tight base (≤13%), pivot ke paas (≤4.5%), shaant (ATR check) = **READY** → picks gear se scale: gear2=3, gear3=5, gear4=6, gear5=8 (gear 1 = 0 picks). 0 picks ho to relaxed "watchlist" (nazar-me-rakho) deta hai
 8. **Journal**: pending pick → pivot cross + 1.2x volume = trigger (entry) → phir SL hit / +8% book / 10DMA trail / 3-din squat fail — sab automatic. Gear-based sizing: gear1=10% ... gear5=25% of capital
@@ -128,6 +135,12 @@ Dono idempotent — same session dobara process nahi hota. Expectation: **same e
 5. **GitHub OAuth token me `workflow` scope NAHI hai** — scan.yml ko gh/git se push NAHI kar sakte. Edit karna ho to: github.com pe web editor (browser automation se content daal do, COMMIT BUTTON user se dabwana — CDP click us button pe renderer FREEZE karta hai is machine pe; 2-3 attempt me kabhi chal jata hai).
 6. **Git-bash me `TZ=Asia/Kolkata date` UTC dikhata hai is PC pe** — IST chahiye to PowerShell `Get-Date` ya Node Intl use karo.
 7. Journal kabhi corrupt ho jaye → git history me pichhla achha version hota hai (`git log -- journal.json`).
+7b. **(7 Aug 2026) Backtest ke 4 bugs, ek saath mile** — sab tab dikhe jab window 45 din se 250 din ki ki:
+   (a) **Timeline misalignment** — purana code stock ka array-index Nifty ke index se seedha match kar deta tha ("same calendar maan lo"). Jo stock baad me list hua ya jiske beech din missing the, uska poora data date-shift ho jaata tha = jhoothi trades. FIX: `alignTo()` har stock ki timeline ko reference pe map karti hai.
+   (b) **Alag rules** — backtest fixed 15-din base + purani scoring pe chal raha tha, jabki live adaptive base + capPref + hot-sector pe. Matlab jo system chal raha tha uska test hi nahi ho raha tha. FIX: `setupAt()` ab scan.mjs ka hubahu port hai.
+   (c) **Infinite capital** — 29 positions ek saath khul jaati thi (₹1 lakh me ~490% deployment). Returns 5x leverage maan ke aa rahe the. FIX: cash constraint, ab peak 99%.
+   (d) **Journal overwrite** — `--write` poora `closed[]` replace kar deta tha, user ki asli live trades mit jaati thi; upar se backtest window live period pe chadh ke wahi din do baar count karti thi. FIX: `live: true` tag + live ki pehli pick pe backtest kaat dena.
+7c. **(7 Aug 2026) Journal ka date sort tut gaya** jab window 12 mahine ki hui — closed entries me sirf "20 Aug" tha, saal nahi. Client saal guess karta tha (`MON[mon] > nowM+1`), to Aug 2025 ki trades Aug 2026 ki ban ke sabse upar aa gayi. Doosra: en-IN locale **"Sept"** likhta hai par client ke map me sirf `Sep` tha → un saari rows ka time 0 ho ke wo sabse neeche chali jaati thi. FIX: har trade me `ts` (asli epoch) jaata hai, client wahi use karta hai; pichhle saal ki rows pe `'25` suffix bhi dikhta hai.
 8. **(6 Aug 2026) "pages build and deployment" deploy job 10-min timeout** ("Timeout reached, aborting!") — GitHub-side degradation thi, repo ki galti nahi. Pehchaan: kal tak deploys <1 min, achanak sab 10-min timeout, PAR live site phir bhi naya data dikha rahi thi (content CDN pahunch jata hai, sirf status-check hang hota hai). FIX: kuch mat chhedo — pehle `curl data.js` se check karo site fresh hai ya nahi; recover hone pe `gh api -X POST repos/GURJOTSINGH10/trading-brain-dashboard/pages/builds` se rebuild trigger karo, green ho jayega. (.nojekyll bhi tab add hua tha — wo cause nahi tha, par rakha hai, Jekyll skip karta hai.)
 
 ## 7. USER KE WORKING RULES (inka paalan karna)
@@ -157,9 +170,23 @@ cd C:/Users/gk379/Projects/trading-brain/dashboard
 node scripts/scan.mjs           # normal scan (naya session ho to process)
 node scripts/scan.mjs --force   # display regenerate (journal untouched)
 node scripts/build-universe.mjs # universe rebuild (waise auto hai har 10 din)
-node scripts/backtest.mjs 45    # 45-din ka backtest (journal.closed bhar deta hai)
+node scripts/fetch-industries.mjs        # naye stocks ka sector laao (build-universe khud bhi bulata hai)
+node scripts/backtest.mjs 250            # 12-mahine ka backtest — sirf report chhapta hai
+node scripts/backtest.mjs 250 --write    # ...aur journal.closed bhi update karta hai
+node scripts/backtest.mjs 250 --refresh  # chart cache phenk ke Yahoo se naya (~10 min)
 # Push hamesha: git add <files> && git commit && git push  (PULL/REBASE NAHI)
 ```
+
+**Backtest ke baare me zaroori baatein:**
+- Rules **live scan.mjs ke barabar** hain (adaptive base, capPref scoring, hot-sector bonus,
+  gear-wise pick count). Pehle backtest purane rules pe chalta tha — matlab jo system chal
+  raha tha uska test hi nahi ho raha tha.
+- **Cash constraint** lagta hai: ₹1 lakh me 29 positions ek saath nahi khul sakti. Bina iske
+  backtest chupke se 5x leverage maan leta tha aur returns jhoothe achhe dikhte the.
+- `--write` **live trades (`live: true`) ko kabhi nahi mitata**, aur apni window ko live
+  period se pehle kaat deta hai — warna wahi din do baar count hote the.
+- Jaan-bujh ke alag: earnings guard nahi hai (historical result calendar milta hi nahi),
+  aur universe aaj ki NSE list hai (delisted stocks nahi = thodi survivorship bias).
 
 ## 10. PENDING IDEAS (user ne abhi mana kiya, baad me maange to)
 
@@ -167,9 +194,29 @@ node scripts/backtest.mjs 45    # 45-din ka backtest (journal.closed bhar deta h
   delivery% flag card pe, PWA manifest (Add to Home Screen app feel)
 - Kal-ke-picks ka result strip scan tab pe
 
-## 11. TRACK RECORD SNAPSHOT (10 Jul 2026 tak)
+## 11. TRACK RECORD SNAPSHOT (7 Aug 2026 tak)
 
-- Backtest (45 din, May-Jun 2026): 186 picks → 62 trades, 32% win rate, avg win +5.2% vs loss −2.0%, ₹1,00,000 → ₹1,01,174 (+1.2%), 124 no-trigger (breakout hi nahi aaya — paisa nahi laga)
+**Backtest — 250 sessions (1 Aug 2025 → 7 Aug 2026), live rules, cash-constrained:**
+
+| | |
+|---|---|
+| Picks diye | 429 |
+| Trade lagi | 127 (29.6%) — baaki 258 no-trigger, 44 cash khatam |
+| Win rate | **38.6%** (49W / 78L) |
+| Avg win / loss | +7.8% / −2.7% |
+| Expectancy per trade | **+1.34%** ← asli baat yahi hai |
+| Profit factor | 1.70 |
+| Equity (gross) | ₹1,00,000 → ₹1,28,377 (+28.4%) |
+| Charges (STT/DP/GST) | ₹7,251 — gross profit ka 25% |
+| **Equity (net)** | **₹1,21,126 (+21.1%)** |
+| Max drawdown | −6.3% |
+| Max concurrent positions | 7 (peak deployment 99% of capital) |
+| Gear 1 (cash) days | 152 / 245 — 62% din market se bahar |
+
+Cap-wise: Mid 56% win / +2.97% exp · Small 40% / +1.29% · Micro 33% / +0.99%.
+Purana 45-din wala backtest (+1.2%) ab valid nahi — wo alag rules pe tha aur cash constraint
+bhi nahi lagta tha.
+
 - 9 Jul: automation ka pehla solo pass (cloud ne 18:45 IST khud update kiya)
 - Ye PAPER trading hai. User se wada: 2-3 mahine paper track record dekh ke hi real paise ki baat.
 

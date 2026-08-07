@@ -776,18 +776,31 @@
     `<div class="bd-chip ${c.cls}" data-status="${c.s}" title="Sirf ye category dekhne ke liye tap karo"><b>${c.n}</b> ${c.label}</div>`
   ).join('');
 
-  // "4 May" jaisi date ko sortable banao (Dec→Jan wrap handle)
-  const MON = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+  /* Sorting: ab har trade me `ts` (asli pick timestamp) aata hai.
+     Pehle sirf "4 May" jaisi string thi aur saal guess hota tha — journal 45 din ka
+     tha to chalta tha. Ab 12 mahine ka backtest hai, to "20 Aug" 2025 ka bhi ho sakta
+     hai aur 2026 ka bhi; guess galat ho ke purani trades sabse upar aa rahi thi.
+     Aur en-IN "Sept" likhta hai jabki purane map me sirf "Sep" tha — wo saari rows
+     ka time 0 ho jaata tha aur wo sabse neeche chali jaati thi. Dono theek. */
+  const MON = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Sept: 8, Oct: 9, Nov: 10, Dec: 11 };
   const nowM = new Date().getMonth(), nowY = new Date().getFullYear();
-  function pickedTime(str) {
-    const [dd, mon] = String(str || '').split(' ');
+  function pickedTime(t) {
+    if (t && t.ts) return t.ts * 1000;                 // asli timestamp — yahi sahi hai
+    const [dd, mon] = String(t && t.picked || '').split(' ');   // legacy rows ka fallback
     if (!(mon in MON)) return 0;
     let y = nowY;
-    if (MON[mon] > nowM + 1) y--; // e.g. abhi Jan hai aur entry "28 Dec" ki — pichhla saal
+    if (MON[mon] > nowM + 1) y--;
     return new Date(y, MON[mon], +dd).getTime();
   }
+  // 12 mahine ke journal me "20 Aug" ambiguous hai — is saal ka na ho to saal dikhao
+  function pickedLabel(t) {
+    const ms = pickedTime(t);
+    if (!ms) return t.picked || '—';
+    const y = new Date(ms).getFullYear();
+    return y === nowY ? t.picked : `${t.picked} '${String(y).slice(-2)}`;
+  }
   const displayRows = rows.map((r, i) => ({ ...r, _i: i }))
-    .sort((a, b) => (pickedTime(b.t.picked) - pickedTime(a.t.picked)) || (b._i - a._i)); // latest sabse upar
+    .sort((a, b) => (pickedTime(b.t) - pickedTime(a.t)) || (b._i - a._i)); // latest sabse upar
 
   function rowHtml(r) {
     const t = r.t;
@@ -795,7 +808,7 @@
     const pnlCell = t.status === 'no-trigger' ? '<span class="note">—</span>'
       : `<span class="${r.pnlAmt >= 0 ? 'pos' : 'neg'}">${r.pnlAmt >= 0 ? '+' : '-'}${inr(Math.abs(r.pnlAmt))} (${t.pnlPct >= 0 ? '+' : ''}${t.pnlPct}%)</span>`;
     return `<tr>
-      <td>${t.picked}</td>
+      <td>${pickedLabel(t)}</td>
       <td><b>${t.symbol}</b><br><span class="note">${t.sector}</span></td>
       <td>${r.sizePct}%<br><span class="note">gear ${t.gear}</span></td>
       <td>${t.status === 'no-trigger' ? '<span class="note">—</span>' : inr(r.invested) + '<br><span class="note">' + r.qty + ' × ₹' + t.entry.toLocaleString('en-IN') + '</span>'}</td>

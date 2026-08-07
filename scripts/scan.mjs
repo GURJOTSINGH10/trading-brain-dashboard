@@ -425,7 +425,10 @@ async function main() {
   }
   const hotSectors = [];
   for (const [name, list] of Object.entries(sectors)) {
-    if (name === 'Other' || list.length < 3) continue; // 'Other' = sector pata nahi, heat ka matlab nahi
+    // 'Other' = sector pata nahi. 'Diversified' = conglomerates ka jhola — un stocks
+    // me koi common driver hota hi nahi, to unka "sector hot hai" jhootha signal hai.
+    // Dono skip; warna +4 hot-sector bonus bekaar picks ko upar utha deta hai.
+    if (name === 'Other' || name === 'Diversified' || list.length < 3) continue;
     let ret5 = 0, up = 0, volR = 0, vn = 0;
     for (const ch of list) {
       const c = ch.c, n = c.length;
@@ -623,7 +626,9 @@ async function main() {
       const pnlPct = round2((exitPrice - pos.entry) / pos.entry * 100);
       const pnlAmt = pos.invested * pnlPct / 100;
       state.equity = round2(state.equity + pnlAmt);
-      state.closed.push({ picked: pos.picked, symbol: pos.symbol, sector: pos.sector, gear: pos.gear, entry: pos.entry, status, pnlPct, exitDate: fmtShort(sessionTs), reason });
+      // live: true — ye ASLI trade hai, backtest ki simulated nahi. backtest.mjs
+      // --write in par kabhi haath nahi lagata (warna user ki asli history mit jaati).
+      state.closed.push({ picked: pos.picked, ts: pos.pickedTs || null, symbol: pos.symbol, sector: pos.sector, gear: pos.gear, entry: pos.entry, status, pnlPct, exitDate: fmtShort(sessionTs), reason, live: true });
     };
 
     if (pos.entryStatus === 'pending') {
@@ -645,7 +650,7 @@ async function main() {
       } else {
         pos.daysWaiting = (pos.daysWaiting || 0) + 1;
         if (pos.daysWaiting >= 4) {
-          state.closed.push({ picked: pos.picked, symbol: pos.symbol, sector: pos.sector, gear: pos.gear, entry: pos.pivot, status: 'no-trigger', pnlPct: 0, reason: 'Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi' });
+          state.closed.push({ picked: pos.picked, ts: pos.pickedTs || null, symbol: pos.symbol, sector: pos.sector, gear: pos.gear, entry: pos.pivot, status: 'no-trigger', pnlPct: 0, reason: 'Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi', live: true });
         } else stillOpen.push(pos);
       }
       continue;
@@ -675,7 +680,9 @@ async function main() {
   for (const p of picks) {
     if (tracked.has(p.symbol)) continue;
     state.positions.push({
-      picked: fmtShort(sessionTs), symbol: p.symbol, sector: p.sector,
+      // pickedTs: "7 Aug" string se saal pata nahi chalta. Journal ab 12 mahine ka
+      // hai, to client ko sort karne ke liye asli timestamp chahiye.
+      picked: fmtShort(sessionTs), pickedTs: sessionTs, symbol: p.symbol, sector: p.sector,
       gear, sizePct: sizePctFor(gear), pivot: p.pivot, sl: p.sl,
       entryStatus: 'pending', daysWaiting: 0
     });
@@ -686,9 +693,11 @@ async function main() {
 
   // --- display journal (closed + open/pending) ---
   const journalOut = [
-    ...state.closed.slice(-200),
+    // Backtest ab 12 mahine ka hai (~370 trades). 200 pe kaatne se track record ka
+    // aadha hissa gayab ho jaata tha aur equity curve beech se shuru hoti thi.
+    ...state.closed.slice(-500),
     ...state.positions.filter(p => p.entryStatus === 'open').map(p => ({
-      picked: p.picked, symbol: p.symbol, sector: p.sector, gear: p.gear, entry: p.entry,
+      picked: p.picked, ts: p.pickedTs || null, symbol: p.symbol, sector: p.sector, gear: p.gear, entry: p.entry,
       status: 'open', pnlPct: p.curPnlPct ?? 0,
       reason: `Open — entry ${p.entry}, SL ${p.sl}${(p.curPnlPct ?? 0) >= 8 ? ', partial book zone me hai' : ''}`
     }))
