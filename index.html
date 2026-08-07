@@ -332,6 +332,18 @@
   .equity-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
   .equity-head b { font-size: 15.5px; }
   .equity-head span { color: var(--muted); font-size: 12px; }
+  /* Time-range tabs (1D / 1W / 1M / 1Y / 5Y / All) — broker app jaisa */
+  .range-tabs { display: flex; gap: 5px; margin: 0 0 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .range-tabs::-webkit-scrollbar { display: none; }
+  .range-tabs button {
+    flex: 0 0 auto; background: var(--surface); border: 1px solid var(--border-soft); color: var(--muted);
+    border-radius: 20px; padding: 5px 14px; font: inherit; font-size: 12px; font-weight: 700;
+    cursor: pointer; transition: all 0.15s ease; letter-spacing: 0.3px;
+  }
+  .range-tabs button:hover { color: var(--text); border-color: var(--border); }
+  .range-tabs button.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .range-stats { margin-top: 11px; font-size: 12.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 16px; }
+  .range-stats b { color: var(--text); font-weight: 700; }
   .breakdown { display: flex; gap: 10px; flex-wrap: wrap; }
   .bd-chip {
     display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border-soft);
@@ -462,9 +474,11 @@
     <div class="card equity-card">
       <div class="equity-head">
         <b id="equityTitle"></b>
-        <span>Sirf closed trades — open positions alag</span>
+        <span id="equitySub">Sirf closed trades — open positions alag</span>
       </div>
+      <div class="range-tabs" id="rangeTabs"></div>
       <div id="equityChart"></div>
+      <div class="range-stats" id="rangeStats"></div>
     </div>
 
     <h2>Kya Hua Kahan — Breakdown</h2>
@@ -472,6 +486,7 @@
 
     <h2>Trade Journal — Har Pick ka Hisaab</h2>
     <input class="jsearch" id="journalSearch" type="text" placeholder="🔍 Stock dhundo — jaise DMART, TITAN..." autocomplete="off">
+    <div class="note" id="journalRangeNote" style="margin:-4px 0 10px;"></div>
     <div class="table-scroll">
       <table>
         <thead><tr>
@@ -505,9 +520,35 @@
     window.scrollTo(0, 0);
   }));
 
+  /* ---- Date helpers ----
+     Har trade me ab `ts` (pick ka waqt) aur `exitTs` (exit ka waqt) aate hain.
+     Pehle sirf "4 May" jaisi string thi aur saal guess hota tha — journal 45 din ka
+     tha to chal jaata tha. 12 mahine+ pe wo guess galat ho ke purani trades sabse
+     upar aa rahi thi. Aur en-IN "Sept" likhta hai jabki purane map me sirf "Sep"
+     tha — wo saari rows ka time 0 ho ke sabse neeche chali jaati thi. */
+  const MON = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Sept: 8, Oct: 9, Nov: 10, Dec: 11 };
+  const nowM = new Date().getMonth(), nowY = new Date().getFullYear();
+  function pickedTime(t) {
+    if (t && t.ts) return t.ts * 1000;                          // asli timestamp — yahi sahi hai
+    const [dd, mon] = String(t && t.picked || '').split(' ');   // legacy rows ka fallback
+    if (!(mon in MON)) return 0;
+    let y = nowY;
+    if (MON[mon] > nowM + 1) y--;
+    return new Date(y, MON[mon], +dd).getTime();
+  }
+  // Trade "kab hui" — closed ke liye exit ka waqt, open/legacy ke liye pick ka
+  const rowTime = t => (t && t.exitTs ? t.exitTs * 1000 : pickedTime(t));
+  // Lambe journal me "20 Aug" ambiguous hai — is saal ka na ho to saal dikhao
+  function pickedLabel(t) {
+    const ms = pickedTime(t);
+    if (!ms) return t.picked || '—';
+    const y = new Date(ms).getFullYear();
+    return y === nowY ? t.picked : `${t.picked} '${String(y).slice(-2)}`;
+  }
+
   /* ---- Portfolio simulation ---- */
   let equity = d.portfolio.startCapital;
-  const curve = [{ label: 'Start', v: equity }];
+  const curve = [{ label: 'Start', v: equity, ts: 0 }];
   const rows = [];
   let wins = 0, losses = 0, slHits = 0, boFails = 0, noTrigs = 0, opens = 0;
   let winSum = 0, lossSum = 0, best = null, worst = null;
@@ -516,14 +557,16 @@
     const sizePct = sizeByGear[(t.gear || 1) - 1];
     let invested = 0, pnlAmt = 0, qty = 0;
     if (t.status !== 'no-trigger') {
-      const alloc = equity * sizePct / 100;
-      qty = Math.max(1, Math.floor(alloc / t.entry));
-      invested = qty * t.entry;
+      // qty/invested ab journal me hi aate hain — engine ne cash constraint ke
+      // saath jo ASLI size li thi wahi. Pehle yahan dobara hisaab hota tha bina
+      // cash limit ke, isliye dashboard ka equity backtest se ~4% upar dikhta tha.
+      if (t.qty && t.invested) { qty = t.qty; invested = t.invested; }
+      else { qty = Math.max(1, Math.floor(equity * sizePct / 100 / t.entry)); invested = qty * t.entry; }
       pnlAmt = invested * t.pnlPct / 100;
     }
     if (t.status === 'win' || t.status === 'sl' || t.status === 'fail') {
       equity += pnlAmt;
-      curve.push({ label: t.symbol, v: equity });
+      curve.push({ label: t.symbol, v: equity, ts: rowTime(t) });
       if (t.pnlPct > 0) { wins++; winSum += t.pnlPct; } else { losses++; lossSum += t.pnlPct; }
       if (t.status === 'sl') slHits++;
       if (t.status === 'fail') boFails++;
@@ -737,68 +780,97 @@
     })()}
     <div class="card stat"><small>Open positions</small><b>${opens}</b><span class="sub">no-trigger: ${noTrigs} picks</span></div>`;
 
-  document.getElementById('equityTitle').textContent = inr(d.portfolio.startCapital) + ' → ' + inr(equity);
-  (function drawEquity() {
-    const w = 640, h = 180, padL = 10, padR = 52, padY = 18;
-    const vs = curve.map(c => c.v);
+  /* ---- Equity curve + time-range selector (1D / 1W / 1M / 1Y / 5Y / All) ----
+     Backtest ab 5 saal ka hai, to poori curve ek saath dekhna bekaar hai — 2000+
+     trades ek line me daboch jaati hain. Broker app jaisa range selector: chart,
+     period ka return, aur neeche ka journal — teeno chune hue period pe chalte hain.
+     Upar ke stat cards jaan-bujh ke LIFETIME rehte hain (shuru se ab tak). */
+  const DAY = 86400000;
+  const RANGES = [
+    { k: '1D', label: '1D', ms: DAY, name: 'aaj' },
+    { k: '1W', label: '1W', ms: 7 * DAY, name: 'pichhle hafte' },
+    { k: '1M', label: '1M', ms: 30 * DAY, name: 'pichhle mahine' },
+    { k: '1Y', label: '1Y', ms: 365 * DAY, name: 'pichhle saal' },
+    { k: '5Y', label: '5Y', ms: 5 * 365 * DAY, name: 'pichhle 5 saal' },
+    { k: 'ALL', label: 'All', ms: Infinity, name: 'shuru se ab tak' }
+  ];
+  // Data ka aakhri din — "aaj" nahi. Weekend/holiday pe browser ka aaj lene se
+  // 1D/1W khali dikhte, jabki asli me pichhle session ka data maujood hai.
+  const lastTs = Math.max(...curve.map(c => c.ts), 0) || Date.now();
+  // Jitna data hai usi ke hisaab se tabs — 5 saal ka data nahi to 5Y tab kyun
+  const span = lastTs - (curve.find(c => c.ts)?.ts || lastTs);
+  const activeRanges = RANGES.filter((r, i) => r.ms === Infinity || r.ms <= span * 1.25 || i < 2);
+  let curRange = activeRanges.find(r => r.k === '1Y') || activeRanges[activeRanges.length - 1];
+
+  document.getElementById('rangeTabs').innerHTML =
+    activeRanges.map(r => `<button data-r="${r.k}">${r.label}</button>`).join('');
+
+  function drawEquity() {
+    const from = curRange.ms === Infinity ? -Infinity : lastTs - curRange.ms;
+    // Period ki shuruaat ka balance = us se pehle wala aakhri point (baseline)
+    let baseIdx = 0;
+    for (let i = 0; i < curve.length; i++) if (curve[i].ts <= from) baseIdx = i;
+    const slice = curve.slice(baseIdx);
+    const startV = slice[0].v, endV = equity;
+    const chg = (endV - startV) / startV * 100;
+
+    document.getElementById('equityTitle').textContent = inr(startV) + ' → ' + inr(endV);
+    document.getElementById('equitySub').textContent =
+      curRange.k === 'ALL' ? 'Shuru se ab tak — sirf closed trades' : curRange.name + ' — sirf closed trades';
+
+    // period ke closed trades ka hisaab
+    const inRange = rows.filter(r => ['win', 'sl', 'fail'].includes(r.t.status) && rowTime(r.t) > from);
+    const w = inRange.filter(r => r.t.pnlPct > 0).length;
+    document.getElementById('rangeStats').innerHTML = inRange.length
+      ? `<span>Is period me <b>${inRange.length}</b> trades</span>
+         <span>Win rate <b>${Math.round(w / inRange.length * 100)}%</b> (${w}W / ${inRange.length - w}L)</span>
+         <span>Return <b class="${chg >= 0 ? 'pos' : 'neg'}">${chg >= 0 ? '+' : ''}${chg.toFixed(1)}%</b></span>`
+      : `<span>Is period me koi trade close nahi hui — capital wahi ka wahi.</span>`;
+
+    const W = 640, H = 180, padL = 10, padR = 56, padY = 18;
+    const pts2 = slice.length > 1 ? slice : [slice[0], { ...slice[0], v: endV }];
+    const vs = pts2.map(c => c.v);
     const min = Math.min(...vs), max = Math.max(...vs);
-    const x = i => padL + i * (w - padL - padR) / (curve.length - 1 || 1);
-    const y = v => h - padY - (v - min) * (h - 2 * padY) / (max - min || 1);
-    const pts = curve.map((c, i) => `${x(i).toFixed(1)},${y(c.v).toFixed(1)}`).join(' ');
-    const area = `${padL},${h - padY} ${pts} ${x(curve.length - 1).toFixed(1)},${h - padY}`;
-    const baseY = y(d.portfolio.startCapital).toFixed(1);
-    const lx = x(curve.length - 1).toFixed(1), ly = y(equity).toFixed(1);
-    const up = equity >= d.portfolio.startCapital;
-    const hex = up ? '#31d492' : '#ff6b76';
+    const x = i => padL + i * (W - padL - padR) / (pts2.length - 1 || 1);
+    const y = v => H - padY - (v - min) * (H - 2 * padY) / (max - min || 1);
+    const pts = pts2.map((c, i) => `${x(i).toFixed(1)},${y(c.v).toFixed(1)}`).join(' ');
+    const area = `${padL},${H - padY} ${pts} ${x(pts2.length - 1).toFixed(1)},${H - padY}`;
+    const baseY = y(startV).toFixed(1);   // period ki shuruaat ki line
+    const lx = x(pts2.length - 1).toFixed(1), ly = y(endV).toFixed(1);
+    const hex = chg >= 0 ? '#31d492' : '#ff6b76';
     document.getElementById('equityChart').innerHTML = `
-    <svg viewBox="0 0 ${w} ${h}" width="100%" preserveAspectRatio="none" style="display:block;">
+    <svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="none" style="display:block;">
       <defs><linearGradient id="geq" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="${hex}" stop-opacity="0.22"/>
         <stop offset="1" stop-color="${hex}" stop-opacity="0"/>
       </linearGradient></defs>
-      <line x1="${padL}" y1="${baseY}" x2="${w - padR}" y2="${baseY}" stroke="#8c96ad" stroke-width="0.8" stroke-dasharray="5 5" opacity="0.5"/>
+      <line x1="${padL}" y1="${baseY}" x2="${W - padR}" y2="${baseY}" stroke="#8c96ad" stroke-width="0.8" stroke-dasharray="5 5" opacity="0.5"/>
       <polygon points="${area}" fill="url(#geq)"/>
       <polyline points="${pts}" fill="none" stroke="${hex}" stroke-width="2" stroke-linejoin="round"/>
       <circle cx="${lx}" cy="${ly}" r="3.2" fill="${hex}"/>
-      <text x="${w - padR + 6}" y="${ly}" fill="${hex}" font-size="11" dominant-baseline="middle">${(netPct >= 0 ? '+' : '') + netPct.toFixed(1)}%</text>
+      <text x="${W - padR + 6}" y="${ly}" fill="${hex}" font-size="11" dominant-baseline="middle">${(chg >= 0 ? '+' : '') + chg.toFixed(1)}%</text>
     </svg>`;
-  })();
+  }
 
   /* ---- Breakdown chips = clickable filters + journal latest-first ---- */
-  const chipDefs = [
-    { s: 'win', cls: 'bd-win', n: wins, label: 'Wins — partial book + trail' },
-    { s: 'sl', cls: 'bd-sl', n: slHits, label: 'SL hit — out, end of story' },
-    { s: 'fail', cls: 'bd-fail', n: boFails, label: 'Breakout fail — abnormal, exit' },
-    { s: 'no-trigger', cls: 'bd-nt', n: noTrigs, label: 'Trigger nahi aaya — paisa nahi laga' },
-    { s: 'open', cls: 'bd-open', n: opens, label: 'Open — chal rahi hai' }
+  // Chip counts bhi chune hue period ke — warna "49 Wins" dabane pe 12 rows aati
+  // thi (chip lifetime ginta tha, table period ka dikhata tha)
+  const CHIP_DEFS = [
+    { s: 'win', cls: 'bd-win', label: 'Wins — partial book + trail' },
+    { s: 'sl', cls: 'bd-sl', label: 'SL hit — out, end of story' },
+    { s: 'fail', cls: 'bd-fail', label: 'Breakout fail — abnormal, exit' },
+    { s: 'no-trigger', cls: 'bd-nt', label: 'Trigger nahi aaya — paisa nahi laga' },
+    { s: 'open', cls: 'bd-open', label: 'Open — chal rahi hai' }
   ];
-  document.getElementById('breakdown').innerHTML = chipDefs.map(c =>
-    `<div class="bd-chip ${c.cls}" data-status="${c.s}" title="Sirf ye category dekhne ke liye tap karo"><b>${c.n}</b> ${c.label}</div>`
-  ).join('');
+  function renderChips() {
+    const from = rangeFrom();
+    const inR = displayRows.filter(r => rowTime(r.t) > from);
+    document.getElementById('breakdown').innerHTML = CHIP_DEFS.map(c => {
+      const n = inR.filter(r => r.t.status === c.s).length;
+      return `<div class="bd-chip ${c.cls}${journalFilter === c.s ? ' active' : ''}" data-status="${c.s}" title="Sirf ye category dekhne ke liye tap karo"><b>${n}</b> ${c.label}</div>`;
+    }).join('');
+  }
 
-  /* Sorting: ab har trade me `ts` (asli pick timestamp) aata hai.
-     Pehle sirf "4 May" jaisi string thi aur saal guess hota tha — journal 45 din ka
-     tha to chalta tha. Ab 12 mahine ka backtest hai, to "20 Aug" 2025 ka bhi ho sakta
-     hai aur 2026 ka bhi; guess galat ho ke purani trades sabse upar aa rahi thi.
-     Aur en-IN "Sept" likhta hai jabki purane map me sirf "Sep" tha — wo saari rows
-     ka time 0 ho jaata tha aur wo sabse neeche chali jaati thi. Dono theek. */
-  const MON = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Sept: 8, Oct: 9, Nov: 10, Dec: 11 };
-  const nowM = new Date().getMonth(), nowY = new Date().getFullYear();
-  function pickedTime(t) {
-    if (t && t.ts) return t.ts * 1000;                 // asli timestamp — yahi sahi hai
-    const [dd, mon] = String(t && t.picked || '').split(' ');   // legacy rows ka fallback
-    if (!(mon in MON)) return 0;
-    let y = nowY;
-    if (MON[mon] > nowM + 1) y--;
-    return new Date(y, MON[mon], +dd).getTime();
-  }
-  // 12 mahine ke journal me "20 Aug" ambiguous hai — is saal ka na ho to saal dikhao
-  function pickedLabel(t) {
-    const ms = pickedTime(t);
-    if (!ms) return t.picked || '—';
-    const y = new Date(ms).getFullYear();
-    return y === nowY ? t.picked : `${t.picked} '${String(y).slice(-2)}`;
-  }
   const displayRows = rows.map((r, i) => ({ ...r, _i: i }))
     .sort((a, b) => (pickedTime(b.t) - pickedTime(a.t)) || (b._i - a._i)); // latest sabse upar
 
@@ -819,20 +891,43 @@
   }
 
   let journalFilter = null, journalQuery = '';
+  const rangeFrom = () => curRange.ms === Infinity ? -Infinity : lastTs - curRange.ms;
   function renderJournal() {
-    let list = journalFilter ? displayRows.filter(r => r.t.status === journalFilter) : displayRows;
+    // Journal bhi chune hue period ka hi — 5 saal ki saari (~2900) rows ek saath
+    // render karna phone pe bhaari hai, aur waise bhi koi 5 saal ki list scroll
+    // nahi karta. Search karne pe range hata dete hain (poori history me dhundo).
+    const from = journalQuery ? -Infinity : rangeFrom();
+    let list = displayRows.filter(r => rowTime(r.t) > from);
+    if (journalFilter) list = list.filter(r => r.t.status === journalFilter);
     if (journalQuery) list = list.filter(r => r.t.symbol.includes(journalQuery));
+    document.getElementById('journalRangeNote').textContent = journalQuery
+      ? `"${journalQuery}" — poori history me dhoonda, ${list.length} mile`
+      : `${curRange.name} ki ${list.length} entries${curRange.k === 'ALL' ? '' : ' — poora dekhna ho to upar "All" dabao'}`;
     document.getElementById('journal').innerHTML = list.length ? list.map(rowHtml).join('')
-      : `<tr><td colspan="7"><span class="note">${journalQuery ? '"' + journalQuery + '" ki koi trade nahi mili.' : journalFilter ? 'Is category me abhi kuch nahi hai.' : 'Journal pehle picks ka result aane ke baad banega.'}</span></td></tr>`;
+      : `<tr><td colspan="7"><span class="note">${journalQuery ? '"' + journalQuery + '" ki koi trade nahi mili.' : journalFilter ? 'Is category me is period me kuch nahi hai.' : 'Is period me koi entry nahi.'}</span></td></tr>`;
   }
-  renderJournal();
 
-  document.querySelectorAll('.bd-chip').forEach(chip => chip.addEventListener('click', () => {
+  /* range tabs wiring — chart, period stats aur journal teeno saath badalte hain */
+  function applyRange() { drawEquity(); renderChips(); renderJournal(); }
+  document.querySelectorAll('#rangeTabs button').forEach(btn => btn.addEventListener('click', () => {
+    curRange = activeRanges.find(r => r.k === btn.dataset.r) || curRange;
+    document.querySelectorAll('#rangeTabs button').forEach(b => b.classList.toggle('active', b === btn));
+    applyRange();
+  }));
+  const initBtn = document.querySelector(`#rangeTabs button[data-r="${curRange.k}"]`);
+  if (initBtn) initBtn.classList.add('active');
+  applyRange();
+
+  // Delegation — chips range badalne pe dobara render hote hain, direct listener
+  // lag jaata to pehli hi baar ke baad kaam karna band kar deta
+  document.getElementById('breakdown').addEventListener('click', e => {
+    const chip = e.target.closest('.bd-chip');
+    if (!chip) return;
     const s = chip.dataset.status;
     journalFilter = (journalFilter === s) ? null : s; // dobara tap = filter hatao
     document.querySelectorAll('.bd-chip').forEach(c => c.classList.toggle('active', c.dataset.status === journalFilter));
     renderJournal();
-  }));
+  });
 
   document.getElementById('journalSearch').addEventListener('input', e => {
     journalQuery = e.target.value.trim().toUpperCase();

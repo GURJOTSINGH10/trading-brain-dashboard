@@ -103,7 +103,12 @@ C:\Users\gk379\Projects\trading-brain\
 
 **UI (index.html)**: gear se poora page ka MOOD badalta hai — gear 1-2 laal, 3 amber, 4-5 hara
 (liquid glass, animated blobs, pulsing pill). Tabs: Aaj ka Scan / Track Record (equity curve,
-clickable filter chips, stock search, recent form). Har stock: cap badge, TradingView link (avatar/button),
+clickable filter chips, stock search, recent form).
+**Track Record pe time-range selector hai (1D/1W/1M/1Y/5Y/All, default 1Y)** — chart, period ka
+return, breakdown chips aur journal table CHAARO ek saath us period pe filter hote hain. Ye sirf
+feature nahi, zaroorat hai: 5-saal ke journal me ~2950 rows hain, sab ek saath render karna phone
+pe bhaari hai (default 1Y pe ~390 rows). Upar ke stat cards jaan-bujh ke LIFETIME rehte hain.
+Search karte waqt range hat jaati hai (poori history me dhundo). Har stock: cap badge, TradingView link (avatar/button),
 full breakdown (DMAs, 52W, delivery%, SL/target ₹ scenarios).
 
 ---
@@ -140,6 +145,8 @@ Dono idempotent — same session dobara process nahi hota. Expectation: **same e
    (b) **Alag rules** — backtest fixed 15-din base + purani scoring pe chal raha tha, jabki live adaptive base + capPref + hot-sector pe. Matlab jo system chal raha tha uska test hi nahi ho raha tha. FIX: `setupAt()` ab scan.mjs ka hubahu port hai.
    (c) **Infinite capital** — 29 positions ek saath khul jaati thi (₹1 lakh me ~490% deployment). Returns 5x leverage maan ke aa rahe the. FIX: cash constraint, ab peak 99%.
    (d) **Journal overwrite** — `--write` poora `closed[]` replace kar deta tha, user ki asli live trades mit jaati thi; upar se backtest window live period pe chadh ke wahi din do baar count karti thi. FIX: `live: true` tag + live ki pehli pick pe backtest kaat dena.
+7d. **(8 Aug 2026) `Math.max(1, floor(alloc/price))` = chhupa hua leverage** — 5-saal ke backtest me peak deployment 126% aaya jabki cash constraint laga tha. Wajah: MRF/Page jaise ₹1.5 lakh ke share ka 1 share zabardasti "khareeda" jaata tha jabki allocation ₹17,000 ki thi. Ab `Math.floor` hai aur ek share bhi na aaye to trade skip. **Yahi bug live scan.mjs me bhi tha** — paper portfolio jhootha ho raha tha; wahan bhi fix hai (aisi trade `no-trigger` me jaati hai saaf reason ke saath).
+7e. **(8 Aug 2026) Dashboard ka equity backtest se ~4% upar dikhta tha** — client `qty` khud dobara nikalta tha, bina cash-limit ke. Ab journal me hi `qty`/`invested` jaate hain aur client wahi use karta hai. Dono number ab ek hain (farak sirf live trades ka, jo backtest ke baad hui hain).
 7c. **(7 Aug 2026) Journal ka date sort tut gaya** jab window 12 mahine ki hui — closed entries me sirf "20 Aug" tha, saal nahi. Client saal guess karta tha (`MON[mon] > nowM+1`), to Aug 2025 ki trades Aug 2026 ki ban ke sabse upar aa gayi. Doosra: en-IN locale **"Sept"** likhta hai par client ke map me sirf `Sep` tha → un saari rows ka time 0 ho ke wo sabse neeche chali jaati thi. FIX: har trade me `ts` (asli epoch) jaata hai, client wahi use karta hai; pichhle saal ki rows pe `'25` suffix bhi dikhta hai.
 8. **(6 Aug 2026) "pages build and deployment" deploy job 10-min timeout** ("Timeout reached, aborting!") — GitHub-side degradation thi, repo ki galti nahi. Pehchaan: kal tak deploys <1 min, achanak sab 10-min timeout, PAR live site phir bhi naya data dikha rahi thi (content CDN pahunch jata hai, sirf status-check hang hota hai). FIX: kuch mat chhedo — pehle `curl data.js` se check karo site fresh hai ya nahi; recover hone pe `gh api -X POST repos/GURJOTSINGH10/trading-brain-dashboard/pages/builds` se rebuild trigger karo, green ho jayega. (.nojekyll bhi tab add hua tha — wo cause nahi tha, par rakha hai, Jekyll skip karta hai.)
 
@@ -171,9 +178,12 @@ node scripts/scan.mjs           # normal scan (naya session ho to process)
 node scripts/scan.mjs --force   # display regenerate (journal untouched)
 node scripts/build-universe.mjs # universe rebuild (waise auto hai har 10 din)
 node scripts/fetch-industries.mjs        # naye stocks ka sector laao (build-universe khud bhi bulata hai)
-node scripts/backtest.mjs 250            # 12-mahine ka backtest — sirf report chhapta hai
-node scripts/backtest.mjs 250 --write    # ...aur journal.closed bhi update karta hai
-node scripts/backtest.mjs 250 --refresh  # chart cache phenk ke Yahoo se naya (~10 min)
+node scripts/backtest.mjs 1250           # 5-saal ka backtest — sirf report chhapta hai
+node scripts/backtest.mjs 1250 --write   # ...aur journal.closed bhi update karta hai
+node scripts/backtest.mjs 1250 --refresh # chart cache phenk ke Yahoo se naya (~2 min)
+node scripts/backtest.mjs 250            # 12-mahine ka (chhota, tez)
+# Yaad rakho: 5y ke liye --max-old-space-size=8192 lagao —
+#   node --max-old-space-size=8192 scripts/backtest.mjs 1250 --write
 # Push hamesha: git add <files> && git commit && git push  (PULL/REBASE NAHI)
 ```
 
@@ -183,6 +193,14 @@ node scripts/backtest.mjs 250 --refresh  # chart cache phenk ke Yahoo se naya (~
   raha tha uska test hi nahi ho raha tha.
 - **Cash constraint** lagta hai: ₹1 lakh me 29 positions ek saath nahi khul sakti. Bina iske
   backtest chupke se 5x leverage maan leta tha aur returns jhoothe achhe dikhte the.
+- **qty me `Math.max(1, ...)` nahi** — wo MRF/Page jaise ₹1.5 lakh ke share ka 1 share
+  zabardasti khareed leta tha jabki allocation ₹17,000 ki thi. Ek share bhi na aaye to
+  wo trade is capital me possible hi nahi (live scan.mjs me bhi yahi fix hai).
+- Range chunav apne aap hota hai: window ≤480 bars → `2y`, ≤1200 → `5y`, warna `10y`.
+  Har chart turant `window + warmup + 30` bars pe kat jaata hai — isliye 5y bhi 2y jitni
+  RAM me chalta hai. Cache alag-alag file me (`charts-10y.json.gz`).
+- Journal me `qty`/`invested` bhi jaate hain, taaki dashboard apna hisaab dobara na kare
+  (pehle wo bina cash-limit ke ginta tha aur equity ~4% upar dikhta tha).
 - `--write` **live trades (`live: true`) ko kabhi nahi mitata**, aur apni window ko live
   period se pehle kaat deta hai — warna wahi din do baar count hote the.
 - Jaan-bujh ke alag: earnings guard nahi hai (historical result calendar milta hi nahi),
@@ -196,26 +214,37 @@ node scripts/backtest.mjs 250 --refresh  # chart cache phenk ke Yahoo se naya (~
 
 ## 11. TRACK RECORD SNAPSHOT (7 Aug 2026 tak)
 
-**Backtest — 250 sessions (1 Aug 2025 → 7 Aug 2026), live rules, cash-constrained:**
+**Backtest — 1250 sessions / 5 saal (16 Jul 2021 → 7 Aug 2026), live rules, cash-constrained:**
 
 | | |
 |---|---|
-| Picks diye | 429 |
-| Trade lagi | 127 (29.6%) — baaki 258 no-trigger, 44 cash khatam |
-| Win rate | **38.6%** (49W / 78L) |
-| Avg win / loss | +7.8% / −2.7% |
-| Expectancy per trade | **+1.34%** ← asli baat yahi hai |
-| Profit factor | 1.70 |
-| Equity (gross) | ₹1,00,000 → ₹1,28,377 (+28.4%) |
-| Charges (STT/DP/GST) | ₹7,251 — gross profit ka 25% |
-| **Equity (net)** | **₹1,21,126 (+21.1%)** |
-| Max drawdown | −6.3% |
-| Max concurrent positions | 7 (peak deployment 99% of capital) |
-| Gear 1 (cash) days | 152 / 245 — 62% din market se bahar |
+| Picks diye | 3855 |
+| Trade lagi | 833 (21.6%) — baaki 2114 no-trigger, 908 cash khatam |
+| Win rate | **38.2%** (318W / 515L) |
+| Avg win / loss | +7.8% / −3.0% |
+| Expectancy per trade | **+1.13%** ← asli baat yahi hai |
+| Profit factor | 1.57 |
+| Equity (gross) | ₹1,00,000 → ₹5,10,068 (+410%) |
+| Charges (STT/DP/GST) | ₹99,295 — gross profit ka 24% |
+| **Equity (net)** | **₹4,10,773 (+311%)** |
+| Max drawdown | **−14.7%** |
+| Max concurrent positions | 6 (peak deployment 100% of capital) |
+| Gear 1 (cash) days | 535 / 1245 — 43% din market se bahar |
 
-Cap-wise: Mid 56% win / +2.97% exp · Small 40% / +1.29% · Micro 33% / +0.99%.
-Purana 45-din wala backtest (+1.2%) ab valid nahi — wo alag rules pe tha aur cash constraint
-bhi nahi lagta tha.
+Gear-wise expectancy: gear 3 = +1.30%, gear 4 = +1.35%, gear 2 = +0.55%, **gear 5 = +0.31%**
+(5th gear sabse kharaab — 61 din, sirf 52 trades; euphoria me entry mehngi padti hai).
+Cap-wise: Mid 42% win / +1.37% · Small 38% / +1.23% · Micro 38% / +1.07%.
+Sector-wise sabse kharaab: **FMCG −0.16% expectancy** (63 trades) — is framework ko defensive
+sectors suit nahi karte.
+
+**Sabse bada sabak:** 908 breakouts sirf isliye chhoot gaye kyunki capital pehle se lagi thi.
+₹1 lakh me gear 5 pe 8 picks dena bekaar hai — 6 se zyada positions kabhi khul hi nahi sakti.
+
+**Caveats (numbers thode upar hain):** universe aaj ki NSE list hai — 5 saal me delist hue
+stocks usme nahi (survivorship bias). Cap/sector tag bhi AAJ ke hain, 2021 ke nahi.
+Earnings guard backtest me nahi hai.
+
+Purana 45-din (+1.2%) aur 250-din wala backtest ab valid nahi — alag rules/constraints the.
 
 - 9 Jul: automation ka pehla solo pass (cloud ne 18:45 IST khud update kiya)
 - Ye PAPER trading hai. User se wada: 2-3 mahine paper track record dekh ke hi real paise ki baat.

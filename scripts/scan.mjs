@@ -628,16 +628,25 @@ async function main() {
       state.equity = round2(state.equity + pnlAmt);
       // live: true — ye ASLI trade hai, backtest ki simulated nahi. backtest.mjs
       // --write in par kabhi haath nahi lagata (warna user ki asli history mit jaati).
-      state.closed.push({ picked: pos.picked, ts: pos.pickedTs || null, symbol: pos.symbol, sector: pos.sector, gear: pos.gear, entry: pos.entry, status, pnlPct, exitDate: fmtShort(sessionTs), reason, live: true });
+      state.closed.push({ picked: pos.picked, ts: pos.pickedTs || null, symbol: pos.symbol, sector: pos.sector, gear: pos.gear, entry: pos.entry, qty: pos.qty, invested: pos.invested, status, pnlPct, exitDate: fmtShort(sessionTs), exitTs: sessionTs, reason, live: true });
     };
 
     if (pos.entryStatus === 'pending') {
       const v20 = sma(ch.v, 20);
       if (hi > pos.pivot && vol > (v20 || 0) * 1.2) {
-        pos.entryStatus = 'open';
-        pos.entry = roundPrice(Math.max(o, pos.pivot));
+        const entryPx = roundPrice(Math.max(o, pos.pivot));
         const alloc = state.equity * pos.sizePct / 100;
-        pos.qty = Math.max(1, Math.floor(alloc / pos.entry));
+        // ★ Math.max(1, ...) hata diya. Wo MRF/Page jaise ₹1.5 lakh ke share ka
+        // 1 share "khareed" leta tha jabki position size ₹17,000 ki thi — paper
+        // portfolio jhootha ho jaata tha. Ek share bhi na aaye = trade possible nahi.
+        const qty = Math.floor(alloc / entryPx);
+        if (qty < 1) {
+          state.closed.push({ picked: pos.picked, ts: pos.pickedTs || null, symbol: pos.symbol, sector: pos.sector, gear: pos.gear, entry: roundPrice(pos.pivot), status: 'no-trigger', pnlPct: 0, exitTs: sessionTs, reason: `Breakout to aaya, par ek share ₹${entryPx} ka hai — ${pos.sizePct}% position size me aata hi nahi. Is capital me ye trade possible nahi.`, live: true });
+          continue;
+        }
+        pos.entryStatus = 'open';
+        pos.entry = entryPx;
+        pos.qty = qty;
         pos.invested = round2(pos.qty * pos.entry);
         pos.daysSinceTrigger = 0;
         pos.triggerDate = fmtShort(sessionTs);
@@ -650,7 +659,7 @@ async function main() {
       } else {
         pos.daysWaiting = (pos.daysWaiting || 0) + 1;
         if (pos.daysWaiting >= 4) {
-          state.closed.push({ picked: pos.picked, ts: pos.pickedTs || null, symbol: pos.symbol, sector: pos.sector, gear: pos.gear, entry: pos.pivot, status: 'no-trigger', pnlPct: 0, reason: 'Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi', live: true });
+          state.closed.push({ picked: pos.picked, ts: pos.pickedTs || null, symbol: pos.symbol, sector: pos.sector, gear: pos.gear, entry: pos.pivot, status: 'no-trigger', pnlPct: 0, exitTs: sessionTs, reason: 'Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi', live: true });
         } else stillOpen.push(pos);
       }
       continue;
@@ -693,12 +702,13 @@ async function main() {
 
   // --- display journal (closed + open/pending) ---
   const journalOut = [
-    // Backtest ab 12 mahine ka hai (~370 trades). 200 pe kaatne se track record ka
-    // aadha hissa gayab ho jaata tha aur equity curve beech se shuru hoti thi.
-    ...state.closed.slice(-500),
+    // Backtest ab 5 saal ka hai (~2900 trades). Kaatna nahi hai — warna equity
+    // curve beech se shuru hoti hai aur "5Y" range ka matlab hi khatam. Dashboard
+    // pe range selector (1D/1W/1M/1Y/5Y/All) hai, wahi render ko halka rakhta hai.
+    ...state.closed.slice(-4000),
     ...state.positions.filter(p => p.entryStatus === 'open').map(p => ({
       picked: p.picked, ts: p.pickedTs || null, symbol: p.symbol, sector: p.sector, gear: p.gear, entry: p.entry,
-      status: 'open', pnlPct: p.curPnlPct ?? 0,
+      qty: p.qty, invested: p.invested, status: 'open', pnlPct: p.curPnlPct ?? 0,
       reason: `Open — entry ${p.entry}, SL ${p.sl}${(p.curPnlPct ?? 0) >= 8 ? ', partial book zone me hai' : ''}`
     }))
   ];

@@ -39,7 +39,6 @@ import { fileURLToPath } from 'url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CACHE_DIR = join(ROOT, '.cache');
-const CACHE_FILE = join(CACHE_DIR, 'charts-2y.json.gz');
 
 const START_CAPITAL = 100000;
 const SIZE_BY_GEAR = [10, 14, 17, 21, 25];
@@ -52,6 +51,14 @@ const WINDOW = parseInt(args.find(a => /^\d+$/.test(a)) || '250', 10);
 const REFRESH = args.includes('--refresh');
 const WRITE = args.includes('--write');
 
+// Yahoo se utna hi maango jitna chahiye: window + warmup + thoda margin.
+// 5-saal ka backtest (1250 sessions) 10y range maangta hai — par 2000 stocks ki
+// poori 10-saal history RAM me 1 GB+ le jaati hai, isliye har chart ko turant
+// KEEP_BARS pe kaat dete hain. Isse 5y bhi 2y jitni RAM me chalta hai.
+const KEEP_BARS = WINDOW + WARMUP + 30;
+const RANGE = KEEP_BARS <= 480 ? '2y' : KEEP_BARS <= 1200 ? '5y' : '10y';
+const CACHE_FILE = join(CACHE_DIR, `charts-${RANGE}.json.gz`);
+
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const round2 = x => Math.round(x * 100) / 100;
 const roundPrice = x => x >= 1000 ? Math.round(x) : Math.round(x * 10) / 10;
@@ -62,7 +69,7 @@ const fmtMonth = ts => new Date(ts * 1000).toLocaleDateString('en-IN', { timeZon
 const istDay = ts => Math.floor((ts + 19800) / 86400);
 
 // ---------- fetch ----------
-async function fetchChart(ticker, range = '2y') {
+async function fetchChart(ticker, range = RANGE) {
   for (const host of ['query1.finance.yahoo.com', 'query2.finance.yahoo.com']) {
     try {
       const res = await fetch(`https://${host}/v8/finance/chart/${encodeURIComponent(ticker)}?range=${range}&interval=1d`, { headers: { 'User-Agent': UA } });
@@ -88,7 +95,10 @@ async function fetchChart(ticker, range = '2y') {
       if (out.t.length && istDay(out.t[out.t.length - 1]) === nowDay && nowMins < 935) {
         for (const k of ['t', 'o', 'h', 'l', 'c', 'v']) out[k].pop();
       }
-      return out.c.length >= WARMUP + 10 ? out : null;
+      if (out.c.length < WARMUP + 10) return null;
+      // sirf utne bars rakho jitne is window ke liye chahiye — RAM aur cache dono bachta hai
+      if (out.c.length > KEEP_BARS) for (const k of ['t', 'o', 'h', 'l', 'c', 'v']) out[k] = out[k].slice(-KEEP_BARS);
+      return out;
     } catch { }
   }
   return null;
@@ -101,11 +111,11 @@ async function loadCharts(universe) {
     try {
       const j = JSON.parse(gunzipSync(readFileSync(CACHE_FILE)).toString('utf8'));
       const ageH = (Date.now() - new Date(j.builtAt).getTime()) / 3600000;
-      console.log(`Chart cache mila: ${Object.keys(j.charts).length} stocks, ${ageH.toFixed(1)}h purana (--refresh se naya laao)`);
+      console.log(`Chart cache mila (${RANGE}): ${Object.keys(j.charts).length} stocks, ${ageH.toFixed(1)}h purana (--refresh se naya laao)`);
       return j.charts;
     } catch { console.log('Cache corrupt — dobara fetch.'); }
   }
-  console.log(`${universe.length} stocks ki 2-saal history laa rahe (~10 min, ek hi baar)...`);
+  console.log(`${universe.length} stocks ki ${RANGE} history laa rahe (ek hi baar, phir cache se)...`);
   const charts = {};
   let idx = 0, ok = 0, t0 = Date.now();
   async function worker() {
@@ -119,7 +129,7 @@ async function loadCharts(universe) {
   }
   await Promise.all(Array.from({ length: 8 }, () => worker()));
   mkdirSync(CACHE_DIR, { recursive: true });
-  writeFileSync(CACHE_FILE, gzipSync(JSON.stringify({ builtAt: new Date().toISOString(), range: '2y', charts })));
+  writeFileSync(CACHE_FILE, gzipSync(JSON.stringify({ builtAt: new Date().toISOString(), range: RANGE, charts })));
   console.log(`Charts: ${ok}/${universe.length} — cache likh diya (${(existsSync(CACHE_FILE) ? readFileSync(CACHE_FILE).length / 1e6 : 0).toFixed(1)} MB)`);
   return charts;
 }
@@ -397,7 +407,10 @@ async function main() {
         deployed = Math.max(0, round2(deployed - p.invested));   // paisa wapas cash me
         closed.push({
           picked: fmtShort(T[p.pickDi]), symbol: sym, sector: S.sec, cap: S.cap, gear: p.gear,
-          entry: p.entry, status, pnlPct, exitDate: fmtShort(T[di]), reason,
+          // qty/invested asli hain (cash constraint ke saath). Dashboard pehle ye
+          // khud dobara nikalta tha — bina cash limit ke — isliye uska equity
+          // backtest se ~4% upar chala jaata tha. Ab dono ka number ek hai.
+          entry: p.entry, qty: p.qty, invested: p.invested, status, pnlPct, exitDate: fmtShort(T[di]), reason,
           _exitTs: T[di], _pickTs: T[p.pickDi], _hold: p.tDays || 0,
           _buyVal: p.invested, _sellVal: round2(p.qty * px)
         });
@@ -410,21 +423,29 @@ async function main() {
           // ★ CASH CONSTRAINT — ₹1 lakh me 29 positions ek saath nahi khul sakti.
           // Bina iske backtest chup-chaap 5x leverage maan leta tha aur returns
           // jhoothe achhe dikhte the. Paisa nahi hai to trade nahi hoti — bas.
+          const entryPx = roundPrice(Math.max(o, p.pivot));
           const alloc = equity * p.sizePct / 100;
-          if (deployed + alloc > equity) {
+          // ★ qty me Math.max(1, ...) NAHI. Wo MRF/Page jaise ₹1.5 lakh ke share ka
+          // 1 share zabardasti khareed leta tha jabki allocation ₹17,000 ki thi —
+          // isi wajah se peak deployment 126% pahunch gaya tha. Ek share bhi na
+          // aata ho to us stock ki trade is capital me possible hi nahi.
+          const qty = Math.floor(alloc / entryPx);
+          if (qty < 1 || deployed + qty * entryPx > equity) {
             skippedNoCash++;
             closed.push({
               picked: fmtShort(T[p.pickDi]), symbol: sym, sector: S.sec, cap: S.cap, gear: p.gear,
               entry: p.pivot, status: 'no-cash', pnlPct: 0,
-              reason: 'Breakout to aaya, par capital pehle se lagi hui thi — ye trade chhoot gayi',
+              reason: qty < 1
+                ? `Ek share ka bhaav ₹${entryPx} — ${SIZE_BY_GEAR[p.gear - 1]}% position size me aata hi nahi. Is capital me ye trade possible nahi.`
+                : 'Breakout to aaya, par capital pehle se lagi hui thi — ye trade chhoot gayi',
               _exitTs: T[di], _pickTs: T[p.pickDi], _hold: 0, _buyVal: 0, _sellVal: 0
             });
             active.delete(sym);
             continue;
           }
           p.status = 'open';
-          p.entry = roundPrice(Math.max(o, p.pivot));
-          p.qty = Math.max(1, Math.floor(alloc / p.entry));
+          p.entry = entryPx;
+          p.qty = qty;
           p.invested = round2(p.qty * p.entry);
           deployed = round2(deployed + p.invested);
           if (deployed / equity * 100 > maxDeployPct) maxDeployPct = deployed / equity * 100;
@@ -524,7 +545,8 @@ function writeJournal(closed, equity, T) {
   const bt = closed
     .filter(t => t.status !== 'no-cash')          // ye sirf backtest diagnostic hai, track record nahi
     .filter(t => t._pickTs < cutoff)
-    .map(({ _exitTs, _pickTs, _hold, _buyVal, _sellVal, ...t }) => ({ ...t, ts: _pickTs, bt: true }));
+    // ts = pick ka waqt (sorting), exitTs = exit ka waqt (equity curve ka time-range filter)
+    .map(({ _exitTs, _pickTs, _hold, _buyVal, _sellVal, ...t }) => ({ ...t, ts: _pickTs, exitTs: _exitTs, bt: true }));
 
   journal.closed = [...bt, ...liveTrades];
   journal.equity = round2(equity);
