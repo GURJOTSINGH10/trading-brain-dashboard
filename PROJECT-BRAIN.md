@@ -104,7 +104,10 @@ C:\Users\gk379\Projects\trading-brain\
 **UI (index.html)**: gear se poora page ka MOOD badalta hai — gear 1-2 laal, 3 amber, 4-5 hara
 (liquid glass, animated blobs, pulsing pill). Tabs: Aaj ka Scan / Track Record (equity curve,
 clickable filter chips, stock search, recent form).
-**Track Record pe time-range selector hai (1D/1W/1M/1Y/5Y/All, default 1Y)** — chart, period ka
+**Scan tab ka "Paper Portfolio" card SIRF chalu FY (1 Apr – 31 Mar) ka return dikhata hai** —
+pehle wo lifetime (5 saal ka backtest) dikha raha tha, to +423% padh ke lagta tha ki ye saal
+ka return hai. Lifetime ab Track Record tab pe hai.
+**Track Record pe time-range selector hai (1D/1W/1M/FY/1Y/5Y/All, default 1Y)** — chart, period ka
 return, breakdown chips aur journal table CHAARO ek saath us period pe filter hote hain. Ye sirf
 feature nahi, zaroorat hai: 5-saal ke journal me ~2950 rows hain, sab ek saath render karna phone
 pe bhaari hai (default 1Y pe ~390 rows). Upar ke stat cards jaan-bujh ke LIFETIME rehte hain.

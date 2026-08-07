@@ -443,11 +443,11 @@
         <div class="verdict" id="verdict"></div>
       </div>
       <div class="card">
-        <div class="hero-label" style="margin-bottom:8px;">Paper Portfolio — ₹1 Lakh Challenge</div>
-        <div class="capital-stat"><span>Starting capital</span><b id="capStart"></b></div>
-        <div class="capital-stat"><span>Current capital</span><b id="capNow"></b></div>
-        <div class="capital-stat"><span>Net P&amp;L</span><b id="capPnl"></b></div>
-        <div class="capital-stat"><span>Win rate</span><b id="capWinrate"></b></div>
+        <div class="hero-label" style="margin-bottom:8px;" id="capTitle">Paper Portfolio</div>
+        <div class="capital-stat"><span id="capStartLabel">FY shuruaat</span><b id="capStart"></b></div>
+        <div class="capital-stat"><span>Abhi</span><b id="capNow"></b></div>
+        <div class="capital-stat"><span id="capPnlLabel">FY return</span><b id="capPnl"></b></div>
+        <div class="capital-stat"><span id="capWinLabel">Win rate (FY)</span><b id="capWinrate"></b></div>
         <div class="sizing-note" id="sizingNote"></div>
       </div>
     </div>
@@ -582,6 +582,23 @@
   const netPct = netPnl / d.portfolio.startCapital * 100;
   const winRate = closed ? Math.round(wins / closed * 100) : 0;
 
+  /* ---- Financial year (Bharat: 1 April – 31 March) ----
+     Scan tab ka portfolio card lifetime (5 saal ka backtest) dikha raha tha —
+     +423% padh ke lagta tha ye saal ka return hai. Ab wahan SIRF is FY ka hisaab
+     hai. Lifetime aur baaki periods Track Record tab pe hain. */
+  const lastTs = Math.max(...curve.map(c => c.ts), 0) || Date.now();
+  const dEnd = new Date(lastTs);
+  const fyY = dEnd.getMonth() >= 3 ? dEnd.getFullYear() : dEnd.getFullYear() - 1; // April = month 3
+  const fyStartMs = new Date(fyY, 3, 1).getTime();
+  const fyLabel = `FY ${String(fyY).slice(-2)}-${String(fyY + 1).slice(-2)}`;
+  // FY ke pehle wala aakhri balance = FY ki opening capital
+  let fyOpen = d.portfolio.startCapital;
+  for (const c of curve) if (c.ts <= fyStartMs) fyOpen = c.v;
+  const fyPnl = equity - fyOpen;
+  const fyPct = fyOpen ? fyPnl / fyOpen * 100 : 0;
+  const fyTrades = rows.filter(r => ['win', 'sl', 'fail'].includes(r.t.status) && rowTime(r.t) > fyStartMs);
+  const fyW = fyTrades.filter(r => r.t.pnlPct > 0).length, fyL = fyTrades.length - fyW;
+
   /* ---- Scan view ---- */
   document.getElementById('genTime').textContent = 'Updated: ' + d.generatedAt;
   if (d.demo) document.getElementById('demoBadge').style.display = 'inline-block';
@@ -606,13 +623,19 @@
   document.getElementById('gearSize').textContent = 'Position size: ' + sizeByGear[d.market.gear - 1] + '% of capital';
   document.getElementById('verdict').textContent = '“' + d.market.verdict + '”';
 
-  document.getElementById('capStart').textContent = inr(d.portfolio.startCapital);
+  const fyDate = new Date(fyStartMs).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: '2-digit' });
+  document.getElementById('capTitle').textContent = `Paper Portfolio — ${fyLabel}`;
+  document.getElementById('capStartLabel').textContent = `Opening (${fyDate})`;
+  document.getElementById('capStart').textContent = inr(fyOpen);
   document.getElementById('capNow').textContent = inr(equity);
   const pnlEl = document.getElementById('capPnl');
-  pnlEl.textContent = (netPnl >= 0 ? '+' : '-') + inr(Math.abs(netPnl)) + ' (' + (netPct >= 0 ? '+' : '') + netPct.toFixed(1) + '%)';
-  pnlEl.className = netPnl >= 0 ? 'pos' : 'neg';
-  document.getElementById('capWinrate').textContent = winRate + '% (' + wins + 'W / ' + losses + 'L)';
-  document.getElementById('sizingNote').textContent = d.portfolio.sizingRule + ' — abhi ' + d.market.gearLabel + ' = ' + sizeByGear[d.market.gear - 1] + '% per trade';
+  pnlEl.textContent = (fyPnl >= 0 ? '+' : '-') + inr(Math.abs(fyPnl)) + ' (' + (fyPct >= 0 ? '+' : '') + fyPct.toFixed(1) + '%)';
+  pnlEl.className = fyPnl >= 0 ? 'pos' : 'neg';
+  document.getElementById('capWinLabel').textContent = `Win rate (${fyLabel})`;
+  document.getElementById('capWinrate').textContent = fyTrades.length
+    ? Math.round(fyW / fyTrades.length * 100) + '% (' + fyW + 'W / ' + fyL + 'L)'
+    : '— (abhi koi closed trade nahi)';
+  document.getElementById('sizingNote').textContent = d.portfolio.sizingRule + ' — abhi ' + d.market.gearLabel + ' = ' + sizeByGear[d.market.gear - 1] + '% per trade. Poori history Track Record tab me.';
 
   document.getElementById('checks').innerHTML = d.market.checks.map((c, i) =>
     `<div class="check" style="animation-delay:${i * 0.05}s"><div class="dot ${c.status}"></div><div><b>${c.label}</b><small>${c.note}</small></div></div>`
@@ -786,27 +809,30 @@
      period ka return, aur neeche ka journal — teeno chune hue period pe chalte hain.
      Upar ke stat cards jaan-bujh ke LIFETIME rehte hain (shuru se ab tak). */
   const DAY = 86400000;
+  // FY calendar-anchored hai (1 April se), baaki rolling duration — isliye uske
+  // paas `from` hai, `ms` nahi. rangeFrom() dono handle karta hai.
   const RANGES = [
     { k: '1D', label: '1D', ms: DAY, name: 'aaj' },
     { k: '1W', label: '1W', ms: 7 * DAY, name: 'pichhle hafte' },
     { k: '1M', label: '1M', ms: 30 * DAY, name: 'pichhle mahine' },
+    { k: 'FY', label: fyLabel.replace('FY ', 'FY'), from: fyStartMs, name: fyLabel + ' (1 Apr se)', always: true },
     { k: '1Y', label: '1Y', ms: 365 * DAY, name: 'pichhle saal' },
     { k: '5Y', label: '5Y', ms: 5 * 365 * DAY, name: 'pichhle 5 saal' },
     { k: 'ALL', label: 'All', ms: Infinity, name: 'shuru se ab tak' }
   ];
-  // Data ka aakhri din — "aaj" nahi. Weekend/holiday pe browser ka aaj lene se
-  // 1D/1W khali dikhte, jabki asli me pichhle session ka data maujood hai.
-  const lastTs = Math.max(...curve.map(c => c.ts), 0) || Date.now();
+  // lastTs upar define hai (FY calc ke saath) — data ka aakhri din, "aaj" nahi.
+  // Weekend/holiday pe browser ka aaj lene se 1D/1W khali dikhte, jabki asli me
+  // pichhle session ka data maujood hai.
   // Jitna data hai usi ke hisaab se tabs — 5 saal ka data nahi to 5Y tab kyun
   const span = lastTs - (curve.find(c => c.ts)?.ts || lastTs);
-  const activeRanges = RANGES.filter((r, i) => r.ms === Infinity || r.ms <= span * 1.25 || i < 2);
+  const activeRanges = RANGES.filter((r, i) => r.always || r.ms === Infinity || r.ms <= span * 1.25 || i < 2);
   let curRange = activeRanges.find(r => r.k === '1Y') || activeRanges[activeRanges.length - 1];
 
   document.getElementById('rangeTabs').innerHTML =
     activeRanges.map(r => `<button data-r="${r.k}">${r.label}</button>`).join('');
 
   function drawEquity() {
-    const from = curRange.ms === Infinity ? -Infinity : lastTs - curRange.ms;
+    const from = rangeFrom();
     // Period ki shuruaat ka balance = us se pehle wala aakhri point (baseline)
     let baseIdx = 0;
     for (let i = 0; i < curve.length; i++) if (curve[i].ts <= from) baseIdx = i;
@@ -815,8 +841,7 @@
     const chg = (endV - startV) / startV * 100;
 
     document.getElementById('equityTitle').textContent = inr(startV) + ' → ' + inr(endV);
-    document.getElementById('equitySub').textContent =
-      curRange.k === 'ALL' ? 'Shuru se ab tak — sirf closed trades' : curRange.name + ' — sirf closed trades';
+    document.getElementById('equitySub').textContent = curRange.name + ' — sirf closed trades';
 
     // period ke closed trades ka hisaab
     const inRange = rows.filter(r => ['win', 'sl', 'fail'].includes(r.t.status) && rowTime(r.t) > from);
@@ -891,7 +916,8 @@
   }
 
   let journalFilter = null, journalQuery = '';
-  const rangeFrom = () => curRange.ms === Infinity ? -Infinity : lastTs - curRange.ms;
+  const rangeFrom = () => curRange.from !== undefined ? curRange.from
+    : curRange.ms === Infinity ? -Infinity : lastTs - curRange.ms;
   function renderJournal() {
     // Journal bhi chune hue period ka hi — 5 saal ki saari (~2900) rows ek saath
     // render karna phone pe bhaari hai, aur waise bhi koi 5 saal ki list scroll
