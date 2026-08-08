@@ -261,6 +261,44 @@ close 10 DMA ke neeche aate hi bahar, avg hold 4 session. Wo chart/volume/market
 discretion lagata hai; hum nahi laga sakte. Backtest me 10 DMA = FULL −25%, 40 DMA = +63%.
 40 DMA hi ek aisi trail hai jo DONO halves me PF > 1 deti hai.
 
+**ROZ SIRF TOP-2 PICKS** (pehle gear ke hisaab se 3-8 the). Creator: *"एक दो पोजीशन ली।
+स्टॉक इज़ अप लाइक 10-20%, ऐसे तीन चार स्टॉक मिल गए — यू आर लाइक 25% इन्वेस्टेड, दे आर डन।"*
+Scan har candidate ko score deta hai; **rank 3 ke baad signal khatam** ho jaata hai aur wo
+trades achhi walon ki capital kha jaati hain. Dono capitals pe test:
+
+| picks/din | ₹6L FULL | ₹6L H2 | ₹1L FULL | ₹1L H2 |
+|---|---|---|---|---|
+| top-1 | +6.8% | +12% | — | — |
+| **top-2** | **+152%** | **+56%** | **+138%** | **+55%** |
+| top-3 | +113% | +9% | +38% | +18% |
+| top-4 | +83% | −5.5% | — | — |
+| purana (3-8) | +123% | +14% | +105% | +8% |
+
+H2 (recent bura market) ka profit factor **1.29 → 2.10**. Drawdown bhi −19.8% se −12.3%.
+Ye ek hi change hai jo dono capitals pe consistent nikla. Watchlist ab hamesha dikhti hai
+(agle 3 candidates) — par wo TRADE nahi hai, journal unhe track nahi karta.
+
+### JO TEST KIYE AUR FAIL HUE (dobara mat aazmana)
+
+Transcripts se 6 filters nikale, sab **alag-alag** OOS test kiye — **har ek ne nateeja
+BIGAADA** (baseline ₹6L: FULL +122.7%, H1 +46%, H2 +13.9%):
+
+| filter | FULL | H1 | H2 |
+|---|---|---|---|
+| prior-move ≥20% / 40% / 60% | +3.8% / −24% / **−48%** | — | −24% / −32% / −28% |
+| no-chase 2% / 3% | +52% / +101% | — | −1% / +10% |
+| liquidity ₹15Cr / ₹25Cr | −1.6% / +16.5% | — | +17% / −17% |
+| 150 DMA ke upar | +20.6% | +26.3% | −12.2% |
+| Healthcare skip | +61% | +29.4% | +0.3% |
+| overhead supply 30% | +67.4% | +27.1% | +3.4% |
+| **hot-sector bonus HATANA** | **−42.1%** | −18.4% | −28% |
+
+Sabak: **uske rules judgement hain, mechanical gate nahi.** "Overhead supply zyada hai"
+wo chart pe context ke saath dekhta hai; fixed 30% rule bhonda hathiyaar hai. Aur ye bhi
+pata chala ki **hot-sector bonus (+4) system ka sabse zaroori scoring element hai** —
+hatane se −42%. Usko kabhi mat chhedna. Uski liquidity ki shikayat bhi USKI capital ke
+liye thi — ₹1.44 lakh ki position ke liye ₹5 Cr turnover bilkul theek hai.
+
 **RISK RAMP — cash se nikalte waqt aadhi size.** Creator ke shabd:
 > *"हमने कुछ एक ट्रेड्स ली **टू टेस्ट कि मार्केट कैसा है**। अगर यहां पर हमें सफलता मिलती है,
 > ईजीनेस महसूस होता है, तो हम आगे जाएंगे। **हम गियर अप करेंगे।** लेकिन हमें वहीं पर ही खड्डे

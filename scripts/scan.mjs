@@ -627,12 +627,18 @@ async function main() {
   candidates.sort((a, b) => b._score - a._score);
   // Picks gear ke saath scale hote hain — jitna strong market, utne zyada mauke
   // gear 2 = 3 (test trades) | 3 = 5 | 4 = 6 | 5 = 8 (attack mode)
-  const maxPicks = gear >= 5 ? 8 : gear === 4 ? 6 : gear >= 3 ? 5 : 3;
+  // ★ Roz sirf TOP-2 picks (pehle gear ke hisaab se 3-8 the).
+  // Creator: "एक दो पोजीशन ली... यू आर लाइक 25% इन्वेस्टेड, दे आर डन।"
+  // Scan har candidate ko score deta hai; rank 3 ke baad signal khatam ho jaata hai
+  // aur wo trades achhi walon ki capital kha jaati hain. Dono capitals pe test kiya:
+  // H2 (recent bura market) me profit factor 1.29 se 2.10 ho gaya.
+  const maxPicks = 2;
   const readyCands = candidates.filter(c => c._ready);
   const picks = noTrade ? [] : readyCands.slice(0, maxPicks).map(({ _score, _ready, ...p }) => p);
-  // Khali din (0 picks) pe "nazar-me-rakho": ready ke sabse KAREEB wale 3 — sirf tracking, buy nahi
+  // Watchlist ab HAMESHA dikhti hai — agle 3 ranked candidates. Ye sirf nazar rakhne
+  // ke liye hain, journal inhe track NAHI karta (warna backtest se match nahi karega).
   const pickSyms = new Set(picks.map(p => p.symbol));
-  const watchlist = picks.length ? [] : candidates.filter(c => !pickSyms.has(c.symbol)).slice(0, 3).map(c => ({
+  const watchlist = candidates.filter(c => !pickSyms.has(c.symbol)).slice(0, 3).map(c => ({
     symbol: c.symbol, name: c.name, sector: c.sector, cap: c.cap,
     cmp: c.cmp, pivot: c.pivot, prox: c.detail.proxPivot, range: c.detail.rangePct
   }));

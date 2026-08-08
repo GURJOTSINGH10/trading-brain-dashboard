@@ -40,7 +40,7 @@ import { fileURLToPath } from 'url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CACHE_DIR = join(ROOT, '.cache');
 
-const MIN_TRADED_VALUE = 5e7;      // ₹5 Cr avg daily traded value (scan.mjs ke barabar)
+// MIN_TRADED_VALUE ab --min-tv flag se aata hai (neeche define hota hai)
 const WARMUP = 120;                // itne bars ke bina koi setup nahi (scan: n < 120 → skip)
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36';
 
@@ -69,7 +69,13 @@ const NO_CHASE = parseFloat(argVal('--no-chase', '0')); // % — open pivot se i
 // aaj ke bar pe nahi. Ye pakka causal test hai: agar edge phir bhi rehta hai to
 // volume ki asli information value hai; nahi rehta to wo sirf same-day look-ahead thi.
 const PREV_VOL = args.includes('--prev-vol');
-const MAX_PICKS = parseInt(argVal('--max-picks', '0'), 10); // 0 = gear ke hisaab se (normal)
+// ★ Roz sirf TOP-2 picks. Pehle gear ke hisaab se 3-8 hote the.
+// Creator: "एक दो पोजीशन ली। स्टॉक इज़ अप लाइक 10-20%, ऐसे तीन चार स्टॉक मिल गए —
+// यू आर लाइक 25% इन्वेस्टेड, दे आर डन।" Scan har candidate ko score deta hai; rank 3
+// ke baad signal khatam ho jaata hai, aur wo trades achhi walon ki capital kha jaati
+// hain. Dono capitals (₹1L aur ₹6L) pe test kiya — H2 (recent bura market) me PF
+// 1.29 se 2.10 ho gaya. --max-picks 0 se purana gear-based behaviour wapas.
+const MAX_PICKS = parseInt(argVal('--max-picks', '2'), 10);
 // ★ RISK RAMP — creator ka "test trades" wala tarika, uske apne shabdon me:
 //   "हमने कुछ एक ट्रेड्स ली टू टेस्ट कि मार्केट कैसा है। अगर यहां पर हमें सफलता मिलती है,
 //    ईजीनेस महसूस होता है, तो हम आगे जाएंगे। हम गियर अप करेंगे।"
@@ -85,6 +91,28 @@ const RAMP_MAX = parseInt(argVal('--ramp-max', '2'), 10);   // test mode me max 
 // Kitna profit ho tab position "chal rahi hai" mani jaye. Creator: "stock is up like
 // 10-20%... they are done" — +0.1% ko success maanna uske matlab se door hai.
 const RAMP_GAIN = parseFloat(argVal('--ramp-gain', '0'));
+
+// ---- Stock-pick quality filters (transcripts se nikale — test ke liye flags) ----
+// --min-gain6 N : stock pichhle ~6 mahine me kam se kam N% bhaag chuka ho.
+//   Creator: "ये स्टॉक ट्रेडेबल नहीं है... 15-20% वाले हैं, उनमें पैसा नहीं लगाना"
+//   aur "हॉटेस्ट स्टॉक, रिसेंटली 77% ऊपर था". Soye hue stock ka breakout squat karta hai.
+const MIN_GAIN6 = parseFloat(argVal('--min-gain6', '0'));
+// --min-tv N : minimum 20-din average traded value, CRORE me (default 5)
+//   Creator ne ₹3 Cr wale stock ko reject kiya tha — "pehle ek ghante me sirf 50 lakh"
+const MIN_TV_CR = parseFloat(argVal('--min-tv', '5'));
+// --above-150dma : higher-timeframe check (150 DMA ≈ 30 weekly bars, Stage-2 filter)
+//   Creator: "मैंने इसका मंथली चार्ट देखा" — wo weekly/monthly bhi dekhta hai, hum sirf daily.
+const ABOVE_150 = args.includes('--above-150dma');
+// --skip-sectors "A,B" : jin sectors me strategy kaam nahi karti unhe chhodo
+const SKIP_SECTORS = new Set((argVal('--skip-sectors', '') || '').split(',').map(s => s.trim()).filter(Boolean));
+// --max-below52 N : 52-week high se itne % se zyada neeche = overhead supply, skip
+//   Creator: "काफी ओवरहेड सप्लाई लग रहा था... 33%, 30% होता है तभी मैं लीव करता हूं"
+const MAX_BELOW52 = parseFloat(argVal('--max-below52', '0'));
+const MIN_TRADED_VALUE = MIN_TV_CR * 1e7;   // crore → rupees
+// --hot-bonus N : hot-sector ka score weight (default 4). Creator theme-driven hai —
+// "Defence names are doing something good", "metal me action hai" — dekhein weight
+// badhane se pick quality sudhrti hai ya nahi.
+const HOT_BONUS = parseFloat(argVal('--hot-bonus', '4'));
 // --book-at N : +N% pe profit book. 0 = bilkul book mat karo, sirf 10 DMA trail chale.
 // --book-part F : +N% pe sirf F fraction becho (creator PARTIAL karta hai), baaki trail pe.
 // Kyun: abhi 100% book +8% pe hota hai, aur wo rule trail se PEHLE chalta hai —
@@ -281,6 +309,16 @@ function setupAt(S, si, hot) {
   const tv = (S.ptv[si + 1] - S.ptv[si + 1 - 20]) / 20;
   if (tv < MIN_TRADED_VALUE) return null;                              // liquidity floor
 
+  // ---- pick-quality filters (sab default me OFF, flags se on hote hain) ----
+  if (SKIP_SECTORS.size && SKIP_SECTORS.has(S.sec)) return null;
+  if (MIN_GAIN6 && (close - c[si - 120]) / c[si - 120] * 100 < MIN_GAIN6) return null;
+  if (ABOVE_150) {
+    if (si < 160) return null;
+    const s150 = smaAt(S.pc, si, 150), s150p = smaAt(S.pc, si - 10, 150);
+    if (!(close > s150 && s150 > s150p)) return null;
+  }
+  if (MAX_BELOW52 && (S.hi252[si] - close) / close * 100 > MAX_BELOW52) return null;
+
   // ADAPTIVE base: 6-30 din me se sabse LAMBA valid base (scan.mjs ka bestBase)
   // strict (pick-worthy): >=8 din, range <=13%, pivot se <=4.5% door
   // loose  (watch-worthy): >=6 din, range <=16%, pivot se <=8% door
@@ -317,7 +355,7 @@ function setupAt(S, si, hot) {
   if (volShrink) score += 2.5;
   if (near52) score += 3;
   if (fivePct) score += 2;
-  if (hot) score += 4;
+  if (hot) score += HOT_BONUS;
   score += S.capPref;
 
   let sl = Math.max(Math.min(...l.slice(si - 7, si + 1)), pivot * 0.955);
