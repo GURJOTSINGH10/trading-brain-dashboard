@@ -1,4 +1,4 @@
-# 🧠 TRADING BRAIN — START HERE (Master Handover)
+﻿# 🧠 TRADING BRAIN — START HERE (Master Handover)
 
 > **Agar tum ye pehli baar padh rahe ho (Claude bina memory ke, ya koi bhi):**
 > Ye file poore project ka dimaag hai. Ise poora padho — iske baad tumhe sab pata hoga.
@@ -191,10 +191,11 @@ node scripts/fetch-industries.mjs        # naye stocks ka sector laao (build-uni
 # --- DONO backtest dobara banane ka poora nuskha (isi order me) ---
 # 1) Strategy proof: 5 saal, Rs 1 lakh, 31 Mar 2026 tak
 node --max-old-space-size=8192 scripts/backtest.mjs --from 2021-07-16 --to 2026-03-31 \
-  --capital 100000 --sizes 24,24,24,24,24 --summary strategy-test.json
+  --capital 100000 --sizes 24,24,24,24,24 --ramp --test-size 12 --ramp-need 2 --ramp-max 3 --ramp-gain 5 \
+  --summary strategy-test.json
 # 2) Chalu portfolio: 1 Apr 2026 se aaj tak, Rs 6 lakh (journal.json isi se banti hai)
 node --max-old-space-size=8192 scripts/backtest.mjs --from 2026-04-01 \
-  --capital 600000 --sizes 24,24,24,24,24 --write
+  --capital 600000 --sizes 24,24,24,24,24 --ramp --test-size 12 --ramp-need 2 --ramp-max 3 --ramp-gain 5 --write
 # 3) Phir hamesha:
 node scripts/scan.mjs --force
 #
@@ -260,7 +261,24 @@ close 10 DMA ke neeche aate hi bahar, avg hold 4 session. Wo chart/volume/market
 discretion lagata hai; hum nahi laga sakte. Backtest me 10 DMA = FULL −25%, 40 DMA = +63%.
 40 DMA hi ek aisi trail hai jo DONO halves me PF > 1 deti hai.
 
-**SIZING: har trade 24% of capital (flat).** Gear-based scaling data me kuch add nahi
+**RISK RAMP — cash se nikalte waqt aadhi size.** Creator ke shabd:
+> *"हमने कुछ एक ट्रेड्स ली **टू टेस्ट कि मार्केट कैसा है**। अगर यहां पर हमें सफलता मिलती है,
+> ईजीनेस महसूस होता है, तो हम आगे जाएंगे। **हम गियर अप करेंगे।** लेकिन हमें वहीं पर ही खड्डे
+> नजर आ रहे थे। तो पहले गियर से दूसरे तीसरे गियर में जाने का कोई मतलब है नहीं।"*
+> *"**एक दो पोजीशन ली। स्टॉक इज़ अप लाइक 10-20%**, ऐसे तीन चार स्टॉक मिल गए। यू आर लाइक 25% इन्वेस्टेड, दे आर डन।"*
+
+Rule: **jab tak 2 open positions +5% se upar na hon, size aadhi (12%) aur max 3 positions.**
+Do chalne lagein → full size (24%). Ye market gear se ALAG hai — gear market ka mood hai,
+ye TUMHARE apne trades ka feedback.
+
+⚠ **IMAANDAARI — iska return pe asar NOISE ke andar hai.** ₹1L pe ye nateeja bigaadta hai
+(+133% → +105%), ₹6L pe sudhaarta hai (+87% → +123%). Same rules, alag capital, ULTA
+nateeja. **Isliye ise return booster maan ke kabhi tune mat karna.** Ye risk discipline
+hai: cash se nikalte hi 96% invested ho jaana asli paise me khatarnak hai, aur backtest
+gap-risk / slippage / emotion price nahi karta. Chalu FY me isne madad ki: −11.4% se
+−8.7%, drawdown −10.3% se −8.9%.
+
+**SIZING: har trade 24% of capital (flat), test mode me 12%.** Gear-based scaling data me kuch add nahi
 karti. 5 ladders × 2 halves test kiye — 22% aur 24% hi dono halves me positive. 24%
 chuna: kam drawdown (−16.9% vs −23.1%) aur H2 me behtar. **Note:** 7 Aug ko maine
 `10/18/24/24/12` recommend kiya tha (gear 5 pe size kam) — wo TOOTE exit rules pe nikla

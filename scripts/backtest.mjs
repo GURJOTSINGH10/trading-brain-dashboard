@@ -70,6 +70,21 @@ const NO_CHASE = parseFloat(argVal('--no-chase', '0')); // % — open pivot se i
 // volume ki asli information value hai; nahi rehta to wo sirf same-day look-ahead thi.
 const PREV_VOL = args.includes('--prev-vol');
 const MAX_PICKS = parseInt(argVal('--max-picks', '0'), 10); // 0 = gear ke hisaab se (normal)
+// ★ RISK RAMP — creator ka "test trades" wala tarika, uske apne shabdon me:
+//   "हमने कुछ एक ट्रेड्स ली टू टेस्ट कि मार्केट कैसा है। अगर यहां पर हमें सफलता मिलती है,
+//    ईजीनेस महसूस होता है, तो हम आगे जाएंगे। हम गियर अप करेंगे।"
+//   "एक दो पोजीशन ली। स्टॉक इज़ अप लाइक 10-20%... यू आर लाइक 25% इन्वेस्टेड, दे आर डन।"
+// Matlab: cash se wapas aate waqt CHHOTI size se shuru karo, aur tabhi poori size pe
+// jao jab apni hi 2 positions profit dikha rahi hon. Market ka breadth alag cheez hai —
+// ye TUMHARE apne trades ka feedback hai. Flat size me pehli hi trade poori size pe
+// lag jaati thi, jo bilkul ulta hai.
+const RAMP = args.includes('--ramp');
+const TEST_SIZE = parseFloat(argVal('--test-size', '8'));   // test mode me % of capital
+const RAMP_NEED = parseInt(argVal('--ramp-need', '2'), 10); // itni open positions profit me = gear up
+const RAMP_MAX = parseInt(argVal('--ramp-max', '2'), 10);   // test mode me max itni positions
+// Kitna profit ho tab position "chal rahi hai" mani jaye. Creator: "stock is up like
+// 10-20%... they are done" — +0.1% ko success maanna uske matlab se door hai.
+const RAMP_GAIN = parseFloat(argVal('--ramp-gain', '0'));
 // --book-at N : +N% pe profit book. 0 = bilkul book mat karo, sirf 10 DMA trail chale.
 // --book-part F : +N% pe sirf F fraction becho (creator PARTIAL karta hai), baaki trail pe.
 // Kyun: abhi 100% book +8% pe hota hai, aur wo rule trail se PEHLE chalta hai —
@@ -456,6 +471,18 @@ async function main() {
   let maxConcurrent = 0, maxDeployPct = 0, skippedNoCash = 0;
 
   for (let di = startDi; di < LAST; di++) {
+    // Din ki shuruaat: apni kitni open positions abhi profit me hain? (KAL ke close pe —
+    // aaj ka bhaav abhi pata nahi). Yahi wo "feedback" hai jis pe gear up hota hai.
+    let winningOpen = 0, openCount = 0;
+    for (const p of active.values()) {
+      if (p.status !== 'open') continue;
+      openCount++;
+      const si = p.S.map[di];
+      const prevClose = si > 0 ? p.S.c[si - 1] : null;
+      if (prevClose && prevClose >= p.entry * (1 + RAMP_GAIN / 100)) winningOpen++;
+    }
+    const rampedUp = !RAMP || winningOpen >= RAMP_NEED;
+
     // 1) purani positions ko aaj ke data se aage badhao
     for (const [sym, p] of [...active]) {
       const S = p.S, si = S.map[di];
@@ -526,6 +553,19 @@ async function main() {
           // Bina iske backtest chup-chaap 5x leverage maan leta tha aur returns
           // jhoothe achhe dikhte the. Paisa nahi hai to trade nahi hoti — bas.
           const entryPx = roundPrice(Math.max(o, p.pivot));
+          // Size TRIGGER ke waqt tay hoti hai, pick ke waqt nahi — kyunki feedback
+          // (kitni positions profit me hain) tabhi pata hota hai.
+          if (RAMP && !rampedUp && openCount >= RAMP_MAX) {
+            skippedNoCash++;
+            closed.push({
+              picked: fmtShort(T[p.pickDi]), symbol: sym, sector: S.sec, cap: S.cap, gear: p.gear,
+              entry: p.pivot, status: 'no-cash', pnlPct: 0,
+              reason: `Test mode — abhi sirf ${winningOpen} position profit me hai. Pehle ${RAMP_NEED} chalein, tab gear up. Tab tak nayi position nahi.`,
+              _exitTs: T[di], _pickTs: T[p.pickDi], _hold: 0, _buyVal: 0, _sellVal: 0
+            });
+            active.delete(sym); continue;
+          }
+          p.sizePct = rampedUp ? p.fullSize : TEST_SIZE;
           const alloc = equity * p.sizePct / 100;
           // ★ qty me Math.max(1, ...) NAHI. Wo MRF/Page jaise ₹1.5 lakh ke share ka
           // 1 share zabardasti khareed leta tha jabki allocation ₹17,000 ki thi —
@@ -639,7 +679,7 @@ async function main() {
     cands.sort((a, b) => b.score - a.score);
     for (const c of cands.slice(0, maxPicks)) {
       active.set(c.S.sym, {
-        S: c.S, gear, sizePct: SIZE_BY_GEAR[gear - 1],
+        S: c.S, gear, fullSize: SIZE_BY_GEAR[gear - 1], sizePct: SIZE_BY_GEAR[gear - 1],
         pivot: c.pivot, sl: c.sl, status: 'pending', wait: 0, pickDi: di
       });
     }
@@ -653,7 +693,7 @@ async function main() {
     for (let i = endDi; i >= startDi && lastClose == null; i--) if (p.S.map[i] >= 0) lastClose = p.S.c[p.S.map[i]];
     const base = {
       picked: fmtShort(T[p.pickDi]), pickedTs: T[p.pickDi], symbol: p.S.sym, sector: p.S.sec,
-      gear: p.gear, sizePct: p.sizePct, pivot: p.pivot, sl: p.sl
+      gear: p.gear, fullSize: p.fullSize, sizePct: p.sizePct, pivot: p.pivot, sl: p.sl
     };
     return p.status === 'open'
       // booked flag zaroori hai — warna scan.mjs is position ko kal DOBARA

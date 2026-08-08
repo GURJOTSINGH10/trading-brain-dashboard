@@ -344,6 +344,13 @@
   .range-tabs button.active { background: var(--text); color: var(--bg); border-color: var(--text); }
   .range-stats { margin-top: 11px; font-size: 12.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 16px; }
   .range-stats b { color: var(--text); font-weight: 700; }
+  /* Risk ramp banner — user ko saaf pata chalna chahiye ki aaj aadhi size leni hai
+     ya poori. Ye market gear se ALAG hai: ye TUMHARI apni positions ka feedback hai. */
+  .ramp-note { margin-top: 12px; padding: 11px 14px; border-radius: 12px; font-size: 12.5px; line-height: 1.5; border: 1px solid; }
+  .ramp-note b { display: block; font-size: 12px; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 3px; }
+  .ramp-test { background: rgba(255,193,77,0.10); border-color: rgba(255,193,77,0.35); color: var(--amber); }
+  .ramp-full { background: rgba(49,212,146,0.10); border-color: rgba(49,212,146,0.32); color: var(--green); }
+  .ramp-note span { color: var(--muted); }
   .st-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(88px, 1fr)); gap: 12px; margin-top: 13px; }
   .st-grid small { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; display: block; font-weight: 700; }
   .st-grid b { font-size: 16px; font-weight: 800; display: block; margin-top: 2px; }
@@ -455,6 +462,7 @@
         <div class="capital-stat"><span id="capPnlLabel">FY return</span><b id="capPnl"></b></div>
         <div class="capital-stat"><span id="capWinLabel">Win rate (FY)</span><b id="capWinrate"></b></div>
         <div class="capital-stat"><span>Lagi hui / free cash</span><b id="capDeployed"></b></div>
+        <div class="ramp-note" id="rampNote" style="display:none;"></div>
         <div class="sizing-note" id="sizingNote"></div>
       </div>
     </div>
@@ -654,10 +662,23 @@
   const freeCash = Math.max(0, equity - deployed);
   const depEl = document.getElementById('capDeployed');
   depEl.innerHTML = `${inr(deployed)} <span class="note">(${Math.round(deployed / equity * 100)}%)</span> / ${inr(freeCash)}`;
-  const curSize = Math.round(equity * sizeByGear[d.market.gear - 1] / 100);
+  // Risk ramp — creator ka "test trades" wala tarika. Market gear se alag hai:
+  // gear market ka mood batata hai, ye TUMHARI apni positions ka feedback hai.
+  const rr = d.riskRamp;
+  if (rr) {
+    const el = document.getElementById('rampNote');
+    el.style.display = '';
+    el.className = 'ramp-note ' + (rr.mode === 'full' ? 'ramp-full' : 'ramp-test');
+    el.innerHTML = (rr.mode === 'full'
+      ? `<b>✓ Full size — ${rr.sizePct}% per trade</b>`
+      : `<b>⚠ Test mode — aadhi size, ${rr.sizePct}% per trade</b>`)
+      + `<span>${rr.note}</span>`;
+  }
+  const rampSizePct = rr ? rr.sizePct : sizeByGear[d.market.gear - 1];
+  const curSize = Math.round(equity * rampSizePct / 100);
   const room = Math.floor(freeCash / (curSize || 1));
   document.getElementById('sizingNote').textContent =
-    `Abhi ${d.market.gearLabel} = ${sizeByGear[d.market.gear - 1]}% per trade ≈ ${inr(curSize)}. ` +
+    `Abhi ${d.market.gearLabel} · ${rampSizePct}% per trade ≈ ${inr(curSize)}. ` +
     (room > 0
       ? `Free cash me ${room} aur position aa sakti hai.`
       : `Nayi position ke liye cash nahi bachi — pehle kisi ka exit hona chahiye. Cash bhi ek position hai.`);

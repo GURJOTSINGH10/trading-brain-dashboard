@@ -23,6 +23,21 @@ const BOOK_AT = 10;        // "double digit" pe partial book (creator ka shabd)
 const BOOK_PART = 0.5;     // 50% book, baaki trail pe
 const TRAIL_MA = 40;       // creator "10 DMA" bolta hai par wo discretion ke saath —
                            // mechanically 40 DMA hi dono backtest halves me PF > 1 deti hai
+// ★ RISK RAMP — creator: "कुछ एक ट्रेड्स ली टू टेस्ट कि मार्केट कैसा है। अगर सफलता
+// मिलती है, ईजीनेस महसूस होता है, तो हम आगे जाएंगे, गियर अप करेंगे।"
+// Cash se wapas aate waqt AADHI size se shuru, aur poori size tabhi jab apni hi 2
+// positions profit me hon. Flat size me pehli hi trade poori size pe lag jaati thi.
+// TEST_SIZE = full ka aadha (principle se chuna, backtest ke max se nahi — sweep
+// noisy tha: 12%→+134%, 14%→+96%, 16%→+55%; us shor pe tune karna overfit hota).
+// IMAANDAARI: iska return pe asar NOISE ke andar hai — ₹1L pe ye nateeja bigaadta hai
+// (+133% → +105%), ₹6L pe sudhaarta hai (+87% → +123%). Same rules, alag capital, ulta
+// nateeja. Isliye ise return booster maan ke tune MAT karna. Ye RISK DISCIPLINE hai:
+// cash se nikalte hi 96% invested ho jaana asli paise me khatarnak hai, aur backtest
+// gap-risk/slippage/emotion price nahi karta. gain=5% variant sabse stable tha.
+const TEST_SIZE = 12;      // full (24%) ka aadha
+const RAMP_NEED = 2;       // itni open positions chal rahi hon = full size unlock
+const RAMP_MAX = 3;        // test mode me max itni positions
+const RAMP_GAIN = 5;       // "chal rahi hai" = kam se kam +5% (creator: "up like 10-20%")
 const MIN_TRADED_VALUE = 5e7; // ₹5 Cr avg daily traded value
 const UNIVERSE_MAX_AGE_DAYS = 10; // har 10 din me stock list auto-refresh
 
@@ -623,6 +638,16 @@ async function main() {
   }));
   console.log(`Candidates: ${candidates.length} (ready: ${readyCands.length}), picks: ${picks.length}, watchlist: ${watchlist.length}, gear: ${gear}`);
 
+  // --- risk ramp ka faisla ---
+  // KAL ke close pe (curPnlPct pichhle run ka hai), aaj ke bhaav pe nahi — jab tumhara
+  // order aaj subah bharta hai tab tumhe kal tak ka hi pata hota hai.
+  // Ye block journal-update se BAHAR hai kyunki data.js me bhi chahiye (force-rerun pe
+  // journal skip hota hai par dashboard tab bhi banta hai).
+  const openNow = state.positions.filter(p => p.entryStatus === 'open');
+  const winningOpen = openNow.filter(p => (p.curPnlPct || 0) >= RAMP_GAIN).length;
+  const rampedUp = winningOpen >= RAMP_NEED;
+  console.log(`Risk ramp: ${winningOpen}/${openNow.length} open positions profit me — ${rampedUp ? 'FULL SIZE' : 'TEST MODE (aadhi size)'}`);
+
   // --- journal update (paper portfolio) — sirf naye session pe, force-rerun pe nahi ---
   const sizePctFor = g => SIZE_BY_GEAR[Math.max(0, Math.min(4, g - 1))];
   if (!alreadyProcessed) {
@@ -634,6 +659,7 @@ async function main() {
   let deployed = state.positions
     .filter(p => p.entryStatus === 'open')
     .reduce((s, p) => s + (p.invested || 0), 0);
+
 
   // DO PASS zaroori hai: pehle saari exits (cash free hoti hai), phir naye triggers
   // us bachi hui cash se. Ek hi pass me aaj bikne wali position ka paisa aaj hi
@@ -664,6 +690,17 @@ async function main() {
       // isi ek cheez se +305% aur -30% ka farak tha.
       if (hi > pos.pivot) {
         const entryPx = roundPrice(Math.max(o, pos.pivot));
+        // Size TRIGGER pe tay hoti hai, pick pe nahi — feedback tabhi pata hota hai
+        if (!rampedUp && openNow.length >= RAMP_MAX) {
+          state.closed.push({
+            picked: pos.picked, ts: pos.pickedTs || null, symbol: pos.symbol, sector: pos.sector,
+            gear: pos.gear, entry: roundPrice(pos.pivot), status: 'no-cash', pnlPct: 0, exitTs: sessionTs,
+            reason: `Test mode — abhi sirf ${winningOpen} position profit me hai. Pehle ${RAMP_NEED} chalein tab gear up hoga. Tab tak nayi position nahi.`,
+            live: true
+          });
+          continue;
+        }
+        pos.sizePct = rampedUp ? (pos.fullSize || pos.sizePct) : TEST_SIZE;
         const alloc = state.equity * pos.sizePct / 100;
         // ★ Math.max(1, ...) hata diya. Wo MRF/Page jaise ₹1.5 lakh ke share ka
         // 1 share "khareed" leta tha jabki position size ₹17,000 ki thi — paper
@@ -752,7 +789,7 @@ async function main() {
       // pickedTs: "7 Aug" string se saal pata nahi chalta. Journal ab 12 mahine ka
       // hai, to client ko sort karne ke liye asli timestamp chahiye.
       picked: fmtShort(sessionTs), pickedTs: sessionTs, symbol: p.symbol, sector: p.sector,
-      gear, sizePct: sizePctFor(gear), pivot: p.pivot, sl: p.sl,
+      gear, fullSize: sizePctFor(gear), sizePct: sizePctFor(gear), pivot: p.pivot, sl: p.sl,
       entryStatus: 'pending', daysWaiting: 0
     });
   }
@@ -790,6 +827,16 @@ async function main() {
         ? `Har trade ${SIZE_BY_GEAR[0]}% of capital. Exit: +${BOOK_AT}% pe ${Math.round(BOOK_PART * 100)}% book, baaki ${TRAIL_MA} DMA pe trail`
         : `Gear-based sizing: ${SIZE_BY_GEAR.map((s, i) => `gear ${i + 1} = ${s}%`).join(', ')}`,
       sizeByGear: SIZE_BY_GEAR
+    },
+    // Risk ramp ki abhi ki haalat — dashboard pe dikhana zaroori hai, warna user ko
+    // pata nahi chalega ki aaj poori size leni hai ya aadhi
+    riskRamp: {
+      mode: rampedUp ? 'full' : 'test',
+      winningOpen, openCount: openNow.length, need: RAMP_NEED, maxTest: RAMP_MAX,
+      sizePct: rampedUp ? SIZE_BY_GEAR[gear - 1] : TEST_SIZE,
+      note: rampedUp
+        ? `${winningOpen} positions +${RAMP_GAIN}% se upar chal rahi hain — market feedback accha hai, full size (${SIZE_BY_GEAR[gear - 1]}%) pe khelo.`
+        : `Abhi sirf ${winningOpen} position +${RAMP_GAIN}% se upar hai. Market se feedback le rahe hain — aadhi size (${TEST_SIZE}%), max ${RAMP_MAX} positions. ${RAMP_NEED} chalne lagein tab gear up karenge.`
     },
     // 5-saal ka strategy test (₹1 lakh pe, 31 Mar 2026 tak) — ye chalu portfolio se
     // ALAG hai. Wo proof hai ki framework kaam karta hai; ye FY 26-27 ka asli hisaab.
