@@ -48,6 +48,48 @@ const args = process.argv.slice(2);
 const argVal = (name, def) => { const i = args.indexOf(name); return i >= 0 && args[i + 1] ? args[i + 1] : def; };
 const REFRESH = args.includes('--refresh');
 const WRITE = args.includes('--write');
+// ★ ENTRY ab DEFAULT me bina volume-confirm ke hai (pivot pe stop-buy jaisa).
+// Pehle default me "us din ka volume > 1.2x average" chahiye tha — par jab tumhara
+// order pivot pe bharta hai, us waqt poore din ka volume pata hi nahi hota. Aur
+// high-volume din aksar bade green din hote hain, to wo condition asal me "jo din
+// stock bhaaga usi din khareedo" ban jaati thi. Usi ek cheez se 5-saal ka result
+// +305% se -30% ho jaata tha. --vol-confirm se purana (galat) behaviour wapas aata
+// hai, sirf comparison ke liye.
+const ANY_CROSS = !args.includes('--vol-confirm');
+// --next-open: breakout+volume EOD pe confirm karo, entry AGLE din ke open pe.
+// Ye poori tarah implementable hai (ye system waise bhi EOD hai) — jabki default
+// wala same-din pivot pe entry us din ke TOTAL volume ko pehle se jaanta hai.
+const NEXT_OPEN = args.includes('--next-open');
+// --vol-exit: pivot pe stop-buy se ghuso (koi look-ahead nahi), phir US DIN KE CLOSE pe
+// volume dekho — confirm na ho to wahin nikal jao. Poori tarah implementable, aur entry
+// ka bhaav bhi pivot hi rehta hai (next-open wale me chase karna padta hai).
+const VOL_EXIT = args.includes('--vol-exit');
+const NO_CHASE = parseFloat(argVal('--no-chase', '0')); // % — open pivot se itna upar ho to skip
+// --prev-vol: volume condition KAL ke bar pe lagao (jo entry se pehle pata hoti hai)
+// aaj ke bar pe nahi. Ye pakka causal test hai: agar edge phir bhi rehta hai to
+// volume ki asli information value hai; nahi rehta to wo sirf same-day look-ahead thi.
+const PREV_VOL = args.includes('--prev-vol');
+const MAX_PICKS = parseInt(argVal('--max-picks', '0'), 10); // 0 = gear ke hisaab se (normal)
+// --book-at N : +N% pe profit book. 0 = bilkul book mat karo, sirf 10 DMA trail chale.
+// --book-part F : +N% pe sirf F fraction becho (creator PARTIAL karta hai), baaki trail pe.
+// Kyun: abhi 100% book +8% pe hota hai, aur wo rule trail se PEHLE chalta hai —
+// matlab koi winner kabhi +8% se aage jaa hi nahi sakta. Momentum ka saara paisa
+// us ek +40% wale runner me hota hai, aur ye rule use 8 pe kaat deta hai.
+// Defaults ab creator ke apne shabdon se: "jaise hi DOUBLE DIGIT me aaye to 1/3 ya
+// 50% book kar lein, baaki trail karte rahein". Pehle 8% pe 100% book hota tha —
+// dono galat the, aur usi ne har winner ko 8% pe kaat diya tha.
+const BOOK_AT = parseFloat(argVal('--book-at', '10'));
+const BOOK_PART = parseFloat(argVal('--book-part', '0.5'));   // 1 = poora, 0.5 = aadha
+// --trail-ma N / --trail-days N : trail kitni dheeli ho.
+// Kyun: 10 DMA se neeche ek hi close pe nikal jaana bahut tight hai — avg hold 4
+// session reh jaata hai. Momentum move hafton me banta hai, 4 din me nahi. Normal
+// pullback bhi 10 DMA tod deta hai, aur hum wahin bahar.
+// Creator "10 DMA se trail" bolta hai, par mechanically wo bahut kathor hai — pehla
+// close 10 DMA ke neeche aate hi bahar, avg hold 4 session. Wo chart/volume/market
+// dekh ke discretion lagata hai, hum nahi laga sakte. 40 DMA hi ek aisi trail hai jo
+// backtest ke DONO halves me PF > 1 deti hai (10 DMA: FULL -25%, 40 DMA: +63%).
+const TRAIL_MA = parseInt(argVal('--trail-ma', '40'), 10);
+const TRAIL_DAYS = parseInt(argVal('--trail-days', '1'), 10); // itne LAGATAR close neeche ho tab bahar
 
 // Ab do alag portfolio chalte hain (Aug 2026 se):
 //  1. History  — 5 saal, ₹1 lakh, 31 Mar 2026 tak. Strategy ka proof, freeze.
@@ -437,9 +479,49 @@ async function main() {
         active.delete(sym);
       };
 
+      // --next-open mode: kal EOD pe breakout confirm hua tha, aaj open pe kharido
+      if (p.status === 'confirmed') {
+        const entryPx = roundPrice(o);
+        const alloc = equity * p.sizePct / 100;
+        const qty = Math.floor(alloc / entryPx);
+        if (qty < 1 || deployed + qty * entryPx > equity) {
+          skippedNoCash++;
+          closed.push({
+            picked: fmtShort(T[p.pickDi]), symbol: sym, sector: S.sec, cap: S.cap, gear: p.gear,
+            entry: p.pivot, status: 'no-cash', pnlPct: 0,
+            reason: 'Breakout confirm hua, par capital pehle se lagi hui thi — trade chhoot gayi',
+            _exitTs: T[di], _pickTs: T[p.pickDi], _hold: 0, _buyVal: 0, _sellVal: 0
+          });
+          active.delete(sym);
+          continue;
+        }
+        p.status = 'open'; p.entry = entryPx; p.qty = qty; p.triggerDi = di;
+        p.invested = round2(p.qty * p.entry);
+        deployed = round2(deployed + p.invested);
+        if (deployed / equity * 100 > maxDeployPct) maxDeployPct = deployed / equity * 100;
+        p.tDays = 0;
+        if (lo <= p.sl) close('sl', Math.min(p.sl, o), `Entry ke din hi SL ${p.sl} hit — turant fail`);
+        continue;
+      }
+
       if (p.status === 'pending') {
+        // ★ LOOK-AHEAD CHECK — volume condition poore din ka volume dekhti hai, jo
+        // breakout ke waqt pata hi nahi hota. Asli me tum pivot pe stop-buy lagate ho
+        // aur wo volume kaisa bhi ho, bhar jaata hai. --any-cross se wahi test hota hai.
         const v20 = smaAt(S.pv, si, 20) || 0;
-        if (hi > p.pivot && S.v[si] > v20 * 1.2) {
+        const volOk = PREV_VOL ? S.v[si - 1] > (smaAt(S.pv, si - 1, 20) || 0) * 1.2
+                               : S.v[si] > v20 * 1.2;
+        if (hi > p.pivot && (ANY_CROSS || VOL_EXIT || volOk)) {
+          if (NEXT_OPEN) { p.status = 'confirmed'; continue; }   // kal ke open pe lenge
+          if (NO_CHASE && o > p.pivot * (1 + NO_CHASE / 100)) {  // bahut upar khula = mat chaso
+            closed.push({
+              picked: fmtShort(T[p.pickDi]), symbol: sym, sector: S.sec, cap: S.cap, gear: p.gear,
+              entry: p.pivot, status: 'no-trigger', pnlPct: 0,
+              reason: `Pivot se ${round2((o - p.pivot) / p.pivot * 100)}% upar khula — chase nahi karte`,
+              _exitTs: T[di], _pickTs: T[p.pickDi], _hold: 0, _buyVal: 0, _sellVal: 0
+            });
+            active.delete(sym); continue;
+          }
           // ★ CASH CONSTRAINT — ₹1 lakh me 29 positions ek saath nahi khul sakti.
           // Bina iske backtest chup-chaap 5x leverage maan leta tha aur returns
           // jhoothe achhe dikhte the. Paisa nahi hai to trade nahi hoti — bas.
@@ -473,6 +555,8 @@ async function main() {
           p.tDays = 0;
           // ★ SAME-DAY SL — breakout aur stop ek hi din me ho sakte hain (GNA, 4 Aug)
           if (lo <= p.sl) close('sl', p.sl, `Entry ke din hi SL ${p.sl} hit — breakout turant fail, same-day out`);
+          // volume EOD pe confirm nahi hua = fake breakout, usi close pe bahar
+          else if (VOL_EXIT && S.v[si] <= v20 * 1.2) close('fail', cl, 'Volume confirm nahi hua — jhoota breakout, usi din close pe nikal gaye');
         } else if (++p.wait >= 4) {
           closed.push({
             picked: fmtShort(T[p.pickDi]), symbol: sym, sector: S.sec, cap: S.cap, gear: p.gear,
@@ -488,7 +572,8 @@ async function main() {
       // open position management — scan.mjs ke exact rules (koi max-hold cap nahi,
       // 10 DMA trail hi natural exit hai)
       p.tDays++;
-      const s10 = smaAt(S.pc, si, 10);
+      const s10 = smaAt(S.pc, si, TRAIL_MA);
+      if (cl >= s10) p.below = 0;   // MA ke upar wapas = counter reset
       // ★ GAP-DOWN — agar stock SL ke NEECHE khula hai to SL ka bhaav milta hi nahi,
       // open pe hi nikalna padta hai. Bina iske backtest har SL ko exact bhaav pe
       // bhar deta tha = losses asli se chhote dikhte the.
@@ -498,10 +583,33 @@ async function main() {
           ? `Gap-down — SL ${p.sl} tha, stock ${roundPrice(o)} pe khula. Bhaav mila hi nahi, open pe out.`
           : `SL hit ${p.sl} pe — out, end of story. Sell is a sell.`);
       }
-      else if (cl >= p.entry * 1.08) close('win', cl, `+${round2((cl - p.entry) / p.entry * 100)}% — partial book zone, profit liya.`);
-      else if (cl < s10 && p.tDays >= 2) {
+      else if (BOOK_AT > 0 && !p.booked && cl >= p.entry * (1 + BOOK_AT / 100)) {
+        if (BOOK_PART >= 1) {
+          close('win', cl, `+${round2((cl - p.entry) / p.entry * 100)}% — book zone, profit liya.`);
+        } else {
+          // PARTIAL book — utna hissa bech ke baaki ko 10 DMA pe chalne do.
+          // Realised P&L alag trade ke roop me darj, position chhoti ho ke chalti rehti hai.
+          const sellQty = Math.max(1, Math.floor(p.qty * BOOK_PART));
+          const pnlPct = round2((cl - p.entry) / p.entry * 100);
+          const soldVal = round2(sellQty * p.entry);
+          equity = round2(equity + soldVal * pnlPct / 100);
+          deployed = Math.max(0, round2(deployed - soldVal));
+          closed.push({
+            picked: fmtShort(T[p.pickDi]), symbol: sym, sector: S.sec, cap: S.cap, gear: p.gear,
+            entry: p.entry, qty: sellQty, invested: soldVal, status: 'win', pnlPct,
+            exitDate: fmtShort(T[di]), reason: `+${pnlPct}% — double digit aa gaya, ${Math.round(BOOK_PART * 100)}% book kiya. Baaki ${TRAIL_MA} DMA pe trail hoga.`,
+            _exitTs: T[di], _pickTs: T[p.pickDi], _hold: p.tDays || 0, _buyVal: soldVal, _sellVal: round2(sellQty * cl)
+          });
+          p.qty -= sellQty; p.invested = round2(p.qty * p.entry); p.booked = true;
+          if (p.qty < 1) active.delete(sym);
+          // Baaki hissa SIRF 10 DMA pe trail hota hai — SL ko entry pe nahi khiskate.
+          // Creator ka shabd: "1/3 ya 50% book kar lein, baaki 10 DE se trail karte
+          // rahein". SL entry pe le jaana runner ko pehle hi pullback pe kaat deta hai.
+        }
+      }
+      else if (cl < s10 && p.tDays >= 2 && (p.below = (p.below || 0) + 1) >= TRAIL_DAYS) {
         const g = (cl - p.entry) / p.entry * 100;
-        close(g >= 0 ? 'win' : 'fail', cl, g >= 0 ? '10 DMA trail exit — jo mila le liya' : '10 DMA break = story over.');
+        close(g >= 0 ? 'win' : 'fail', cl, g >= 0 ? `${TRAIL_MA} DMA trail exit — jo mila le liya` : `${TRAIL_MA} DMA break = story over.`);
       }
       else if (p.tDays >= 3 && cl < p.pivot) close('fail', cl, `Breakout fail — ${p.tDays} din squat, move nahi aaya. Abnormal behavior = out.`);
     }
@@ -518,7 +626,7 @@ async function main() {
     gearDays[gear]++;
     if (gear <= 1) continue;                                 // noTrade — cash bhi ek position hai
     const hot = hotAt(di);
-    const maxPicks = gear >= 5 ? 8 : gear === 4 ? 6 : gear >= 3 ? 5 : 3;
+    const maxPicks = MAX_PICKS || (gear >= 5 ? 8 : gear === 4 ? 6 : gear >= 3 ? 5 : 3);
 
     const cands = [];
     for (const S of stocks) {
@@ -548,8 +656,10 @@ async function main() {
       gear: p.gear, sizePct: p.sizePct, pivot: p.pivot, sl: p.sl
     };
     return p.status === 'open'
+      // booked flag zaroori hai — warna scan.mjs is position ko kal DOBARA
+      // partial-book kar dega (wo `!pos.booked` dekhta hai)
       ? { ...base, entryStatus: 'open', entry: p.entry, qty: p.qty, invested: p.invested,
-          daysSinceTrigger: p.tDays || 0, triggerDate: fmtShort(T[p.triggerDi]),
+          booked: !!p.booked, daysSinceTrigger: p.tDays || 0, triggerDate: fmtShort(T[p.triggerDi]),
           curPnlPct: lastClose ? round2((lastClose - p.entry) / p.entry * 100) : 0 }
       : { ...base, entryStatus: 'pending', daysWaiting: p.wait || 0 };
   });

@@ -149,6 +149,9 @@ Dono idempotent — same session dobara process nahi hota. Expectation: **same e
    (b) **Alag rules** — backtest fixed 15-din base + purani scoring pe chal raha tha, jabki live adaptive base + capPref + hot-sector pe. Matlab jo system chal raha tha uska test hi nahi ho raha tha. FIX: `setupAt()` ab scan.mjs ka hubahu port hai.
    (c) **Infinite capital** — 29 positions ek saath khul jaati thi (₹1 lakh me ~490% deployment). Returns 5x leverage maan ke aa rahe the. FIX: cash constraint, ab peak 99%.
    (d) **Journal overwrite** — `--write` poora `closed[]` replace kar deta tha, user ki asli live trades mit jaati thi; upar se backtest window live period pe chadh ke wahi din do baar count karti thi. FIX: `live: true` tag + live ki pehli pick pe backtest kaat dena.
+7i. **(8 Aug 2026) ENTRY ka volume look-ahead — POORE PROJECT KA SABSE BADA BUG.** Trigger `pivot cross + AAJ ka volume > 1.2× avg` tha. Us din ka total volume order bharte waqt pata hi nahi hota, aur high-volume din = bade green din, to ye "aaj jo bhaaga usi ko aaj ke low pe khareedo" ban gaya tha. 5-saal ka result **+305% se −30%**. User ne shak kiya tha ki numbers sensible nahi lag rahe — sahi tha. **Sabak: har filter pe poochho — "ye information decision ke WAQT available hoti hai?"**
+7j. **(8 Aug 2026) `+8% pe 100% book` rule trail se PEHLE chalta tha** — matlab koi trade kabhi +8% se aage ja hi nahi sakti thi. Momentum ka saara paisa ek bade runner me hota hai, wahi kat raha tha. Transcripts se creator ka asli rule mila: "double digit pe 1/3 ya 50% book, baaki trail". Fix ke baad avg win +7.7% se +17.7% ho gaya. **Sabak: rules ko creator ke transcripts se verify karo, yaad se mat likho.**
+7k. **(8 Aug 2026) `booked` flag positions me carry nahi ho raha tha** — backtest ne partial-book kiya, par `openPositions` me flag nahi bheja, to scan.mjs agle din usi position ko DOBARA half book kar deta. journal me positions likhte waqt saara state bhejo, sirf price fields nahi.
 7f. **(8 Aug 2026) LIVE journal me cash constraint tha hi nahi — SABSE BADA** — maine constraint sirf backtest me daala tha, `scan.mjs` me daalna reh gaya. Nateeja: live portfolio me **11 open positions, ₹2,66,203 deployed = ₹1 lakh ka 266%**. Backtest wahi rules pe max 6 pe rukta tha. User ne khud pakda. **FIX**: scan.mjs ab `deployed` track karta hai aur DO PASS chalata hai — pehle saari exits (cash free hoti hai), phir naye triggers us bachi cash se. Na fit ho to trade `no-cash` status me jaati hai (dashboard pe apna chip hai). Sabak: koi bhi constraint backtest me daalo to **usi waqt live me bhi daalo** — warna backtest jhooth bolega ki sab theek hai.
 7g. **(8 Aug 2026) `backtest --write` ne live equity ka basis tod diya** — usne `journal.equity` ko backtest ki ending equity (₹5,10,068) se replace kar diya, jabki open positions ₹1.15 lakh ke hisaab se khuli thi. Agli position 21% of ₹5.1L = ₹1.07 lakh ki banti — ₹1 lakh ke account pe. **FIX**: ab `journal.startCapital` aur `sizeByGear` bhi backtest hi likhta hai, aur scan.mjs wahi padhta hai (hardcode nahi) — dono kabhi alag nahi ho sakte. Saath me `lastSession` bhi set hota hai, warna scan usi din ko dobara process kar deta.
 7h. **(8 Aug 2026) Open positions chhoti range me gayab** — journal pick-date pe filter hota tha, to 3 Aug ki khuli position 1D view me nahi dikhti thi aur lagta tha "gayab ho gayi". Open positions HISTORY nahi, ABHI ki haalat hain — ab har range me dikhti hain.
@@ -188,15 +191,22 @@ node scripts/fetch-industries.mjs        # naye stocks ka sector laao (build-uni
 # --- DONO backtest dobara banane ka poora nuskha (isi order me) ---
 # 1) Strategy proof: 5 saal, Rs 1 lakh, 31 Mar 2026 tak
 node --max-old-space-size=8192 scripts/backtest.mjs --from 2021-07-16 --to 2026-03-31 \
-  --capital 100000 --sizes 10,18,24,24,12 --summary strategy-test.json
+  --capital 100000 --sizes 24,24,24,24,24 --summary strategy-test.json
 # 2) Chalu portfolio: 1 Apr 2026 se aaj tak, Rs 6 lakh (journal.json isi se banti hai)
 node --max-old-space-size=8192 scripts/backtest.mjs --from 2026-04-01 \
-  --capital 600000 --sizes 10,18,24,24,12 --write
+  --capital 600000 --sizes 24,24,24,24,24 --write
 # 3) Phir hamesha:
 node scripts/scan.mjs --force
 #
 # Flags: --from/--to YYYY-MM-DD · --capital N · --sizes a,b,c,d,e · --summary FILE
 #        --write (journal likho) · --refresh (chart cache phenk do)
+#        --book-at N / --book-part F / --trail-ma N  (default 10 / 0.5 / 40)
+#        --max-picks N  ·  --no-chase N%
+# AUDIT flags (sirf comparison ke liye, normal run me MAT lagao):
+#        --vol-confirm  = purana look-ahead wapas (+305% wala jhootha number)
+#        --prev-vol     = volume kal ke bar se (causal test)
+#        --next-open    = EOD confirm, agle din open pe entry
+#        --vol-exit     = pivot pe ghuso, volume na aaye to usi close pe bahar
 # Bina --write ke sirf report chhapti hai — experiment ke liye safe.
 # Push hamesha: git add <files> && git commit && git push  (PULL/REBASE NAHI)
 ```
@@ -226,34 +236,80 @@ node scripts/scan.mjs --force
   delivery% flag card pe, PWA manifest (Add to Home Screen app feel)
 - Kal-ke-picks ka result strip scan tab pe
 
+## 10b. STRATEGY RULES — 8 Aug 2026 ko BADLE (kyun badle, ye padhna zaroori hai)
+
+**ENTRY: volume condition hata di.** Pehle trigger tha `pivot cross + us din ka volume
+> 1.2× average`. Ye LOOK-AHEAD tha — jab tumhara stop-buy pivot pe bharta hai, us waqt
+poore din ka volume pata hi nahi hota. Aur high-volume din aksar bade green din hote
+hain, to wo condition asal me *"jo din stock bhaaga usi din ke low pe khareedo"* ban
+jaati thi. **Sirf isi ek cheez se 5-saal ka result +305% se −30% ho jaata tha.** Teen
+tarike se verify kiya (any-cross, prev-day volume, next-open) — teenon me edge khatam.
+
+**EXIT: transcripts se creator ke apne shabd nikale.** Wo do baar saaf bolta hai:
+> *"जैसे ही आप डबल डिजिट में आए तो आप 1/3 या 50% बुक कर लें। बाकी आप 10 डे से ट्रेल करते रहे।"*
+> *"जहां पे भी 10-12% का आए आप 50% बुक करके बाकी 10 डे पे ट्रेल कर सकते हैं"*
+
+Code kar raha tha: **+8% pe 100% book** — dono galat. Aur wo rule trail se PEHLE chalta
+tha, matlab **koi trade kabhi +8% se aage ja hi nahi sakti thi.** Momentum ka saara
+paisa us ek bade runner me hota hai, wahi kat raha tha.
+
+Ab: **+10% pe 50% book, baaki 40 DMA pe trail.**
+
+Trail 10 DMA kyun nahi (jo creator bolta hai)? Mechanically wo bahut kathor hai — pehla
+close 10 DMA ke neeche aate hi bahar, avg hold 4 session. Wo chart/volume/market dekh ke
+discretion lagata hai; hum nahi laga sakte. Backtest me 10 DMA = FULL −25%, 40 DMA = +63%.
+40 DMA hi ek aisi trail hai jo DONO halves me PF > 1 deti hai.
+
+**SIZING: har trade 24% of capital (flat).** Gear-based scaling data me kuch add nahi
+karti. 5 ladders × 2 halves test kiye — 22% aur 24% hi dono halves me positive. 24%
+chuna: kam drawdown (−16.9% vs −23.1%) aur H2 me behtar. **Note:** 7 Aug ko maine
+`10/18/24/24/12` recommend kiya tha (gear 5 pe size kam) — wo TOOTE exit rules pe nikla
+tha. Us waqt gear 5 isliye kharaab lag raha tha kyunki +8% cap us gear ke sabse bade
+runners ko kaat raha tha. Exit theek karte hi wo nateeja ulta ho gaya.
+
+**Sabak:** ek rule ka nateeja doosre rule ki galti ki wajah se aa sakta hai. Koi bhi
+parameter tune karne se pehle dekho ki baaki rules sahi hain ya nahi.
+
 ## 11. TRACK RECORD SNAPSHOT (8 Aug 2026 tak)
 
 ### DO ALAG CHEEZEIN — inhe kabhi mat milaana
 
-**(a) Chalu portfolio — FY 26-27, base ₹6,00,000** (user ki asli trading capital ke kareeb;
-pehle ₹1 lakh sirf prototype amount tha). 1 Apr 2026 se chalu, `journal.json` isi ka hai.
+**(a) Chalu portfolio — FY 26-27, base ₹6,00,000.** 1 Apr 2026 se, `journal.json` isi ka hai.
 
 | | |
 |---|---|
 | Opening (1 Apr 26) | ₹6,00,000 |
-| Abhi | ₹6,79,927 (**+13.3%**, 88 sessions) |
-| Win rate | 34% (18W / 35L) |
-| Open positions | 5 · ₹6,31,634 lagi hui (**93%**) · free cash ₹48,293 |
-| Chhoote mauke | 44 (breakout aaya, cash nahi thi) |
+| Abhi | ₹5,45,351 (**−9.1%**, 88 sessions) |
+| Win rate | 21% (10W / 38L) · avg win +12.4% / loss −2.7% |
+| Open positions | 6 · ₹5,33,469 lagi hui (**98%**) · 4 half-booked |
+| Chhoote mauke | 113 (breakout aaya, cash nahi thi) |
+
+Haan, abhi **loss me hai**. 88 sessions / 48 trades ka sample bahut chhota hai, aur ye
+daur weak raha (Sep 24 – Mar 26 me Nifty −13.5%). Long-only momentum girte market me
+paisa nahi banata — ye bug nahi.
 
 **(b) Strategy ka 5-saal test — ₹1 lakh pe, 16 Jul 2021 → 30 Mar 2026** (`strategy-test.json`).
 Ye PROOF hai ki framework kaam karta hai, user ka account nahi.
 
 | | |
 |---|---|
-| Trades | 714 (943 aur chhoote — cash khatam) |
-| Win rate | 37.5% · expectancy **+1.06%**/trade · PF 1.58 |
-| Equity | ₹1,00,000 → ₹4,96,327 gross / **₹4,05,101 net** (+305%) |
-| Charges | ₹91,226 (gross profit ka 23%) |
-| Max drawdown | −16.6% · max 8 positions |
+| Trades | 417 (2104 aur chhoote — cash khatam) |
+| Win rate | 33.6% · avg win **+17.7%** / loss −2.9% |
+| Expectancy | **+4.02%**/trade · PF **1.63** · avg hold 12.4 sessions |
+| Equity | ₹1,00,000 → ₹2,67,397 gross / **₹2,33,306 net** (+133%) |
+| Charges | ₹34,092 (gross profit ka 20%) |
+| Max drawdown | **−18.2%** · max 7 positions |
+
+≈ **19.5% CAGR** net. Benchmark usi daur me: Nifty +40% (7.5% CAGR), Nifty Midcap
++94% (15.2% CAGR). To ye midcap ko thoda beat karta hai, aur 42% din cash me baitha
+rehta hai — user ka andaaza ("creator index ko kuch percent se beat karta hai") match.
+
+**Purane numbers (+305%) INVALID the** — wo entry ke volume look-ahead pe khade the.
 
 **Caveat dono pe:** universe aaj ki NSE list hai — delist hue stocks nahi (survivorship
-bias), cap/sector tag bhi aaj ke hain. Backtest me earnings guard nahi hai.
+bias), cap/sector tag bhi aaj ke hain. Backtest me earnings guard nahi hai. Transcripts
+bhi adhure hain (kaafi videos delete ho chuke hain), to creator ke rules ka poora context
+nahi mila hoga.
 
 ### POSITION SIZING — 10/18/24/24/12 (data se chuna, guess nahi)
 

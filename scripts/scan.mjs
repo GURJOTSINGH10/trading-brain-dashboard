@@ -16,7 +16,13 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 // Capital aur sizing ladder journal.json se aati hai (backtest --write wahan likhta
 // hai). Yahan hardcode karne se dono jagah alag ho jaate the. Ye sirf fallback hai.
 const DEFAULT_CAPITAL = 600000;
-const DEFAULT_SIZES = [10, 14, 17, 21, 25];
+const DEFAULT_SIZES = [24, 24, 24, 24, 24];
+// Exit rules — backtest.mjs ke barabar rakhna ZAROORI hai, warna paper portfolio
+// aur backtest do alag cheezein ho jaate hain.
+const BOOK_AT = 10;        // "double digit" pe partial book (creator ka shabd)
+const BOOK_PART = 0.5;     // 50% book, baaki trail pe
+const TRAIL_MA = 40;       // creator "10 DMA" bolta hai par wo discretion ke saath —
+                           // mechanically 40 DMA hi dono backtest halves me PF > 1 deti hai
 const MIN_TRADED_VALUE = 5e7; // ₹5 Cr avg daily traded value
 const UNIVERSE_MAX_AGE_DAYS = 10; // har 10 din me stock list auto-refresh
 
@@ -568,7 +574,7 @@ async function main() {
       candidates.push({
         symbol: u.s, name: u.n, sector: u.sec, cap: u.cap || 'Small',
         cmp: roundPrice(close), pivot: roundPrice(pivot),
-        entry: `${roundPrice(pivot)} ke upar close/cross, elevated volume ke saath`,
+        entry: `${roundPrice(pivot)} pe stop-buy lagao. Volume bhi elevated ho to aur behtar — par paper portfolio sirf pivot cross maanta hai (order to bhar hi jaata hai)`,
         sl, slPct, target: `${t1} – ${t2}`, rr: `1 : ${rr}`,
         setup: superTight ? `Super tight consolidation — ${win} din, ${round2(rangePct)}% range` : `Tight base — ${win} din, ${round2(rangePct)}% range, pivot ke paas`,
         volumeNote: volShrink ? 'Base me volume shrink — classic supply exhaustion.' : 'Volume abhi normal hai — breakout pe elevated chahiye.',
@@ -651,8 +657,12 @@ async function main() {
     };
 
     if (pos.entryStatus === 'pending') {
-      const v20 = sma(ch.v, 20);
-      if (hi > pos.pivot && vol > (v20 || 0) * 1.2) {
+      // ★ Volume condition ENTRY se hata di. Pehle `vol > v20*1.2` bhi chahiye tha —
+      // par tum pivot pe stop-buy lagate ho, wo volume kaisa bhi ho bhar jaata hai.
+      // Us din ka total volume order bharte waqt pata hi nahi hota. Journal me wo
+      // condition rakhna matlab sirf jeetne wale din ginna — 5-saal ke backtest me
+      // isi ek cheez se +305% aur -30% ka farak tha.
+      if (hi > pos.pivot) {
         const entryPx = roundPrice(Math.max(o, pos.pivot));
         const alloc = state.equity * pos.sizePct / 100;
         // ★ Math.max(1, ...) hata diya. Wo MRF/Page jaise ₹1.5 lakh ke share ka
@@ -696,15 +706,36 @@ async function main() {
 
     // open position management
     pos.daysSinceTrigger = (pos.daysSinceTrigger || 0) + 1;
-    const s10 = sma(ch.c, 10);
+    const trailMa = sma(ch.c, TRAIL_MA);
     if (lo <= pos.sl) {
       closeTrade('sl', pos.sl, `SL hit ${pos.sl} pe — out, end of story. Sell is a sell.`);
-    } else if (cl >= pos.entry * 1.08) {
-      closeTrade('win', cl, `+${round2((cl - pos.entry) / pos.entry * 100)}% — partial book zone, profit liya. Exact top nahi milega, 8-9% realistic hai.`);
-    } else if (cl < s10 && pos.daysSinceTrigger >= 2) {
+    } else if (!pos.booked && cl >= pos.entry * (1 + BOOK_AT / 100)) {
+      // ★ PARTIAL BOOK — creator ke apne shabd: "jaise hi DOUBLE DIGIT me aaye to
+      // 1/3 ya 50% book kar lein, baaki 10 DE se trail karte rahein."
+      // Pehle yahan +8% pe POORA book hota tha, aur ye rule trail se pehle chalta tha —
+      // matlab koi bhi trade kabhi +8% se aage ja hi nahi sakti thi. Momentum ka saara
+      // paisa us ek bade runner me hota hai, aur wahi kat raha tha.
+      const sellQty = Math.max(1, Math.floor(pos.qty * BOOK_PART));
+      const pnlPct = round2((cl - pos.entry) / pos.entry * 100);
+      const soldVal = round2(sellQty * pos.entry);
+      state.equity = round2(state.equity + soldVal * pnlPct / 100);
+      deployed = Math.max(0, round2(deployed - soldVal));
+      state.closed.push({
+        picked: pos.picked, ts: pos.pickedTs || null, symbol: pos.symbol, sector: pos.sector,
+        gear: pos.gear, entry: pos.entry, qty: sellQty, invested: soldVal, status: 'win', pnlPct,
+        exitDate: fmtShort(sessionTs), exitTs: sessionTs,
+        reason: `+${pnlPct}% — double digit aa gaya, ${Math.round(BOOK_PART * 100)}% book kiya. Baaki ${TRAIL_MA} DMA pe trail hoga.`,
+        live: true
+      });
+      pos.qty -= sellQty;
+      pos.invested = round2(pos.qty * pos.entry);
+      pos.booked = true;
+      pos.curPnlPct = pnlPct;
+      if (pos.qty >= 1) stillOpen.push(pos);   // baaki hissa chalta rahega
+    } else if (cl < trailMa && pos.daysSinceTrigger >= 2) {
       const pnl = (cl - pos.entry) / pos.entry * 100;
-      closeTrade(pnl >= 0 ? 'win' : 'fail', cl, pnl >= 0 ? '10 DMA trail exit — jo mila le liya' : '10 DMA break = story over. 10 me se 10 baar yahi decision.');
-    } else if (pos.daysSinceTrigger >= 3 && cl < pos.pivot) {
+      closeTrade(pnl >= 0 ? 'win' : 'fail', cl, pnl >= 0 ? `${TRAIL_MA} DMA trail exit — jo mila le liya` : `${TRAIL_MA} DMA break = story over.`);
+    } else if (!pos.booked && pos.daysSinceTrigger >= 3 && cl < pos.pivot) {
       closeTrade('fail', cl, `Breakout fail — ${pos.daysSinceTrigger} din squat, move nahi aaya. Abnormal behavior = out.`);
     } else {
       pos.curPnlPct = round2((cl - pos.entry) / pos.entry * 100);
@@ -755,7 +786,9 @@ async function main() {
     nextTradingDay: nextTradingDay(sessionTs),
     portfolio: {
       startCapital: START_CAPITAL,
-      sizingRule: `Gear-based sizing: ${SIZE_BY_GEAR.map((s, i) => `gear ${i + 1} = ${s}%`).join(', ')}`,
+      sizingRule: SIZE_BY_GEAR.every(s => s === SIZE_BY_GEAR[0])
+        ? `Har trade ${SIZE_BY_GEAR[0]}% of capital. Exit: +${BOOK_AT}% pe ${Math.round(BOOK_PART * 100)}% book, baaki ${TRAIL_MA} DMA pe trail`
+        : `Gear-based sizing: ${SIZE_BY_GEAR.map((s, i) => `gear ${i + 1} = ${s}%`).join(', ')}`,
       sizeByGear: SIZE_BY_GEAR
     },
     // 5-saal ka strategy test (₹1 lakh pe, 31 Mar 2026 tak) — ye chalu portfolio se
