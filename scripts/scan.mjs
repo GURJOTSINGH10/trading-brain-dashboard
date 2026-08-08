@@ -13,8 +13,10 @@ import { fileURLToPath } from 'url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const HERE = dirname(fileURLToPath(import.meta.url));
-const START_CAPITAL = 100000;
-const SIZE_BY_GEAR = [10, 14, 17, 21, 25];
+// Capital aur sizing ladder journal.json se aati hai (backtest --write wahan likhta
+// hai). Yahan hardcode karne se dono jagah alag ho jaate the. Ye sirf fallback hai.
+const DEFAULT_CAPITAL = 600000;
+const DEFAULT_SIZES = [10, 14, 17, 21, 25];
 const MIN_TRADED_VALUE = 5e7; // ₹5 Cr avg daily traded value
 const UNIVERSE_MAX_AGE_DAYS = 10; // har 10 din me stock list auto-refresh
 
@@ -238,8 +240,10 @@ async function main() {
   if (!FORCE) refreshUniverseIfStale();
 
   // --- state load ---
-  let state = { lastSession: null, equity: START_CAPITAL, positions: [], closed: [] };
+  let state = { lastSession: null, equity: DEFAULT_CAPITAL, positions: [], closed: [] };
   try { state = JSON.parse(readFileSync(join(ROOT, 'journal.json'), 'utf8')); } catch { }
+  const START_CAPITAL = state.startCapital || DEFAULT_CAPITAL;
+  const SIZE_BY_GEAR = state.sizeByGear || DEFAULT_SIZES;
 
   // --- indices ---
   const nifty = await fetchChart('^NSEI');
@@ -617,7 +621,21 @@ async function main() {
   const sizePctFor = g => SIZE_BY_GEAR[Math.max(0, Math.min(4, g - 1))];
   if (!alreadyProcessed) {
   const stillOpen = [];
-  for (const pos of state.positions) {
+  // ★ CASH CONSTRAINT — ₹6 lakh me 25% wali 11 positions ek saath nahi khul sakti.
+  // Ye check pehle SIRF backtest me tha, live journal me nahi — isliye live portfolio
+  // 11 positions / 266% deployment tak pahunch gaya tha, jo asal me possible hi nahi.
+  // deployed = abhi jitna paisa positions me phansa hua hai.
+  let deployed = state.positions
+    .filter(p => p.entryStatus === 'open')
+    .reduce((s, p) => s + (p.invested || 0), 0);
+
+  // DO PASS zaroori hai: pehle saari exits (cash free hoti hai), phir naye triggers
+  // us bachi hui cash se. Ek hi pass me aaj bikne wali position ka paisa aaj hi
+  // dobara nahi lag paata — jo asli trading me lagta hai.
+  const ordered = [...state.positions].sort((a, b) =>
+    (a.entryStatus === 'open' ? 0 : 1) - (b.entryStatus === 'open' ? 0 : 1));
+
+  for (const pos of ordered) {
     const ch = charts[pos.symbol] || await fetchChart(pos.symbol + '.NS');
     if (!ch) { stillOpen.push(pos); continue; }
     const n = ch.c.length;
@@ -626,6 +644,7 @@ async function main() {
       const pnlPct = round2((exitPrice - pos.entry) / pos.entry * 100);
       const pnlAmt = pos.invested * pnlPct / 100;
       state.equity = round2(state.equity + pnlAmt);
+      deployed = Math.max(0, round2(deployed - (pos.invested || 0)));  // paisa wapas cash me
       // live: true — ye ASLI trade hai, backtest ki simulated nahi. backtest.mjs
       // --write in par kabhi haath nahi lagata (warna user ki asli history mit jaati).
       state.closed.push({ picked: pos.picked, ts: pos.pickedTs || null, symbol: pos.symbol, sector: pos.sector, gear: pos.gear, entry: pos.entry, qty: pos.qty, invested: pos.invested, status, pnlPct, exitDate: fmtShort(sessionTs), exitTs: sessionTs, reason, live: true });
@@ -640,14 +659,24 @@ async function main() {
         // 1 share "khareed" leta tha jabki position size ₹17,000 ki thi — paper
         // portfolio jhootha ho jaata tha. Ek share bhi na aaye = trade possible nahi.
         const qty = Math.floor(alloc / entryPx);
-        if (qty < 1) {
-          state.closed.push({ picked: pos.picked, ts: pos.pickedTs || null, symbol: pos.symbol, sector: pos.sector, gear: pos.gear, entry: roundPrice(pos.pivot), status: 'no-trigger', pnlPct: 0, exitTs: sessionTs, reason: `Breakout to aaya, par ek share ₹${entryPx} ka hai — ${pos.sizePct}% position size me aata hi nahi. Is capital me ye trade possible nahi.`, live: true });
+        // qty < 1  = share ka bhaav position size se bada (MRF/Page type)
+        // cash khatam = capital pehle se lagi hui hai, ye mauka chhoot gaya
+        if (qty < 1 || deployed + qty * entryPx > state.equity) {
+          state.closed.push({
+            picked: pos.picked, ts: pos.pickedTs || null, symbol: pos.symbol, sector: pos.sector,
+            gear: pos.gear, entry: roundPrice(pos.pivot), status: 'no-cash', pnlPct: 0, exitTs: sessionTs,
+            reason: qty < 1
+              ? `Breakout to aaya, par ek share ₹${entryPx} ka hai — ${pos.sizePct}% position size (₹${Math.round(alloc).toLocaleString('en-IN')}) me aata hi nahi.`
+              : `Breakout to aaya, par capital pehle se lagi hui thi (₹${Math.round(deployed).toLocaleString('en-IN')} deployed) — ye trade chhoot gayi. Cash bhi ek position hai.`,
+            live: true
+          });
           continue;
         }
         pos.entryStatus = 'open';
         pos.entry = entryPx;
         pos.qty = qty;
         pos.invested = round2(pos.qty * pos.entry);
+        deployed = round2(deployed + pos.invested);
         pos.daysSinceTrigger = 0;
         pos.triggerDate = fmtShort(sessionTs);
         // ★ SAME-DAY SL — breakout aur stop-loss ek hi din me ho sakte hain.
@@ -713,6 +742,10 @@ async function main() {
     }))
   ];
 
+  // --- 5-saal ka strategy test (alag file, backtest.mjs --summary se banti hai) ---
+  let strategyTest = null;
+  try { strategyTest = JSON.parse(readFileSync(join(ROOT, 'strategy-test.json'), 'utf8')); } catch { }
+
   // --- data.js write ---
   const now = new Date();
   const dashboard = {
@@ -722,9 +755,12 @@ async function main() {
     nextTradingDay: nextTradingDay(sessionTs),
     portfolio: {
       startCapital: START_CAPITAL,
-      sizingRule: 'Gear-based: 1st gear 10% → 5th gear 25% of capital',
+      sizingRule: `Gear-based sizing: ${SIZE_BY_GEAR.map((s, i) => `gear ${i + 1} = ${s}%`).join(', ')}`,
       sizeByGear: SIZE_BY_GEAR
     },
+    // 5-saal ka strategy test (₹1 lakh pe, 31 Mar 2026 tak) — ye chalu portfolio se
+    // ALAG hai. Wo proof hai ki framework kaam karta hai; ye FY 26-27 ka asli hisaab.
+    strategyTest,
     market: { gear, gearLabel, verdict: verdicts[gear], checks },
     hotSectors: hotSectors.slice(0, 4).map(({ name, note }) => ({ name, note })),
     picks,

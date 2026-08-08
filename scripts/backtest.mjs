@@ -40,16 +40,31 @@ import { fileURLToPath } from 'url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CACHE_DIR = join(ROOT, '.cache');
 
-const START_CAPITAL = 100000;
-const SIZE_BY_GEAR = [10, 14, 17, 21, 25];
 const MIN_TRADED_VALUE = 5e7;      // ₹5 Cr avg daily traded value (scan.mjs ke barabar)
 const WARMUP = 120;                // itne bars ke bina koi setup nahi (scan: n < 120 → skip)
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36';
 
 const args = process.argv.slice(2);
-const WINDOW = parseInt(args.find(a => /^\d+$/.test(a)) || '250', 10);
+const argVal = (name, def) => { const i = args.indexOf(name); return i >= 0 && args[i + 1] ? args[i + 1] : def; };
 const REFRESH = args.includes('--refresh');
 const WRITE = args.includes('--write');
+
+// Ab do alag portfolio chalte hain (Aug 2026 se):
+//  1. History  — 5 saal, ₹1 lakh, 31 Mar 2026 tak. Strategy ka proof, freeze.
+//  2. Chalu FY — 1 Apr 2026 se, ₹6 lakh (user ki asli trading capital ke kareeb).
+// Isliye capital, sizing ladder aur date-range sab flags se aate hain.
+const START_CAPITAL = parseFloat(argVal('--capital', '100000'));
+const SIZE_BY_GEAR = argVal('--sizes', '10,14,17,21,25').split(',').map(Number);
+const FROM = argVal('--from', null);          // YYYY-MM-DD (IST) — is din se replay
+const TO = argVal('--to', null);              // YYYY-MM-DD (IST) — is din tak
+const SUMMARY_OUT = argVal('--summary', null); // report ka JSON yahan likho
+const dayNum = s => { const [y, m, d] = s.split('-').map(Number); return Math.floor(Date.UTC(y, m - 1, d) / 86400000); };
+const FROM_DAY = FROM ? dayNum(FROM) : null;
+const TO_DAY = TO ? dayNum(TO) : null;
+// Window: explicit number, warna --from se andaaza (250 trading days ≈ 365 calendar)
+const todayDay = Math.floor((Date.now() / 1000 + 19800) / 86400);
+const WINDOW = parseInt(args.find(a => /^\d+$/.test(a)) || '', 10)
+  || (FROM_DAY ? Math.ceil((todayDay - FROM_DAY) * 250 / 365) + 10 : 250);
 
 // Yahoo se utna hi maango jitna chahiye: window + warmup + thoda margin.
 // 5-saal ka backtest (1250 sessions) 10y range maangta hai — par 2000 stocks ki
@@ -297,8 +312,13 @@ async function main() {
   }
   console.log(`Prepared: ${stocks.length} stocks (universe ${universe.length})`);
 
-  const startDi = Math.max(WARMUP, N - WINDOW);
-  console.log(`Replay: ${fmtShort(T[startDi])} → ${fmtShort(T[N - 1])} (${N - startDi} sessions)\n`);
+  // Replay ki hadd: --from/--to diye ho to unke hisaab se, warna last WINDOW sessions
+  let startDi = Math.max(WARMUP, N - WINDOW);
+  if (FROM_DAY != null) { const i = refDays.findIndex(d => d >= FROM_DAY); if (i >= 0) startDi = Math.max(WARMUP, i); }
+  let endDi = N - 1;
+  if (TO_DAY != null) { for (let i = 0; i < N; i++) if (refDays[i] <= TO_DAY) endDi = i; }
+  const LAST = endDi + 1;   // loop `di < LAST` chalega
+  console.log(`Replay: ${fmtShort(T[startDi])} → ${fmtShort(T[endDi])} (${LAST - startDi} sessions) | capital ₹${START_CAPITAL.toLocaleString('en-IN')} | sizes ${SIZE_BY_GEAR.join('/')}%\n`);
 
   // ---- per-day market gear (scan.mjs ka poora 8-point score) ----
   function marketAt(di) {
@@ -393,7 +413,7 @@ async function main() {
   const gearDays = [0, 0, 0, 0, 0, 0];
   let maxConcurrent = 0, maxDeployPct = 0, skippedNoCash = 0;
 
-  for (let di = startDi; di < N; di++) {
+  for (let di = startDi; di < LAST; di++) {
     // 1) purani positions ko aaj ke data se aage badhao
     for (const [sym, p] of [...active]) {
       const S = p.S, si = S.map[di];
@@ -446,6 +466,7 @@ async function main() {
           p.status = 'open';
           p.entry = entryPx;
           p.qty = qty;
+          p.triggerDi = di;
           p.invested = round2(p.qty * p.entry);
           deployed = round2(deployed + p.invested);
           if (deployed / equity * 100 > maxDeployPct) maxDeployPct = deployed / equity * 100;
@@ -489,7 +510,10 @@ async function main() {
     if (openNow > maxConcurrent) maxConcurrent = openNow;
 
     // 2) aaj ke naye picks (kal se track honge)
-    if (di > N - 6) continue;                                // aakhri din — track karne ki jagah nahi
+    // Historical run me aakhri kuch din pick mat lo — track karne ki jagah nahi.
+    // Lekin AAJ tak chalne wale run me lena hai: wahi to live portfolio ki
+    // abhi-khuli positions banti hain jo scan.mjs aage sambhalega.
+    if (TO_DAY != null && di > endDi - 5) continue;
     const { gear } = marketAt(di);
     gearDays[gear]++;
     if (gear <= 1) continue;                                 // noTrade — cash bhi ek position hai
@@ -513,11 +537,45 @@ async function main() {
     }
   }
 
-  report(closed, equity, gearDays, { maxConcurrent, maxDeployPct, skippedNoCash }, T, startDi, N);
+  // Replay ke aakhir me jo positions khuli/pending hain — wahi live portfolio ki
+  // current holdings hain. scan.mjs inhe kal se aage sambhalega, isliye usi
+  // format me likhni padti hain.
+  const openPositions = [...active.values()].map(p => {
+    let lastClose = null;
+    for (let i = endDi; i >= startDi && lastClose == null; i--) if (p.S.map[i] >= 0) lastClose = p.S.c[p.S.map[i]];
+    const base = {
+      picked: fmtShort(T[p.pickDi]), pickedTs: T[p.pickDi], symbol: p.S.sym, sector: p.S.sec,
+      gear: p.gear, sizePct: p.sizePct, pivot: p.pivot, sl: p.sl
+    };
+    return p.status === 'open'
+      ? { ...base, entryStatus: 'open', entry: p.entry, qty: p.qty, invested: p.invested,
+          daysSinceTrigger: p.tDays || 0, triggerDate: fmtShort(T[p.triggerDi]),
+          curPnlPct: lastClose ? round2((lastClose - p.entry) / p.entry * 100) : 0 }
+      : { ...base, entryStatus: 'pending', daysWaiting: p.wait || 0 };
+  });
 
-  if (WRITE) writeJournal(closed, equity, T);
+  const stats = report(closed, equity, gearDays, { maxConcurrent, maxDeployPct, skippedNoCash }, T, startDi, endDi);
+
+  if (SUMMARY_OUT) {
+    // Equity curve ko ~160 points pe downsample — dashboard ke sparkline ke liye kaafi
+    const byExit = closed.filter(t => t.status !== 'no-trigger' && t.status !== 'no-cash').sort((a, b) => a._exitTs - b._exitTs);
+    let eq = START_CAPITAL;
+    const full = [{ ts: T[startDi], v: eq }];
+    for (const t of byExit) { eq += t._buyVal * t.pnlPct / 100; full.push({ ts: t._exitTs, v: Math.round(eq) }); }
+    const step = Math.max(1, Math.ceil(full.length / 160));
+    const curve = full.filter((_, i) => i % step === 0 || i === full.length - 1);
+    writeFileSync(SUMMARY_OUT, JSON.stringify({
+      from: fmtLongDate(T[startDi]), to: fmtLongDate(T[endDi]), sessions: LAST - startDi,
+      capital: START_CAPITAL, sizeByGear: SIZE_BY_GEAR, builtAt: new Date().toISOString(), ...stats, curve
+    }, null, 1));
+    console.log(`\nSummary likh di: ${SUMMARY_OUT}`);
+  }
+
+  if (WRITE) writeJournal(closed, equity, T, openPositions, T[endDi]);
   else console.log('\n(--write nahi diya — journal.json ko haath nahi lagaya. Track record badalna ho to --write lagao.)');
 }
+
+const fmtLongDate = ts => new Date(ts * 1000).toLocaleDateString('en-IN', { timeZone: IST, day: 'numeric', month: 'short', year: 'numeric' });
 
 // ---------- journal me likhna ----------
 // Journal me DO tarah ki trades hoti hain: backtest ki simulated (bt:true) aur
@@ -526,40 +584,47 @@ async function main() {
 // Aur ulta problem bhi tha: backtest window live period ke UPAR chadh jaati thi,
 // to wahi din do baar count hote the. Ab live ki sabse purani pick pe backtest
 // kaat dete hain — ek hi timeline, koi overlap nahi.
-function writeJournal(closed, equity, T) {
+const istDateStr = ts => new Date(ts * 1000).toLocaleDateString('en-IN', { timeZone: IST, year: 'numeric', month: '2-digit', day: '2-digit' });
+
+function writeJournal(closed, equity, T, positions, lastSessionTs) {
   const path = join(ROOT, 'journal.json');
-  let journal = { lastSession: null, equity: START_CAPITAL, positions: [], closed: [] };
+  let journal = {};
   try { journal = JSON.parse(readFileSync(path, 'utf8')); } catch { }
 
-  // legacy: purane backtest ne 'cap' likha tha, live scan nahi likhta
-  const liveTrades = (journal.closed || []).filter(t => t.live || (!t.bt && t.cap === undefined));
-
-  // live ki sabse purani pick ka timestamp — "3 Aug" jaisi string ko T[] se match karke
-  let cutoff = Infinity;
-  for (const t of liveTrades) {
-    for (let i = T.length - 1; i >= 0; i--) {
-      if (fmtShort(T[i]) === t.picked) { if (T[i] < cutoff) cutoff = T[i]; break; }
-    }
-  }
-
-  const bt = closed
-    .filter(t => t.status !== 'no-cash')          // ye sirf backtest diagnostic hai, track record nahi
-    .filter(t => t._pickTs < cutoff)
+  // Aug 2026 se: backtest hi is portfolio ka poora record likhta hai (closed + open
+  // positions). Pehle live trades ko bachaya jaata tha, par wo trades BUGGY engine ne
+  // banayi thi — bina cash constraint ke, aur Math.max(1,...) wale galat qty pe.
+  // Unhe rakhna matlab jhoothi history rakhna. Ab engine sahi hai, to poora period
+  // isi se dobara simulate hota hai aur scan.mjs kal se aage le jaata hai.
+  journal.startCapital = START_CAPITAL;
+  journal.sizeByGear = SIZE_BY_GEAR;
+  // no-cash bhi journal me jaata hai. Pehle filter kar dete the "ye to diagnostic hai"
+  // soch ke — galat tha. Ye SABSE zaroori signal hai: batata hai ki capital chhoti pad
+  // rahi hai aur kitne mauke isliye chhoot rahe hain. Dashboard pe apna chip hai.
+  journal.closed = closed
     // ts = pick ka waqt (sorting), exitTs = exit ka waqt (equity curve ka time-range filter)
     .map(({ _exitTs, _pickTs, _hold, _buyVal, _sellVal, ...t }) => ({ ...t, ts: _pickTs, exitTs: _exitTs, bt: true }));
-
-  journal.closed = [...bt, ...liveTrades];
+  journal.positions = positions;
   journal.equity = round2(equity);
+  // lastSession = replay ka aakhri din. Ye ZAROORI hai: backtest us din ko process
+  // kar chuka hai, to scan.mjs ko sirf display banana hai. Null chhodne pe scan usi
+  // din ko DOBARA process karta — pending positions ek extra din aage badh jaati aur
+  // exits do baar check hote.
+  journal.lastSession = istDateStr(lastSessionTs);
+  journal.lastBhav = null;   // bhavcopy ka apna track — agla scan set kar lega
   journal.backtestedAt = new Date().toISOString();
   journal.backtestWindow = WINDOW;
   writeFileSync(path, JSON.stringify(journal, null, 2));
-  console.log(`\njournal.json: ${bt.length} backtest + ${liveTrades.length} live trades` +
-    (cutoff < Infinity ? ` (backtest ${fmtShort(cutoff)} pe kaata — live wahin se shuru)` : ''));
+  const open = positions.filter(p => p.entryStatus === 'open');
+  const dep = open.reduce((s, p) => s + (p.invested || 0), 0);
+  console.log(`\njournal.json: ${journal.closed.length} closed + ${open.length} open + ${positions.length - open.length} pending`);
+  console.log(`  capital ₹${START_CAPITAL.toLocaleString('en-IN')} → equity ₹${Math.round(equity).toLocaleString('en-IN')} | deployed ₹${Math.round(dep).toLocaleString('en-IN')} (${round2(dep / equity * 100)}%)`);
   console.log('Ab `node scripts/scan.mjs --force` chala ke dashboard refresh karo.');
 }
 
 // ---------- report ----------
-function report(closed, equity, gearDays, cash, T, startDi, N) {
+function report(closed, equity, gearDays, cash, T, startDi, endDi) {
+  const N = endDi + 1;
   const traded = closed.filter(t => t.status !== 'no-trigger' && t.status !== 'no-cash');
   const noTrig = closed.filter(t => t.status === 'no-trigger').length;
   const wins = traded.filter(t => t.pnlPct > 0), losses = traded.filter(t => t.pnlPct <= 0);
@@ -660,6 +725,18 @@ function report(closed, equity, gearDays, cash, T, startDi, N) {
 
   mkdirSync(CACHE_DIR, { recursive: true });
   writeFileSync(join(CACHE_DIR, 'backtest-report.txt'), L.join('\n'));
+
+  return {
+    picks: closed.length, trades: traded.length, noTrigger: noTrig, noCash: cash.skippedNoCash,
+    wins: wins.length, losses: losses.length, winRate: round2(winRate),
+    avgWin: round2(avgWin), avgLoss: round2(avgLoss), expectancy: round2(expectancy),
+    profitFactor: round2(pf), avgHold: round2(traded.reduce((s, t) => s + t._hold, 0) / (traded.length || 1)),
+    equityGross: Math.round(eq), equityNet: Math.round(eqNet), charges: Math.round(costTotal),
+    returnPct: round2((eq - START_CAPITAL) / START_CAPITAL * 100),
+    returnNetPct: round2((eqNet - START_CAPITAL) / START_CAPITAL * 100),
+    maxDrawdownPct: round2(maxDD), maxConcurrent: cash.maxConcurrent,
+    maxDeployPct: round2(cash.maxDeployPct), cashDays: gearDays[1] ?? 0
+  };
 }
 
 main().catch(e => { console.error(e); process.exit(1); });

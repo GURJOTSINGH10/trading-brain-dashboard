@@ -344,6 +344,9 @@
   .range-tabs button.active { background: var(--text); color: var(--bg); border-color: var(--text); }
   .range-stats { margin-top: 11px; font-size: 12.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 16px; }
   .range-stats b { color: var(--text); font-weight: 700; }
+  .st-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(88px, 1fr)); gap: 12px; margin-top: 13px; }
+  .st-grid small { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; display: block; font-weight: 700; }
+  .st-grid b { font-size: 16px; font-weight: 800; display: block; margin-top: 2px; }
   .breakdown { display: flex; gap: 10px; flex-wrap: wrap; }
   .bd-chip {
     display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border-soft);
@@ -375,7 +378,7 @@
   .jsearch:focus { border-color: rgba(var(--mood-rgb), 0.55); }
   .jsearch::placeholder { color: var(--muted); }
   .bd-win b { color: var(--green); } .bd-sl b { color: var(--red); } .bd-fail b { color: var(--amber); }
-  .bd-nt b { color: var(--muted); } .bd-open b { color: var(--accent); }
+  .bd-nt b { color: var(--muted); } .bd-open b { color: var(--accent); } .bd-nc b { color: #a78bfa; }
 
   .table-scroll { overflow-x: auto; border-radius: 15px; border: 1px solid var(--border-soft); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
   table { width: 100%; border-collapse: collapse; background: var(--surface); min-width: 760px; }
@@ -388,6 +391,9 @@
   .badge.sl { background: rgba(255,107,118,0.15); color: var(--red); }
   .badge.fail { background: rgba(255,193,77,0.15); color: var(--amber); }
   .badge.no-trigger { background: var(--surface-3); color: var(--muted); }
+  /* no-cash = breakout aaya tha par capital pehle se lagi hui thi. Ye "miss" hai,
+     loss nahi — isliye purple, laal nahi. Ye batata hai ki capital chhoti pad rahi hai. */
+  .badge.no-cash { background: rgba(167,139,250,0.16); color: #a78bfa; }
   .badge.open { background: rgba(84,169,255,0.15); color: var(--accent); }
   td .note { color: var(--muted); font-size: 12px; }
 
@@ -448,6 +454,7 @@
         <div class="capital-stat"><span>Abhi</span><b id="capNow"></b></div>
         <div class="capital-stat"><span id="capPnlLabel">FY return</span><b id="capPnl"></b></div>
         <div class="capital-stat"><span id="capWinLabel">Win rate (FY)</span><b id="capWinrate"></b></div>
+        <div class="capital-stat"><span>Lagi hui / free cash</span><b id="capDeployed"></b></div>
         <div class="sizing-note" id="sizingNote"></div>
       </div>
     </div>
@@ -480,6 +487,9 @@
       <div id="equityChart"></div>
       <div class="range-stats" id="rangeStats"></div>
     </div>
+
+    <h2 id="stHeading" style="display:none;">Strategy ka 5-Saal Test — ₹1 Lakh se</h2>
+    <div class="card equity-card" id="stCard" style="display:none;"></div>
 
     <h2>Kya Hua Kahan — Breakdown</h2>
     <div class="breakdown" id="breakdown"></div>
@@ -550,13 +560,16 @@
   let equity = d.portfolio.startCapital;
   const curve = [{ label: 'Start', v: equity, ts: 0 }];
   const rows = [];
-  let wins = 0, losses = 0, slHits = 0, boFails = 0, noTrigs = 0, opens = 0;
+  let wins = 0, losses = 0, slHits = 0, boFails = 0, noTrigs = 0, noCash = 0, opens = 0;
   let winSum = 0, lossSum = 0, best = null, worst = null;
+  let deployed = 0;   // open positions me abhi kitna paisa phansa hua hai
 
+  // In do statuses me paisa laga hi nahi: pivot cross nahi hua, ya cash khatam thi
+  const NO_CAPITAL = new Set(['no-trigger', 'no-cash']);
   d.journal.forEach(t => {
     const sizePct = sizeByGear[(t.gear || 1) - 1];
     let invested = 0, pnlAmt = 0, qty = 0;
-    if (t.status !== 'no-trigger') {
+    if (!NO_CAPITAL.has(t.status)) {
       // qty/invested ab journal me hi aate hain — engine ne cash constraint ke
       // saath jo ASLI size li thi wahi. Pehle yahan dobara hisaab hota tha bina
       // cash limit ke, isliye dashboard ka equity backtest se ~4% upar dikhta tha.
@@ -573,7 +586,8 @@
       if (best === null || t.pnlPct > best) best = t.pnlPct;
       if (worst === null || t.pnlPct < worst) worst = t.pnlPct;
     } else if (t.status === 'no-trigger') { noTrigs++; }
-    else if (t.status === 'open') { opens++; }
+    else if (t.status === 'no-cash') { noCash++; }
+    else if (t.status === 'open') { opens++; deployed += invested; }
     rows.push({ t, sizePct, invested, pnlAmt, qty });
   });
 
@@ -635,7 +649,18 @@
   document.getElementById('capWinrate').textContent = fyTrades.length
     ? Math.round(fyW / fyTrades.length * 100) + '% (' + fyW + 'W / ' + fyL + 'L)'
     : '— (abhi koi closed trade nahi)';
-  document.getElementById('sizingNote').textContent = d.portfolio.sizingRule + ' — abhi ' + d.market.gearLabel + ' = ' + sizeByGear[d.market.gear - 1] + '% per trade. Poori history Track Record tab me.';
+  // Kitna paisa laga hua hai — ye chhupa hua tha, isi wajah se 11 positions / 266%
+  // deployment kisi ko dikha hi nahi. Ab card pe saamne hai.
+  const freeCash = Math.max(0, equity - deployed);
+  const depEl = document.getElementById('capDeployed');
+  depEl.innerHTML = `${inr(deployed)} <span class="note">(${Math.round(deployed / equity * 100)}%)</span> / ${inr(freeCash)}`;
+  const curSize = Math.round(equity * sizeByGear[d.market.gear - 1] / 100);
+  const room = Math.floor(freeCash / (curSize || 1));
+  document.getElementById('sizingNote').textContent =
+    `Abhi ${d.market.gearLabel} = ${sizeByGear[d.market.gear - 1]}% per trade ≈ ${inr(curSize)}. ` +
+    (room > 0
+      ? `Free cash me ${room} aur position aa sakti hai.`
+      : `Nayi position ke liye cash nahi bachi — pehle kisi ka exit hona chahiye. Cash bhi ek position hai.`);
 
   document.getElementById('checks').innerHTML = d.market.checks.map((c, i) =>
     `<div class="check" style="animation-delay:${i * 0.05}s"><div class="dot ${c.status}"></div><div><b>${c.label}</b><small>${c.note}</small></div></div>`
@@ -801,7 +826,8 @@
       const p10 = l10.reduce((s, r) => s + r.t.pnlPct, 0);
       return `<div class="card stat"><small>Recent form (last ${l10.length})</small><b class="${p10 >= 0 ? 'pos' : 'neg'}">${w10}W / ${l10.length - w10}L</b><span class="sub">net ${p10 >= 0 ? '+' : ''}${p10.toFixed(1)}% — abhi ki form</span></div>`;
     })()}
-    <div class="card stat"><small>Open positions</small><b>${opens}</b><span class="sub">no-trigger: ${noTrigs} picks</span></div>`;
+    <div class="card stat"><small>Open positions</small><b>${opens}</b><span class="sub">${inr(deployed)} lagi hui (${Math.round(deployed / equity * 100)}% capital)</span></div>
+    <div class="card stat"><small>Chhoote mauke</small><b>${noCash}</b><span class="sub">breakout aaya, cash nahi thi</span></div>`;
 
   /* ---- Equity curve + time-range selector (1D / 1W / 1M / 1Y / 5Y / All) ----
      Backtest ab 5 saal ka hai, to poori curve ek saath dekhna bekaar hai — 2000+
@@ -885,11 +911,12 @@
     { s: 'sl', cls: 'bd-sl', label: 'SL hit — out, end of story' },
     { s: 'fail', cls: 'bd-fail', label: 'Breakout fail — abnormal, exit' },
     { s: 'no-trigger', cls: 'bd-nt', label: 'Trigger nahi aaya — paisa nahi laga' },
+    { s: 'no-cash', cls: 'bd-nc', label: 'Cash khatam — mauka chhoot gaya' },
     { s: 'open', cls: 'bd-open', label: 'Open — chal rahi hai' }
   ];
   function renderChips() {
     const from = rangeFrom();
-    const inR = displayRows.filter(r => rowTime(r.t) > from);
+    const inR = displayRows.filter(r => r.t.status === 'open' || rowTime(r.t) > from);
     document.getElementById('breakdown').innerHTML = CHIP_DEFS.map(c => {
       const n = inR.filter(r => r.t.status === c.s).length;
       return `<div class="bd-chip ${c.cls}${journalFilter === c.s ? ' active' : ''}" data-status="${c.s}" title="Sirf ye category dekhne ke liye tap karo"><b>${n}</b> ${c.label}</div>`;
@@ -901,14 +928,14 @@
 
   function rowHtml(r) {
     const t = r.t;
-    const statusLabel = { win: 'WIN', sl: 'SL HIT', fail: 'BO FAIL', 'no-trigger': 'NO TRIGGER', open: 'OPEN' }[t.status];
-    const pnlCell = t.status === 'no-trigger' ? '<span class="note">—</span>'
+    const statusLabel = { win: 'WIN', sl: 'SL HIT', fail: 'BO FAIL', 'no-trigger': 'NO TRIGGER', 'no-cash': 'CASH NAHI', open: 'OPEN' }[t.status];
+    const pnlCell = NO_CAPITAL.has(t.status) ? '<span class="note">—</span>'
       : `<span class="${r.pnlAmt >= 0 ? 'pos' : 'neg'}">${r.pnlAmt >= 0 ? '+' : '-'}${inr(Math.abs(r.pnlAmt))} (${t.pnlPct >= 0 ? '+' : ''}${t.pnlPct}%)</span>`;
     return `<tr>
       <td>${pickedLabel(t)}</td>
       <td><b>${t.symbol}</b><br><span class="note">${t.sector}</span></td>
       <td>${r.sizePct}%<br><span class="note">gear ${t.gear}</span></td>
-      <td>${t.status === 'no-trigger' ? '<span class="note">—</span>' : inr(r.invested) + '<br><span class="note">' + r.qty + ' × ₹' + t.entry.toLocaleString('en-IN') + '</span>'}</td>
+      <td>${NO_CAPITAL.has(t.status) ? '<span class="note">—</span>' : inr(r.invested) + '<br><span class="note">' + r.qty + ' × ₹' + t.entry.toLocaleString('en-IN') + '</span>'}</td>
       <td>${pnlCell}</td>
       <td><span class="badge ${t.status}">${statusLabel}</span></td>
       <td class="wrap-cell"><span class="note">${t.reason}</span></td>
@@ -923,7 +950,10 @@
     // render karna phone pe bhaari hai, aur waise bhi koi 5 saal ki list scroll
     // nahi karta. Search karne pe range hata dete hain (poori history me dhundo).
     const from = journalQuery ? -Infinity : rangeFrom();
-    let list = displayRows.filter(r => rowTime(r.t) > from);
+    // OPEN positions HAR range me dikhti hain. Wo history nahi, ABHI ki haalat hain —
+    // 3 Aug ki khuli position 1D (sirf aaj) me chhup jaati thi aur lagta tha "gayab
+    // ho gayi". Baaki rows apne exit-time se filter hoti hain.
+    let list = displayRows.filter(r => r.t.status === 'open' || rowTime(r.t) > from);
     if (journalFilter) list = list.filter(r => r.t.status === journalFilter);
     if (journalQuery) list = list.filter(r => r.t.symbol.includes(journalQuery));
     document.getElementById('journalRangeNote').textContent = journalQuery
@@ -932,6 +962,51 @@
     document.getElementById('journal').innerHTML = list.length ? list.map(rowHtml).join('')
       : `<tr><td colspan="7"><span class="note">${journalQuery ? '"' + journalQuery + '" ki koi trade nahi mili.' : journalFilter ? 'Is category me is period me kuch nahi hai.' : 'Is period me koi entry nahi.'}</span></td></tr>`;
   }
+
+  /* ---- Strategy ka 5-saal test (chalu portfolio se ALAG) ----
+     Ye ₹1 lakh pe Jul 2021 – Mar 2026 ka replay hai — proof ki framework kaam karta
+     hai. Upar wala portfolio FY 26-27 ka asli hisaab hai (₹6 lakh se). Dono ko mila
+     dena galat hota: user 5 saal se paper trade nahi kar raha. */
+  (function strategyTest() {
+    const s = d.strategyTest;
+    if (!s) return;
+    document.getElementById('stHeading').style.display = '';
+    const card = document.getElementById('stCard');
+    card.style.display = '';
+    const up = s.returnNetPct >= 0, hex = up ? '#31d492' : '#ff6b76';
+    const W = 640, H = 120, padL = 8, padR = 60, padY = 12;
+    const vs = s.curve.map(c => c.v), mn = Math.min(...vs), mx = Math.max(...vs);
+    const x = i => padL + i * (W - padL - padR) / (s.curve.length - 1 || 1);
+    const y = v => H - padY - (v - mn) * (H - 2 * padY) / (mx - mn || 1);
+    const pts = s.curve.map((c, i) => `${x(i).toFixed(1)},${y(c.v).toFixed(1)}`).join(' ');
+    const cell = (label, val, cls) => `<div><small>${label}</small><b class="${cls || ''}">${val}</b></div>`;
+    card.innerHTML = `
+      <div class="equity-head">
+        <b>${inr(s.capital)} → ${inr(s.equityNet)}</b>
+        <span>${s.from} – ${s.to} · ${s.sessions} sessions · charges ke baad</span>
+      </div>
+      <svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="none" style="display:block;">
+        <defs><linearGradient id="gst" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="${hex}" stop-opacity="0.2"/><stop offset="1" stop-color="${hex}" stop-opacity="0"/>
+        </linearGradient></defs>
+        <polygon points="${padL},${H - padY} ${pts} ${x(s.curve.length - 1).toFixed(1)},${H - padY}" fill="url(#gst)"/>
+        <polyline points="${pts}" fill="none" stroke="${hex}" stroke-width="1.8" stroke-linejoin="round"/>
+        <text x="${W - padR + 6}" y="${y(vs[vs.length - 1]).toFixed(1)}" fill="${hex}" font-size="11" dominant-baseline="middle">${(s.returnNetPct >= 0 ? '+' : '') + s.returnNetPct}%</text>
+      </svg>
+      <div class="st-grid">
+        ${cell('Trades', s.trades)}
+        ${cell('Win rate', s.winRate + '%')}
+        ${cell('Expectancy', (s.expectancy >= 0 ? '+' : '') + s.expectancy + '%', s.expectancy >= 0 ? 'pos' : 'neg')}
+        ${cell('Profit factor', s.profitFactor)}
+        ${cell('Max drawdown', '-' + s.maxDrawdownPct + '%', 'neg')}
+        ${cell('Max positions', s.maxConcurrent)}
+      </div>
+      <div class="note" style="margin-top:11px;">
+        Ye chalu portfolio se ALAG hai — ₹1 lakh pe strategy ka historical test.
+        Charges (STT/DP/GST) ${inr(s.charges)} kaat ke. Universe aaj ki NSE list hai,
+        to delist hue stocks isme nahi (numbers thode upar honge).
+      </div>`;
+  })();
 
   /* range tabs wiring — chart, period stats aur journal teeno saath badalte hain */
   function applyRange() { drawEquity(); renderChips(); renderJournal(); }
