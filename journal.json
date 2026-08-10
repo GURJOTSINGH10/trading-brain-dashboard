@@ -1,6 +1,6 @@
 {
-  "lastSession": "07/08/2026",
-  "equity": 597782.15,
+  "lastSession": "10/08/2026",
+  "equity": 600995.34,
   "positions": [
     {
       "picked": "4 May",
@@ -17,9 +17,9 @@
       "qty": 16,
       "invested": 36288,
       "booked": true,
-      "daysSinceTrigger": 65,
+      "daysSinceTrigger": 66,
       "triggerDate": "6 May",
-      "curPnlPct": 55.93
+      "curPnlPct": 60.99
     },
     {
       "picked": "16 Jun",
@@ -36,9 +36,9 @@
       "qty": 183,
       "invested": 68808,
       "booked": true,
-      "daysSinceTrigger": 34,
+      "daysSinceTrigger": 35,
       "triggerDate": "19 Jun",
-      "curPnlPct": 8.52
+      "curPnlPct": 8.44
     },
     {
       "picked": "18 Jun",
@@ -55,9 +55,9 @@
       "qty": 37,
       "invested": 68709,
       "booked": true,
-      "daysSinceTrigger": 34,
+      "daysSinceTrigger": 35,
       "triggerDate": "19 Jun",
-      "curPnlPct": 13.17
+      "curPnlPct": 14.78
     },
     {
       "picked": "23 Jun",
@@ -74,9 +74,9 @@
       "qty": 48,
       "invested": 69072,
       "booked": true,
-      "daysSinceTrigger": 30,
+      "daysSinceTrigger": 31,
       "triggerDate": "25 Jun",
-      "curPnlPct": 27.85
+      "curPnlPct": 28.46
     },
     {
       "picked": "2 Jul",
@@ -90,31 +90,12 @@
       "sl": 614,
       "entryStatus": "open",
       "entry": 642.9,
-      "qty": 216,
-      "invested": 138866.4,
-      "booked": false,
-      "daysSinceTrigger": 25,
+      "qty": 108,
+      "invested": 69433.2,
+      "booked": true,
+      "daysSinceTrigger": 26,
       "triggerDate": "3 Jul",
-      "curPnlPct": 8.48
-    },
-    {
-      "picked": "6 Aug",
-      "pickedTs": 1785987900,
-      "symbol": "BHARATFORG",
-      "sector": "Automobile and Auto Components",
-      "gear": 4,
-      "fullSize": 24,
-      "sizePct": 24,
-      "pivot": 2238,
-      "sl": 2141,
-      "entryStatus": "open",
-      "entry": 2238,
-      "qty": 64,
-      "invested": 143232,
-      "booked": false,
-      "daysSinceTrigger": 0,
-      "triggerDate": "7 Aug",
-      "curPnlPct": 1.22
+      "curPnlPct": 13.56
     },
     {
       "picked": "6 Aug",
@@ -126,8 +107,13 @@
       "sizePct": 24,
       "pivot": 677.2,
       "sl": 646.7,
-      "entryStatus": "pending",
-      "daysWaiting": 1
+      "entryStatus": "open",
+      "daysWaiting": 1,
+      "entry": 677.2,
+      "qty": 212,
+      "invested": 143566.4,
+      "daysSinceTrigger": 0,
+      "triggerDate": "10 Aug"
     },
     {
       "picked": "7 Aug",
@@ -139,19 +125,24 @@
       "sizePct": 24,
       "pivot": 701.3,
       "sl": 669.7,
-      "entryStatus": "pending",
-      "daysWaiting": 0
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 701.3,
+      "qty": 205,
+      "invested": 143766.5,
+      "daysSinceTrigger": 0,
+      "triggerDate": "10 Aug"
     },
     {
-      "picked": "7 Aug",
-      "pickedTs": 1786074300,
-      "symbol": "LLOYDSENT",
+      "picked": "10 Aug",
+      "pickedTs": 1786333500,
+      "symbol": "GRAVITA",
       "sector": "Metals & Mining",
       "gear": 4,
       "fullSize": 24,
       "sizePct": 24,
-      "pivot": 84.2,
-      "sl": 80.4,
+      "pivot": 1799,
+      "sl": 1718,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
@@ -1556,10 +1547,55 @@
       "ts": 1785728700,
       "exitTs": 1786074300,
       "bt": true
+    },
+    {
+      "picked": "2 Jul",
+      "ts": 1782963900,
+      "symbol": "AKUMS",
+      "sector": "Healthcare",
+      "gear": 4,
+      "entry": 642.9,
+      "qty": 108,
+      "invested": 69433.2,
+      "status": "win",
+      "pnlPct": 13.56,
+      "exitDate": "10 Aug",
+      "exitTs": 1786333500,
+      "reason": "+13.56% — double digit aa gaya, 50% book kiya. Baaki 40 DMA pe trail hoga.",
+      "live": true
+    },
+    {
+      "picked": "6 Aug",
+      "ts": 1785987900,
+      "symbol": "BHARATFORG",
+      "sector": "Automobile and Auto Components",
+      "gear": 4,
+      "entry": 2238,
+      "qty": 64,
+      "invested": 143232,
+      "status": "sl",
+      "pnlPct": -4.33,
+      "exitDate": "10 Aug",
+      "exitTs": 1786333500,
+      "reason": "SL hit 2141 pe — out, end of story. Sell is a sell.",
+      "live": true
+    },
+    {
+      "picked": "7 Aug",
+      "ts": 1786074300,
+      "symbol": "LLOYDSENT",
+      "sector": "Metals & Mining",
+      "gear": 4,
+      "entry": 84.2,
+      "status": "no-cash",
+      "pnlPct": 0,
+      "exitTs": 1786333500,
+      "reason": "Breakout to aaya, par capital pehle se lagi hui thi (₹5,99,643 deployed) — ye trade chhoot gayi. Cash bhi ek position hai.",
+      "live": true
     }
   ],
   "backtestedAt": "2026-08-08T17:58:22.130Z",
-  "lastBhav": "07/08/2026",
+  "lastBhav": "10/08/2026",
   "backtestWindow": 600000,
   "startCapital": 600000,
   "sizeByGear": [
