@@ -19,6 +19,7 @@ const DEFAULT_CAPITAL = 600000;
 const DEFAULT_SIZES = [24, 24, 24, 24, 24];
 // Exit rules — backtest.mjs ke barabar rakhna ZAROORI hai, warna paper portfolio
 // aur backtest do alag cheezein ho jaate hain.
+const MIN_BARS = 100;      // itne din ka data ho tabhi stock scan me aata hai (~5 mahine)
 const BOOK_AT = 10;        // "double digit" pe partial book (creator ka shabd)
 const BOOK_PART = 0.5;     // 50% book, baaki trail pe
 const TRAIL_MA = 40;       // creator "10 DMA" bolta hai par wo discretion ke saath —
@@ -480,7 +481,11 @@ async function main() {
     for (const u of universe) {
       const ch = charts[u.s]; if (!ch) continue;
       const c = ch.c, h = ch.h, l = ch.l, v = ch.v, n = c.length;
-      if (n < 120) continue;
+      // ★ 120 se ghata ke 100. Pehle 6 mahine se nayi listings scanner ko INVISIBLE
+      // thi — 51 liquid naye stocks (INDOMIM ₹1433Cr/din, SBIFUNDS ₹649Cr/din) bilkul
+      // nahi dikhte the. Backtest: 120→100 pe ₹6L FULL +150%→+201%, DD -11.7%→-9.9%.
+      // 100 se aur neeche jaane ka koi fayda nahi mila, isliye wahin ruke.
+      if (n < MIN_BARS) continue;
       const close = c[n - 1];
 
       // liquidity
@@ -488,9 +493,14 @@ async function main() {
       tv /= 20;
       if (tv < MIN_TRADED_VALUE) continue;
 
-      // trend: above rising 50 DMA
+      // trend: above rising 50 DMA. Nayi listing (120 bars se kam) ke paas 50 DMA
+      // kachchi hoti hai — uske liye 20 DMA se check karte hain. s50 display ke liye
+      // phir bhi asli 50 DMA hi rehti hai (100+ bars pe wo maujood hoti hai).
+      const young = n < 120;
+      const tMa = young ? 20 : 50;
+      const trendMa = sma(c, tMa), trendMaPrev = sma(c, tMa, 10);
+      if (!(close > trendMa && trendMa > trendMaPrev)) continue;
       const s50 = sma(c, 50), s50p = sma(c, 50, 10), s10 = sma(c, 10);
-      if (!(close > s50 && s50 > s50p)) continue;
 
       // consolidation + pivot — ADAPTIVE base window
       // BUG THA: fix 15-din window. Agar 12 din pehle ek spike hua ho (jaise GNA Axles
@@ -569,6 +579,9 @@ async function main() {
 
       const flags = [];
       if (earnRisk) flags.push('⚠️ Result ' + earnInfo.earnOn);
+      // Nayi listing = upar koi phansa hua nahi (overhead supply nahi), par history
+      // patli hai. User ko dono pata hone chahiye.
+      if (young) flags.push(`🆕 Nayi listing — ${Math.round(n / 21)} mahine ka data`);
       if (hot) flags.push('Hot sector');
       if (superTight) flags.push('Super tight'); else flags.push('Tight base');
       if (volShrink) flags.push('Volume shrink');

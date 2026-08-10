@@ -113,6 +113,19 @@ const MIN_TRADED_VALUE = MIN_TV_CR * 1e7;   // crore → rupees
 // "Defence names are doing something good", "metal me action hai" — dekhein weight
 // badhane se pick quality sudhrti hai ya nahi.
 const HOT_BONUS = parseFloat(argVal('--hot-bonus', '4'));
+// --min-bars N : stock ke paas kam se kam itne din ka data ho tabhi setup ban sakta hai.
+// Default 120 (~6 mahine) = abhi ka behaviour. Isse kam karne se NAYE LISTINGS dikhne
+// lagte hain — abhi 51 liquid naye stocks (INDOMIM ₹1433Cr/din, SBIFUNDS ₹649Cr/din
+// waghera) scanner ko bilkul invisible hain. Floor 60 hai kyunki 60-din wale window
+// (pbig, s50p) usse neeche toot jaate hain.
+// Default 100 (~5 mahine). 120 se ghataya kyunki 51 liquid naye listings invisible the.
+// Test: 120→100 pe bada fayda (₹6L FULL +150%→+201%, PF 1.85→2.05, DD -11.7%→-9.9%),
+// par 100→80→60 me KOI farak nahi. Matlab fayda 5-6 mahine purani listings se hai,
+// 2-mahine wali se nahi. Isliye 100 pe ruke — utna hi fayda, patle data se door.
+const MIN_BARS = Math.max(60, parseInt(argVal('--min-bars', '100'), 10));
+// Cache hamesha 70+ bars wale sab stocks laati hai; MIN_BARS sirf setup-eligibility
+// decide karta hai. Isse ek hi fetch se saari min-bars settings test ho jaati hain.
+const FETCH_MIN_BARS = 70;
 // --book-at N : +N% pe profit book. 0 = bilkul book mat karo, sirf 10 DMA trail chale.
 // --book-part F : +N% pe sirf F fraction becho (creator PARTIAL karta hai), baaki trail pe.
 // Kyun: abhi 100% book +8% pe hota hai, aur wo rule trail se PEHLE chalta hai —
@@ -157,7 +170,8 @@ const WINDOW = parseInt(args.find(a => /^\d+$/.test(a)) || '', 10)
 // KEEP_BARS pe kaat dete hain. Isse 5y bhi 2y jitni RAM me chalta hai.
 const KEEP_BARS = WINDOW + WARMUP + 30;
 const RANGE = KEEP_BARS <= 480 ? '2y' : KEEP_BARS <= 1200 ? '5y' : '10y';
-const CACHE_FILE = join(CACHE_DIR, `charts-${RANGE}.json.gz`);
+// v2 = naye listings bhi included (fetch threshold 130 se 70 bars ho gaya)
+const CACHE_FILE = join(CACHE_DIR, `charts-${RANGE}-v2.json.gz`);
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const round2 = x => Math.round(x * 100) / 100;
@@ -195,7 +209,7 @@ async function fetchChart(ticker, range = RANGE) {
       if (out.t.length && istDay(out.t[out.t.length - 1]) === nowDay && nowMins < 935) {
         for (const k of ['t', 'o', 'h', 'l', 'c', 'v']) out[k].pop();
       }
-      if (out.c.length < WARMUP + 10) return null;
+      if (out.c.length < FETCH_MIN_BARS) return null;
       // sirf utne bars rakho jitne is window ke liye chahiye — RAM aur cache dono bachta hai
       if (out.c.length > KEEP_BARS) for (const k of ['t', 'o', 'h', 'l', 'c', 'v']) out[k] = out[k].slice(-KEEP_BARS);
       return out;
@@ -299,12 +313,17 @@ function prepare(ch, refDays) {
 // ---------- setup detection (scan.mjs ke barabar) ----------
 function setupAt(S, si, hot) {
   const { h, l, c, v } = S;
-  if (si < WARMUP) return null;
+  if (si < MIN_BARS) return null;
   const close = c[si];
 
-  const s50 = smaAt(S.pc, si, 50), s50p = smaAt(S.pc, si - 10, 50), s10 = smaAt(S.pc, si, 10);
+  // Trend check: normally "close > rising 50 DMA". Par naye listing ke paas 50 DMA
+  // hoti hi nahi (ya kachchi hoti hai) — uske liye 20 DMA use karte hain. Ye tabhi
+  // hota hai jab MIN_BARS ghataya gaya ho; default 120 pe har stock 50 DMA hi use karta hai.
+  const young = si < 120;
+  const ma = young ? 20 : 50;
+  const s50 = smaAt(S.pc, si, ma), s50p = smaAt(S.pc, si - 10, ma), s10 = smaAt(S.pc, si, 10);
   if (s50 == null || s50p == null) return null;
-  if (!(close > s50 && s50 > s50p)) return null;                       // above rising 50 DMA
+  if (!(close > s50 && s50 > s50p)) return null;                       // above rising MA
 
   const tv = (S.ptv[si + 1] - S.ptv[si + 1 - 20]) / 20;
   if (tv < MIN_TRADED_VALUE) return null;                              // liquidity floor
@@ -399,7 +418,7 @@ async function main() {
   const stocks = [];
   for (const u of universe) {
     const ch = raw[u.s];
-    if (!ch || ch.c.length < WARMUP + 10) continue;
+    if (!ch || ch.c.length < FETCH_MIN_BARS) continue;
     const S = prepare(ch, refDays);
     S.sym = u.s; S.sec = u.sec; S.cap = u.cap || 'Small';
     S.capPref = capPref[S.cap] ?? 2.5;
@@ -710,7 +729,7 @@ async function main() {
     for (const S of stocks) {
       if (active.has(S.sym)) continue;
       const si = S.map[di];
-      if (si < WARMUP) continue;
+      if (si < MIN_BARS) continue;   // setupAt bhi yahi check karta hai, ye sirf tez raasta
       const r = setupAt(S, si, hot.has(S.sec));
       if (r && r.isReady) cands.push({ S, ...r });
     }

@@ -261,6 +261,32 @@ close 10 DMA ke neeche aate hi bahar, avg hold 4 session. Wo chart/volume/market
 discretion lagata hai; hum nahi laga sakte. Backtest me 10 DMA = FULL −25%, 40 DMA = +63%.
 40 DMA hi ek aisi trail hai jo DONO halves me PF > 1 deti hai.
 
+**NAYE LISTINGS AB DIKHTE HAIN — min history 120 → 100 bars.** Pehle `if (n < 120) continue`
+ki wajah se 6 mahine se nayi koi bhi listing scanner ko **bilkul invisible** thi — 51 liquid
+naye stocks (INDOMIM ₹1433Cr/din, MANIPALHOS ₹1328Cr, SBIFUNDS ₹649Cr, LASERPOWER ₹174Cr...).
+Creator inhi me se trade karta hai: *"आईपीओ स्टॉक्स में... i finance... 147.50 के ऊपर जाता है
+तो देखा जा सकता है"*. 120 se kam bars wale stock ka trend check 50 DMA ki jagah **20 DMA** se
+hota hai (50 DMA tab kachchi hoti hai); display me 50 DMA phir bhi asli hi dikhti hai.
+Card pe `🆕 Nayi listing — X mahine ka data` flag aata hai.
+
+| min-bars | ₹6L FULL | ₹6L H1 | ₹6L H2 | ₹6L PF | ₹6L DD |
+|---|---|---|---|---|---|
+| 120 (purana) | +149.7% | +42.8% | +56% | 1.85 | −11.7% |
+| **100** | **+200.9%** | **+73.1%** | +56% | **2.05** | **−9.9%** |
+| 80 | +203.9% | +73.1% | +57.6% | 2.07 | −9.9% |
+| 60 | +204.7% | +73% | +58.3% | 2.08 | −9.9% |
+
+**100 pe ruke, 60 pe nahi** — kyunki 100/80/60 me koi farak nahi hai. Poora fayda 120→100
+wale kadam me hai, matlab **fayda 5-6 mahine purani listings se hai, 2-mahine wali se nahi**.
+₹1L pe FULL flat raha (156→154) par H1 +21.4% → +38.4% (PF 1.36→1.53) — yaani dono halves pe
+behtar-ya-barabar, dono capitals pe.
+
+⚠ **Is ek change pe survivorship bias sabse TEZ hai.** Universe aaj ki NSE list hai — jo IPOs
+2021-24 me list hoke baad me delist/suspend ho gaye wo isme hain hi nahi, aur naye listings
+purane stocks se zyada marte hain. **Numbers me kaat lagana.** (Mainboard NSE delistings kam
+hote hain, SME already bahar hai, to bias hai par mota nahi.)
+Chart cache ab `charts-{range}-v2.json.gz` — fetch threshold 130 se 70 bars ho gaya.
+
 **ROZ SIRF TOP-2 PICKS** (pehle gear ke hisaab se 3-8 the). Creator: *"एक दो पोजीशन ली।
 स्टॉक इज़ अप लाइक 10-20%, ऐसे तीन चार स्टॉक मिल गए — यू आर लाइक 25% इन्वेस्टेड, दे आर डन।"*
 Scan har candidate ko score deta hai; **rank 3 ke baad signal khatam** ho jaata hai aur wo
