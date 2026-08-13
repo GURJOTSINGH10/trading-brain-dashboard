@@ -1,5 +1,5 @@
 {
-  "lastSession": "12/08/2026",
+  "lastSession": "13/08/2026",
   "equity": 622117.24,
   "positions": [
     {
@@ -17,9 +17,9 @@
       "qty": 16,
       "invested": 36288,
       "booked": true,
-      "daysSinceTrigger": 68,
+      "daysSinceTrigger": 69,
       "triggerDate": "6 May",
-      "curPnlPct": 56.29
+      "curPnlPct": 58.54
     },
     {
       "picked": "16 Jun",
@@ -36,9 +36,9 @@
       "qty": 190,
       "invested": 71440,
       "booked": true,
-      "daysSinceTrigger": 37,
+      "daysSinceTrigger": 38,
       "triggerDate": "19 Jun",
-      "curPnlPct": 9.3
+      "curPnlPct": 8.43
     },
     {
       "picked": "18 Jun",
@@ -55,9 +55,9 @@
       "qty": 38,
       "invested": 70566,
       "booked": true,
-      "daysSinceTrigger": 37,
+      "daysSinceTrigger": 38,
       "triggerDate": "19 Jun",
-      "curPnlPct": 17.88
+      "curPnlPct": 18.41
     },
     {
       "picked": "23 Jun",
@@ -74,9 +74,9 @@
       "qty": 50,
       "invested": 71950,
       "booked": true,
-      "daysSinceTrigger": 33,
+      "daysSinceTrigger": 34,
       "triggerDate": "25 Jun",
-      "curPnlPct": 29.78
+      "curPnlPct": 30.92
     },
     {
       "picked": "2 Jul",
@@ -93,9 +93,9 @@
       "qty": 112,
       "invested": 72004.8,
       "booked": true,
-      "daysSinceTrigger": 28,
+      "daysSinceTrigger": 29,
       "triggerDate": "3 Jul",
-      "curPnlPct": 16.65
+      "curPnlPct": 16.95
     },
     {
       "picked": "7 Aug",
@@ -112,35 +112,9 @@
       "entry": 701.3,
       "qty": 215,
       "invested": 150779.5,
-      "daysSinceTrigger": 2,
+      "daysSinceTrigger": 3,
       "triggerDate": "10 Aug",
-      "curPnlPct": -1.76
-    },
-    {
-      "picked": "10 Aug",
-      "pickedTs": 1786336200,
-      "symbol": "VMART",
-      "sector": "Consumer Services",
-      "gear": 4,
-      "fullSize": 24,
-      "sizePct": 24,
-      "pivot": 823.3,
-      "sl": 786.2,
-      "entryStatus": "pending",
-      "daysWaiting": 2
-    },
-    {
-      "picked": "11 Aug",
-      "pickedTs": 1786419900,
-      "symbol": "HESTERBIO",
-      "sector": "Healthcare",
-      "gear": 3,
-      "fullSize": 24,
-      "sizePct": 24,
-      "pivot": 2547,
-      "sl": 2432,
-      "entryStatus": "pending",
-      "daysWaiting": 1
+      "curPnlPct": 3.83
     },
     {
       "picked": "11 Aug",
@@ -157,8 +131,35 @@
       "entry": 1974,
       "qty": 75,
       "invested": 148050,
-      "daysSinceTrigger": 0,
-      "triggerDate": "12 Aug"
+      "daysSinceTrigger": 1,
+      "triggerDate": "12 Aug",
+      "curPnlPct": -0.28
+    },
+    {
+      "picked": "10 Aug",
+      "pickedTs": 1786336200,
+      "symbol": "VMART",
+      "sector": "Consumer Services",
+      "gear": 4,
+      "fullSize": 24,
+      "sizePct": 24,
+      "pivot": 823.3,
+      "sl": 786.2,
+      "entryStatus": "pending",
+      "daysWaiting": 3
+    },
+    {
+      "picked": "11 Aug",
+      "pickedTs": 1786419900,
+      "symbol": "HESTERBIO",
+      "sector": "Healthcare",
+      "gear": 3,
+      "fullSize": 24,
+      "sizePct": 24,
+      "pivot": 2547,
+      "sl": 2432,
+      "entryStatus": "pending",
+      "daysWaiting": 2
     },
     {
       "picked": "12 Aug",
@@ -170,6 +171,19 @@
       "sizePct": 24,
       "pivot": 73.3,
       "sl": 70,
+      "entryStatus": "pending",
+      "daysWaiting": 1
+    },
+    {
+      "picked": "13 Aug",
+      "pickedTs": 1786592700,
+      "symbol": "EMCURE",
+      "sector": "Healthcare",
+      "gear": 4,
+      "fullSize": 24,
+      "sizePct": 24,
+      "pivot": 2048,
+      "sl": 1956,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
@@ -1631,7 +1645,7 @@
     }
   ],
   "backtestedAt": "2026-08-10T18:55:11.967Z",
-  "lastBhav": "12/08/2026",
+  "lastBhav": "13/08/2026",
   "backtestWindow": 600000,
   "startCapital": 600000,
   "sizeByGear": [
