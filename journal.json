@@ -1,6 +1,6 @@
 {
-  "lastSession": "13/08/2026",
-  "equity": 622117.24,
+  "lastSession": "14/08/2026",
+  "equity": 625872.86,
   "positions": [
     {
       "picked": "4 May",
@@ -17,28 +17,9 @@
       "qty": 16,
       "invested": 36288,
       "booked": true,
-      "daysSinceTrigger": 69,
+      "daysSinceTrigger": 70,
       "triggerDate": "6 May",
-      "curPnlPct": 58.54
-    },
-    {
-      "picked": "16 Jun",
-      "pickedTs": 1781581500,
-      "symbol": "ABCAPITAL",
-      "sector": "Financial Services",
-      "gear": 3,
-      "fullSize": 24,
-      "sizePct": 24,
-      "pivot": 376,
-      "sl": 359,
-      "entryStatus": "open",
-      "entry": 376,
-      "qty": 190,
-      "invested": 71440,
-      "booked": true,
-      "daysSinceTrigger": 38,
-      "triggerDate": "19 Jun",
-      "curPnlPct": 8.43
+      "curPnlPct": 60.58
     },
     {
       "picked": "18 Jun",
@@ -55,9 +36,9 @@
       "qty": 38,
       "invested": 70566,
       "booked": true,
-      "daysSinceTrigger": 38,
+      "daysSinceTrigger": 39,
       "triggerDate": "19 Jun",
-      "curPnlPct": 18.41
+      "curPnlPct": 17.11
     },
     {
       "picked": "23 Jun",
@@ -74,9 +55,9 @@
       "qty": 50,
       "invested": 71950,
       "booked": true,
-      "daysSinceTrigger": 34,
+      "daysSinceTrigger": 35,
       "triggerDate": "25 Jun",
-      "curPnlPct": 30.92
+      "curPnlPct": 30.18
     },
     {
       "picked": "2 Jul",
@@ -93,28 +74,9 @@
       "qty": 112,
       "invested": 72004.8,
       "booked": true,
-      "daysSinceTrigger": 29,
+      "daysSinceTrigger": 30,
       "triggerDate": "3 Jul",
-      "curPnlPct": 16.95
-    },
-    {
-      "picked": "7 Aug",
-      "pickedTs": 1786074300,
-      "symbol": "CYIENTDLM",
-      "sector": "Defence",
-      "gear": 4,
-      "fullSize": 24,
-      "sizePct": 24,
-      "pivot": 701.3,
-      "sl": 669.7,
-      "entryStatus": "open",
-      "daysWaiting": 0,
-      "entry": 701.3,
-      "qty": 215,
-      "invested": 150779.5,
-      "daysSinceTrigger": 3,
-      "triggerDate": "10 Aug",
-      "curPnlPct": 3.83
+      "curPnlPct": 13.02
     },
     {
       "picked": "11 Aug",
@@ -131,22 +93,9 @@
       "entry": 1974,
       "qty": 75,
       "invested": 148050,
-      "daysSinceTrigger": 1,
+      "daysSinceTrigger": 2,
       "triggerDate": "12 Aug",
-      "curPnlPct": -0.28
-    },
-    {
-      "picked": "10 Aug",
-      "pickedTs": 1786336200,
-      "symbol": "VMART",
-      "sector": "Consumer Services",
-      "gear": 4,
-      "fullSize": 24,
-      "sizePct": 24,
-      "pivot": 823.3,
-      "sl": 786.2,
-      "entryStatus": "pending",
-      "daysWaiting": 3
+      "curPnlPct": -2.92
     },
     {
       "picked": "11 Aug",
@@ -159,7 +108,7 @@
       "pivot": 2547,
       "sl": 2432,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "12 Aug",
@@ -172,7 +121,7 @@
       "pivot": 73.3,
       "sl": 70,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "13 Aug",
@@ -184,6 +133,32 @@
       "sizePct": 24,
       "pivot": 2048,
       "sl": 1956,
+      "entryStatus": "pending",
+      "daysWaiting": 1
+    },
+    {
+      "picked": "14 Aug",
+      "pickedTs": 1786679100,
+      "symbol": "MBAPL",
+      "sector": "Agri",
+      "gear": 3,
+      "fullSize": 24,
+      "sizePct": 24,
+      "pivot": 170.9,
+      "sl": 163.2,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "14 Aug",
+      "pickedTs": 1786679100,
+      "symbol": "KRISHANA",
+      "sector": "Agri",
+      "gear": 3,
+      "fullSize": 24,
+      "sizePct": 24,
+      "pivot": 193.9,
+      "sl": 185.2,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
@@ -1642,10 +1617,55 @@
       "exitTs": 1786506300,
       "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi",
       "live": true
+    },
+    {
+      "picked": "16 Jun",
+      "ts": 1781581500,
+      "symbol": "ABCAPITAL",
+      "sector": "Financial Services",
+      "gear": 3,
+      "entry": 376,
+      "qty": 190,
+      "invested": 71440,
+      "status": "win",
+      "pnlPct": 6.65,
+      "exitDate": "14 Aug",
+      "exitTs": 1786679100,
+      "reason": "40 DMA trail exit — jo mila le liya",
+      "live": true
+    },
+    {
+      "picked": "7 Aug",
+      "ts": 1786074300,
+      "symbol": "CYIENTDLM",
+      "sector": "Defence",
+      "gear": 4,
+      "entry": 701.3,
+      "qty": 215,
+      "invested": 150779.5,
+      "status": "fail",
+      "pnlPct": -0.66,
+      "exitDate": "14 Aug",
+      "exitTs": 1786679100,
+      "reason": "Breakout fail — 4 din squat, move nahi aaya. Abnormal behavior = out.",
+      "live": true
+    },
+    {
+      "picked": "10 Aug",
+      "ts": 1786336200,
+      "symbol": "VMART",
+      "sector": "Consumer Services",
+      "gear": 4,
+      "entry": 823.3,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "exitTs": 1786679100,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi",
+      "live": true
     }
   ],
   "backtestedAt": "2026-08-10T18:55:11.967Z",
-  "lastBhav": "13/08/2026",
+  "lastBhav": "14/08/2026",
   "backtestWindow": 600000,
   "startCapital": 600000,
   "sizeByGear": [
