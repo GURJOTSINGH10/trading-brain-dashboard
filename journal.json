@@ -1,6 +1,6 @@
 {
-  "lastSession": "14/08/2026",
-  "equity": 625872.86,
+  "lastSession": "17/08/2026",
+  "equity": 619195.8,
   "positions": [
     {
       "picked": "4 May",
@@ -17,9 +17,9 @@
       "qty": 16,
       "invested": 36288,
       "booked": true,
-      "daysSinceTrigger": 70,
+      "daysSinceTrigger": 71,
       "triggerDate": "6 May",
-      "curPnlPct": 60.58
+      "curPnlPct": 57.95
     },
     {
       "picked": "18 Jun",
@@ -36,9 +36,9 @@
       "qty": 38,
       "invested": 70566,
       "booked": true,
-      "daysSinceTrigger": 39,
+      "daysSinceTrigger": 40,
       "triggerDate": "19 Jun",
-      "curPnlPct": 17.11
+      "curPnlPct": 17.18
     },
     {
       "picked": "23 Jun",
@@ -55,9 +55,9 @@
       "qty": 50,
       "invested": 71950,
       "booked": true,
-      "daysSinceTrigger": 35,
+      "daysSinceTrigger": 36,
       "triggerDate": "25 Jun",
-      "curPnlPct": 30.18
+      "curPnlPct": 30.79
     },
     {
       "picked": "2 Jul",
@@ -74,41 +74,9 @@
       "qty": 112,
       "invested": 72004.8,
       "booked": true,
-      "daysSinceTrigger": 30,
+      "daysSinceTrigger": 31,
       "triggerDate": "3 Jul",
-      "curPnlPct": 13.02
-    },
-    {
-      "picked": "11 Aug",
-      "pickedTs": 1786419900,
-      "symbol": "LALPATHLAB",
-      "sector": "Healthcare",
-      "gear": 3,
-      "fullSize": 24,
-      "sizePct": 24,
-      "pivot": 1974,
-      "sl": 1885,
-      "entryStatus": "open",
-      "daysWaiting": 0,
-      "entry": 1974,
-      "qty": 75,
-      "invested": 148050,
-      "daysSinceTrigger": 2,
-      "triggerDate": "12 Aug",
-      "curPnlPct": -2.92
-    },
-    {
-      "picked": "11 Aug",
-      "pickedTs": 1786419900,
-      "symbol": "HESTERBIO",
-      "sector": "Healthcare",
-      "gear": 3,
-      "fullSize": 24,
-      "sizePct": 24,
-      "pivot": 2547,
-      "sl": 2432,
-      "entryStatus": "pending",
-      "daysWaiting": 3
+      "curPnlPct": 15.73
     },
     {
       "picked": "12 Aug",
@@ -121,7 +89,7 @@
       "pivot": 73.3,
       "sl": 70,
       "entryStatus": "pending",
-      "daysWaiting": 2
+      "daysWaiting": 3
     },
     {
       "picked": "13 Aug",
@@ -134,7 +102,7 @@
       "pivot": 2048,
       "sl": 1956,
       "entryStatus": "pending",
-      "daysWaiting": 1
+      "daysWaiting": 2
     },
     {
       "picked": "14 Aug",
@@ -146,8 +114,13 @@
       "sizePct": 24,
       "pivot": 170.9,
       "sl": 163.2,
-      "entryStatus": "pending",
-      "daysWaiting": 0
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 172,
+      "qty": 863,
+      "invested": 148436,
+      "daysSinceTrigger": 0,
+      "triggerDate": "17 Aug"
     },
     {
       "picked": "14 Aug",
@@ -159,6 +132,37 @@
       "sizePct": 24,
       "pivot": 193.9,
       "sl": 185.2,
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 193.9,
+      "qty": 766,
+      "invested": 148527.4,
+      "daysSinceTrigger": 0,
+      "triggerDate": "17 Aug"
+    },
+    {
+      "picked": "17 Aug",
+      "pickedTs": 1786938300,
+      "symbol": "BALRAMCHIN",
+      "sector": "Agri",
+      "gear": 3,
+      "fullSize": 24,
+      "sizePct": 24,
+      "pivot": 665.5,
+      "sl": 635.6,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "17 Aug",
+      "pickedTs": 1786938300,
+      "symbol": "CYIENTDLM",
+      "sector": "Defence",
+      "gear": 3,
+      "fullSize": 24,
+      "sizePct": 24,
+      "pivot": 743,
+      "sl": 709.6,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
@@ -1662,10 +1666,39 @@
       "exitTs": 1786679100,
       "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi",
       "live": true
+    },
+    {
+      "picked": "11 Aug",
+      "ts": 1786419900,
+      "symbol": "LALPATHLAB",
+      "sector": "Healthcare",
+      "gear": 3,
+      "entry": 1974,
+      "qty": 75,
+      "invested": 148050,
+      "status": "sl",
+      "pnlPct": -4.51,
+      "exitDate": "17 Aug",
+      "exitTs": 1786938300,
+      "reason": "SL hit 1885 pe — out, end of story. Sell is a sell.",
+      "live": true
+    },
+    {
+      "picked": "11 Aug",
+      "ts": 1786419900,
+      "symbol": "HESTERBIO",
+      "sector": "Healthcare",
+      "gear": 3,
+      "entry": 2547,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "exitTs": 1786938300,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi",
+      "live": true
     }
   ],
   "backtestedAt": "2026-08-10T18:55:11.967Z",
-  "lastBhav": "14/08/2026",
+  "lastBhav": "17/08/2026",
   "backtestWindow": 600000,
   "startCapital": 600000,
   "sizeByGear": [
