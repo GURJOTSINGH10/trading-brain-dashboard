@@ -1,6 +1,6 @@
 {
- "note": "POORI NSE EQ list (2075 stocks) — cap tags + sector jahan mile. Scan me bhavcopy turnover se prefilter hota hai. Rebuild: node scripts/build-universe.mjs",
- "builtAt": "2026-08-07T18:00:33.312Z",
+ "note": "POORI NSE EQ list (2295 stocks) — cap tags + sector jahan mile. Scan me bhavcopy turnover se prefilter hota hai. Rebuild: node scripts/build-universe.mjs",
+ "builtAt": "2026-08-18T02:55:48.016Z",
  "stocks": [
   {
    "s": "20MICRONS",
@@ -24,12 +24,6 @@
    "s": "3BBLACKBIO",
    "n": "3B Blackbio Dx",
    "sec": "Other",
-   "cap": "Micro"
-  },
-  {
-   "s": "3IINFOLTD",
-   "n": "3i Infotech",
-   "sec": "Information Technology",
    "cap": "Micro"
   },
   {
@@ -82,6 +76,12 @@
    "cap": "Micro"
   },
   {
+   "s": "AAREYDRUGS",
+   "n": "Aarey Drugs & Pharmaceuticals",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "AARNAV",
    "n": "Aarnav Fashions",
    "sec": "Other",
@@ -113,12 +113,6 @@
    "cap": "Micro"
   },
   {
-   "s": "AARTISURF",
-   "n": "Aarti Surfactants",
-   "sec": "Chemicals",
-   "cap": "Micro"
-  },
-  {
    "s": "AARVI",
    "n": "Aarvi Encon",
    "sec": "Services",
@@ -135,6 +129,12 @@
    "n": "Aavas Financiers",
    "sec": "Financial Services",
    "cap": "Small"
+  },
+  {
+   "s": "ABANSENT",
+   "n": "Abans Enterprises",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "ABB",
@@ -186,12 +186,6 @@
    "cap": "Small"
   },
   {
-   "s": "ABMINTLLTD",
-   "n": "ABM International",
-   "sec": "Chemicals",
-   "cap": "Micro"
-  },
-  {
    "s": "ABMKNO",
    "n": "ABM Knowledgeware",
    "sec": "Other",
@@ -233,6 +227,12 @@
    "s": "ACEINTEG",
    "n": "Ace Integrated Solutions",
    "sec": "Services",
+   "cap": "Micro"
+  },
+  {
+   "s": "ACGL",
+   "n": "Automobile Corporation of Goa",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -303,6 +303,12 @@
    "curated": true
   },
   {
+   "s": "ADDIND",
+   "n": "Addi Industries",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "ADFFOODS",
    "n": "ADF Foods",
    "sec": "Fast Moving Consumer Goods",
@@ -360,6 +366,12 @@
    "s": "ADVENZYMES",
    "n": "Advanced Enzyme Technologies",
    "sec": "Healthcare",
+   "cap": "Micro"
+  },
+  {
+   "s": "ADVIKCA",
+   "n": "Advik Capital",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -470,6 +482,12 @@
    "s": "AGL",
    "n": "Allcargo Global",
    "sec": "Logistics / Shipping",
+   "cap": "Micro"
+  },
+  {
+   "s": "AGRITECH",
+   "n": "Agri-Tech (India)",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -606,6 +624,12 @@
    "cap": "Micro"
   },
   {
+   "s": "ALFREDHE",
+   "n": "Alfred Herbert India",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "ALGOQUANT",
    "n": "Algoquant Fintech",
    "sec": "Capital Markets",
@@ -686,9 +710,27 @@
    "cap": "Micro"
   },
   {
+   "s": "ALUFLUOR",
+   "n": "Alufluoride",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "AMAGI",
    "n": "Amagi Media Labs",
    "sec": "Information Technology",
+   "cap": "Micro"
+  },
+  {
+   "s": "AMAL",
+   "n": "Amal",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "AMARJOTHI",
+   "n": "Amarjothi Spinning Mills",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -773,6 +815,12 @@
    "cap": "Micro"
   },
   {
+   "s": "ANDREWYU",
+   "n": "Andrew Yule & Company",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "ANGELONE",
    "n": "Angel One",
    "sec": "Capital Markets",
@@ -789,6 +837,18 @@
    "s": "ANMOL",
    "n": "Anmol India",
    "sec": "Oil Gas & Consumable Fuels",
+   "cap": "Micro"
+  },
+  {
+   "s": "ANNAPURNA",
+   "n": "Annapurna Swadisht",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "ANSALBU",
+   "n": "Ansal Buildwell",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -899,6 +959,12 @@
    "cap": "Micro"
   },
   {
+   "s": "APOORVA",
+   "n": "Apoorva Leasing Finance and Investment Company",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "APTUS",
    "n": "Aptus Value Housing Finance India",
    "sec": "Financial Services",
@@ -920,6 +986,18 @@
    "s": "ARCHIES",
    "n": "Archies",
    "sec": "Consumer Services",
+   "cap": "Micro"
+  },
+  {
+   "s": "ARCL",
+   "n": "ARCL Organics",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "ARDEE",
+   "n": "Ardee Industries",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -1031,6 +1109,12 @@
    "cap": "Micro"
   },
   {
+   "s": "ARYAMAN",
+   "n": "Aryaman Financial Services",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "ASAHIINDIA",
    "n": "Asahi India Glass",
    "sec": "Automobile and Auto Components",
@@ -1058,12 +1142,6 @@
    "s": "ASHIANA",
    "n": "Ashiana Housing",
    "sec": "Realty",
-   "cap": "Micro"
-  },
-  {
-   "s": "ASHIKAG",
-   "n": "Ashika Global Securities",
-   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -1117,6 +1195,12 @@
    "cap": "Micro"
   },
   {
+   "s": "ASIANTNE",
+   "n": "Asian Tea & Exports",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "ASKAUTOLTD",
    "n": "ASK Automotive",
    "sec": "Automobile and Auto Components",
@@ -1126,6 +1210,12 @@
    "s": "ASPINWALL",
    "n": "Aspinwall and Company",
    "sec": "Agri",
+   "cap": "Micro"
+  },
+  {
+   "s": "ASSAMENT",
+   "n": "Assam Entrade",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -1260,6 +1350,18 @@
    "cap": "Micro"
   },
   {
+   "s": "AUSOMENT",
+   "n": "Ausom Enterprise",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "AUSTENG",
+   "n": "Austin Engineering Company",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "AUTOAXLES",
    "n": "Automotive Axles",
    "sec": "Automobile and Auto Components",
@@ -1277,6 +1379,12 @@
    "sec": "Capital Goods",
    "cap": "Micro",
    "curated": true
+  },
+  {
+   "s": "AVANCE",
+   "n": "Avance Technologies",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "AVANTEL",
@@ -1353,6 +1461,12 @@
    "cap": "Micro"
   },
   {
+   "s": "AXTEL",
+   "n": "Axtel Industries",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "AYE",
    "n": "Aye Finance",
    "sec": "NBFC / Finance",
@@ -1370,6 +1484,12 @@
    "sec": "Capital Goods",
    "cap": "Micro",
    "curated": true
+  },
+  {
+   "s": "AZADIND",
+   "n": "Azad India Mobility",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "BAGFILMS",
@@ -1552,6 +1672,12 @@
    "cap": "Micro"
   },
   {
+   "s": "BANKA",
+   "n": "Banka BioLoo",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "BANKBARODA",
    "n": "Bank of Baroda",
    "sec": "PSU Banks",
@@ -1708,6 +1834,12 @@
    "curated": true
   },
   {
+   "s": "BENARAS",
+   "n": "Benares Hotels",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "BENGALASM",
    "n": "Bengal & Assam Company",
    "sec": "Other",
@@ -1754,6 +1886,18 @@
    "s": "BHAGCHEM",
    "n": "Bhagiradha Chemicals & Industries",
    "sec": "Agri",
+   "cap": "Micro"
+  },
+  {
+   "s": "BHAGYANGR",
+   "n": "Bhagyanagar India",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "BHANDARI",
+   "n": "Bhandari Hosiery Exports",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -1916,6 +2060,18 @@
    "cap": "Micro"
   },
   {
+   "s": "BLUECHIP",
+   "n": "Blue Chip India",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "BLUECLOUDS",
+   "n": "Blue Cloud Softech Solutions",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "BLUEDART",
    "n": "Blue Dart Express",
    "sec": "Services",
@@ -1951,6 +2107,12 @@
    "s": "BMWVENTLTD",
    "n": "BMW Ventures",
    "sec": "Metals & Mining",
+   "cap": "Micro"
+  },
+  {
+   "s": "BNAGROCHEM",
+   "n": "BN Agrochem",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -2022,6 +2184,18 @@
    "cap": "Micro"
   },
   {
+   "s": "BPLPHARMA",
+   "n": "Bharat Parenterals",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "BRAHMINFRA",
+   "n": "Brahmaputra Infrastructure",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "BRIGADE",
    "n": "Brigade Enterprises",
    "sec": "Realty",
@@ -2032,6 +2206,12 @@
    "s": "BRIGHOTEL",
    "n": "Brigade Hotel Ventures",
    "sec": "Hotels / Travel",
+   "cap": "Micro"
+  },
+  {
+   "s": "BRIGHTBR",
+   "n": "Bright Brothers",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -2053,6 +2233,12 @@
    "sec": "Capital Markets",
    "cap": "Mid",
    "curated": true
+  },
+  {
+   "s": "BSHSL",
+   "n": "Bombay Super Hybrid Seeds",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "BSL",
@@ -2088,6 +2274,12 @@
    "s": "BVCL",
    "n": "Barak Valley Cements",
    "sec": "Construction Materials",
+   "cap": "Micro"
+  },
+  {
+   "s": "CALSOFT",
+   "n": "California Software Company",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -2322,6 +2514,12 @@
    "cap": "Micro"
   },
   {
+   "s": "CFEL",
+   "n": "Confidence Futuristic Energetech",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "CGCL",
    "n": "Capri Global Capital",
    "sec": "Financial Services",
@@ -2335,6 +2533,12 @@
    "curated": true
   },
   {
+   "s": "CGVAK",
+   "n": "CG Vak Software & Exports",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "CHALET",
    "n": "Chalet Hotels",
    "sec": "Consumer Services",
@@ -2346,6 +2550,24 @@
    "sec": "Chemicals",
    "cap": "Small",
    "curated": true
+  },
+  {
+   "s": "CHEMBOND",
+   "n": "Chembond Material Technologies",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "CHEMCRUX",
+   "n": "Chemcrux Enterprises",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "CHEMFAB",
+   "n": "Chemfab Alkalis",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "CHEMPLASTS",
@@ -2516,6 +2738,12 @@
    "cap": "Micro"
   },
   {
+   "s": "COMPEAU",
+   "n": "Competent Automobiles Company",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "COMPUSOFT",
    "n": "Compucom Software",
    "sec": "Consumer Services",
@@ -2584,9 +2812,9 @@
    "cap": "Micro"
   },
   {
-   "s": "COUNCODOS",
-   "n": "Country Condo's",
-   "sec": "Realty",
+   "s": "CPCAP",
+   "n": "CP Capital",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -2618,6 +2846,12 @@
    "s": "CRAMC",
    "n": "Canara Robeco Asset Management Company",
    "sec": "Financial Services",
+   "cap": "Micro"
+  },
+  {
+   "s": "CRAVATEX",
+   "n": "Cravatex",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -2661,6 +2895,12 @@
    "s": "CROWN",
    "n": "Crown Lifters",
    "sec": "Services",
+   "cap": "Micro"
+  },
+  {
+   "s": "CRSL",
+   "n": "Cressanda Railway Solutions",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -2719,6 +2959,12 @@
    "cap": "Micro"
   },
   {
+   "s": "CYBERMEDIA",
+   "n": "Cyber Media (India)",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "CYIENT",
    "n": "Cyient",
    "sec": "Information Technology",
@@ -2737,6 +2983,12 @@
    "sec": "Fast Moving Consumer Goods",
    "cap": "Mid",
    "curated": true
+  },
+  {
+   "s": "DAICHI",
+   "n": "Dai-Ichi Karkaria",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "DALBHARAT",
@@ -2801,6 +3053,12 @@
    "cap": "Micro"
   },
   {
+   "s": "DBREALTY",
+   "n": "Valor Estate",
+   "sec": "Realty",
+   "cap": "Micro"
+  },
+  {
    "s": "DCAL",
    "n": "Dishman Carbogen Amcis",
    "sec": "Healthcare",
@@ -2825,11 +3083,23 @@
    "cap": "Micro"
   },
   {
+   "s": "DCMNVL",
+   "n": "DCM Nouvelle",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "DCMSHRIRAM",
    "n": "DCM Shriram",
    "sec": "Diversified",
    "cap": "Small",
    "curated": true
+  },
+  {
+   "s": "DCMSIL",
+   "n": "DCM Shriram International",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "DCMSRIND",
@@ -2864,6 +3134,18 @@
   {
    "s": "DECNGOLD",
    "n": "Deccan Gold Mines",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "DEEDEV",
+   "n": "DEE Development Engineers",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "DEEP",
+   "n": "Deep Polymers",
    "sec": "Other",
    "cap": "Micro"
   },
@@ -2949,6 +3231,12 @@
    "cap": "Micro"
   },
   {
+   "s": "DHABRIYA",
+   "n": "Dhabriya Polywood",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "DHAMPURSUG",
    "n": "Dhampur Sugar Mills",
    "sec": "Fast Moving Consumer Goods",
@@ -2970,6 +3258,24 @@
    "s": "DHARMAJ",
    "n": "Dharmaj Crop Guard",
    "sec": "Agri",
+   "cap": "Micro"
+  },
+  {
+   "s": "DHATRE",
+   "n": "Dhatre Udyog",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "DHOOTTRANS",
+   "n": "Dhoot Transmission",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "DHRUV",
+   "n": "Dhruv Consultancy Services",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -3009,6 +3315,12 @@
    "cap": "Micro"
   },
   {
+   "s": "DIGISPICE",
+   "n": "DiGiSPICE Technologies",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "DIGITIDE",
    "n": "Digitide Solutions",
    "sec": "Services",
@@ -3023,6 +3335,12 @@
   {
    "s": "DISAQ",
    "n": "Disa India",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "DISHTV",
+   "n": "Dish TV India",
    "sec": "Other",
    "cap": "Micro"
   },
@@ -3207,15 +3525,15 @@
    "cap": "Micro"
   },
   {
-   "s": "E2E",
-   "n": "E2E Networks",
-   "sec": "Information Technology",
-   "cap": "Micro"
-  },
-  {
    "s": "EASEMYTRIP",
    "n": "Easy Trip Planners",
    "sec": "Hotels / Travel",
+   "cap": "Micro"
+  },
+  {
+   "s": "EASTWEST",
+   "n": "East West Freight Carriers",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -3225,10 +3543,22 @@
    "cap": "Micro"
   },
   {
+   "s": "EBIX",
+   "n": "EBIX",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "ECLERX",
    "n": "eClerx Services",
    "sec": "Services",
    "cap": "Small"
+  },
+  {
+   "s": "ECORECO",
+   "n": "Eco Recycling",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "EDELWEISS",
@@ -3283,6 +3613,12 @@
    "s": "EKC",
    "n": "Everest Kanto Cylinder",
    "sec": "Capital Goods",
+   "cap": "Micro"
+  },
+  {
+   "s": "EKI",
+   "n": "EKI Energy Services",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -3368,6 +3704,12 @@
    "cap": "Small"
   },
   {
+   "s": "EMAMIREAL",
+   "n": "Emami Realty",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "EMBDL",
    "n": "Embassy Developments",
    "sec": "Realty",
@@ -3398,6 +3740,18 @@
    "sec": "Capital Goods",
    "cap": "Small",
    "curated": true
+  },
+  {
+   "s": "EMPIND",
+   "n": "Empire Industries",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "EMPOWER",
+   "n": "Empower India",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "EMSLIMITED",
@@ -3434,6 +3788,12 @@
    "s": "ENIL",
    "n": "Entertainment Network (India)",
    "sec": "Media & Entertainment",
+   "cap": "Micro"
+  },
+  {
+   "s": "ENKEIWHEL",
+   "n": "Enkei Wheels (India)",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -3493,12 +3853,6 @@
    "cap": "Micro"
   },
   {
-   "s": "ESAFSFB",
-   "n": "ESAF Small Finance Bank",
-   "sec": "Financial Services",
-   "cap": "Micro"
-  },
-  {
    "s": "ESCORTS",
    "n": "Escorts Kubota",
    "sec": "Automobile and Auto Components",
@@ -3509,6 +3863,12 @@
    "s": "ESSARSHPNG",
    "n": "Essar Shipping",
    "sec": "Logistics / Shipping",
+   "cap": "Micro"
+  },
+  {
+   "s": "ESSENTIA",
+   "n": "Integra Essentia",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -3674,6 +4034,12 @@
    "cap": "Micro"
   },
   {
+   "s": "FILATFASH",
+   "n": "Filatex Fashions",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "FINCABLES",
    "n": "Finolex Cables",
    "sec": "Capital Goods",
@@ -3773,6 +4139,12 @@
    "cap": "Micro"
   },
   {
+   "s": "FREDUN",
+   "n": "Fredun Pharmaceuticals",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "FRONTSP",
    "n": "Frontier Springs",
    "sec": "Other",
@@ -3856,6 +4228,12 @@
    "s": "GANESHHOU",
    "n": "GANESH HOUSING",
    "sec": "Realty",
+   "cap": "Micro"
+  },
+  {
+   "s": "GANGAFORGE",
+   "n": "Ganga Forging",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -3999,6 +4377,12 @@
    "cap": "Micro"
   },
   {
+   "s": "GKB",
+   "n": "GKB Ophthalmics",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "GKENERGY",
    "n": "GK Energy",
    "sec": "Power",
@@ -4036,9 +4420,21 @@
    "curated": true
   },
   {
+   "s": "GLFL",
+   "n": "Gujarat Lease Financing",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "GLOBAL",
    "n": "Global Education",
    "sec": "Consumer Services",
+   "cap": "Micro"
+  },
+  {
+   "s": "GLOBALE",
+   "n": "Globale Tessile",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -4256,6 +4652,12 @@
    "s": "GPTINFRA",
    "n": "GPT Infraprojects",
    "sec": "Construction",
+   "cap": "Micro"
+  },
+  {
+   "s": "GRADIENTE",
+   "n": "Gradiente Infotainment",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -4519,6 +4921,12 @@
    "cap": "Micro"
   },
   {
+   "s": "HAMPTON",
+   "n": "Hampton Sky Realty",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "HAPPSTMNDS",
    "n": "Happiest Minds Technologies",
    "sec": "Information Technology",
@@ -4586,6 +4994,12 @@
    "cap": "Micro"
   },
   {
+   "s": "HAZOOR",
+   "n": "Hazoor Multi Projects",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "HBESD",
    "n": "HB Estate Developers",
    "sec": "Other",
@@ -4597,6 +5011,12 @@
    "sec": "Capital Goods",
    "cap": "Small",
    "curated": true
+  },
+  {
+   "s": "HBPOR",
+   "n": "HB Portfolio",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "HBSL",
@@ -4773,11 +5193,23 @@
    "cap": "Micro"
   },
   {
+   "s": "HINDADH",
+   "n": "Hindustan Adhesives",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "HINDALCO",
    "n": "Hindalco Industries",
    "sec": "Metals & Mining",
    "cap": "Large",
    "curated": true
+  },
+  {
+   "s": "HINDALUMI",
+   "n": "Hind Aluminium Industries",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "HINDCOMPOS",
@@ -4832,7 +5264,7 @@
   },
   {
    "s": "HIRECT",
-   "n": "Hind Rectifiers",
+   "n": "Hirect",
    "sec": "Capital Goods",
    "cap": "Micro"
   },
@@ -4916,6 +5348,12 @@
    "cap": "Micro"
   },
   {
+   "s": "HRYNSHP",
+   "n": "Hariyana Ship Breakers",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "HSCL",
    "n": "Himadri Speciality Chemical",
    "sec": "Chemicals",
@@ -4952,6 +5390,12 @@
    "n": "Hyundai Motor India",
    "sec": "Automobile and Auto Components",
    "cap": "Large"
+  },
+  {
+   "s": "IBULLSLTD",
+   "n": "Indiabulls",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "ICDSLTD",
@@ -5015,6 +5459,12 @@
    "cap": "Mid"
   },
   {
+   "s": "IDEAFORGE",
+   "n": "Ideaforge Technology",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "IDFCFIRSTB",
    "n": "IDFC First Bank",
    "sec": "Private Banks",
@@ -5026,6 +5476,12 @@
    "n": "Indian Energy Exchange",
    "sec": "Financial Services",
    "cap": "Small"
+  },
+  {
+   "s": "IFBAGRO",
+   "n": "IFB Agro Industries",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "IFBIND",
@@ -5244,6 +5700,12 @@
    "cap": "Micro"
   },
   {
+   "s": "INDOKEM",
+   "n": "Indokem",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "INDOMIM",
    "n": "INDO-MIM",
    "sec": "Capital Goods",
@@ -5262,6 +5724,12 @@
    "cap": "Micro"
   },
   {
+   "s": "INDOTECH",
+   "n": "Indo Tech Transformers",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "INDOTHAI",
    "n": "Indo Thai Securities",
    "sec": "Capital Markets",
@@ -5271,6 +5739,12 @@
    "s": "INDOUS",
    "n": "Indo Us Biotech",
    "sec": "Agri",
+   "cap": "Micro"
+  },
+  {
+   "s": "INDOWIND",
+   "n": "Indowind Energy",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -5350,6 +5824,12 @@
   {
    "s": "INNOVISION",
    "n": "Innovision",
+   "sec": "Services",
+   "cap": "Micro"
+  },
+  {
+   "s": "INOXGREEN",
+   "n": "Inox Green Energy Services",
    "sec": "Services",
    "cap": "Micro"
   },
@@ -5441,6 +5921,12 @@
    "cap": "Micro"
   },
   {
+   "s": "IPRINGLTD",
+   "n": "IP Rings",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "IRB",
    "n": "IRB Infrastructure Developers",
    "sec": "Construction Materials",
@@ -5511,6 +5997,12 @@
    "cap": "Micro"
   },
   {
+   "s": "ISTLTD",
+   "n": "I S T",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "ITC",
    "n": "ITC",
    "sec": "Fast Moving Consumer Goods",
@@ -5534,6 +6026,12 @@
    "n": "ITI",
    "sec": "Telecommunication",
    "cap": "Small"
+  },
+  {
+   "s": "ITL",
+   "n": "ITL Industries",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "IVALUE",
@@ -5581,6 +6079,12 @@
    "s": "JAGSNPHARM",
    "n": "Jagsonpal Pharmaceuticals",
    "sec": "Healthcare",
+   "cap": "Micro"
+  },
+  {
+   "s": "JAIBALAJI",
+   "n": "Jai Balaji Industries",
+   "sec": "Metals & Mining",
    "cap": "Micro"
   },
   {
@@ -5655,6 +6159,12 @@
    "n": "JBM Auto",
    "sec": "Automobile and Auto Components",
    "cap": "Small"
+  },
+  {
+   "s": "JENBURPH",
+   "n": "Jenburkt Pharmaceuticals",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "JETFREIGHT",
@@ -5748,6 +6258,12 @@
    "s": "JKIL",
    "n": "J.Kumar Infraprojects",
    "sec": "Construction",
+   "cap": "Micro"
+  },
+  {
+   "s": "JKIPL",
+   "n": "Jinkushal Industries",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -5939,6 +6455,12 @@
    "curated": true
   },
   {
+   "s": "JYOTIRES",
+   "n": "Jyoti Resins & Adhesives",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "JYOTISTRUC",
    "n": "Jyoti Structures",
    "sec": "Capital Goods",
@@ -5956,6 +6478,12 @@
    "sec": "Consumer Durables",
    "cap": "Small",
    "curated": true
+  },
+  {
+   "s": "KAKATCEM",
+   "n": "Kakatiya Cement Sugar & Industries",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "KALAMANDIR",
@@ -5989,6 +6517,12 @@
    "cap": "Micro"
   },
   {
+   "s": "KAMANWALA",
+   "n": "Kamanwala Housing Construction",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "KAMATHOTEL",
    "n": "Kamat Hotels (I)",
    "sec": "Hotels / Travel",
@@ -6004,6 +6538,18 @@
    "s": "KANANIIND",
    "n": "Kanani Industries",
    "sec": "Consumer Durables",
+   "cap": "Micro"
+  },
+  {
+   "s": "KANCHI",
+   "n": "Kanchi Karpooram",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "KANCOTEA",
+   "n": "Kanco Tea & Industries",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -6060,12 +6606,6 @@
    "s": "KCP",
    "n": "KCP",
    "sec": "Construction Materials",
-   "cap": "Micro"
-  },
-  {
-   "s": "KCPSUGIND",
-   "n": "KCP Sugar and Industries Corporation",
-   "sec": "Fast Moving Consumer Goods",
    "cap": "Micro"
   },
   {
@@ -6230,6 +6770,12 @@
    "cap": "Micro"
   },
   {
+   "s": "KJMCFIN",
+   "n": "KJMC Financial Services",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "KKCL",
    "n": "Kewal Kiran Clothing",
    "sec": "Textiles",
@@ -6238,6 +6784,12 @@
   {
    "s": "KLBRENG-B",
    "n": "Kilburn Engineering",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "KMCSHIL",
+   "n": "K M C Speciality Hospitals (India)",
    "sec": "Other",
    "cap": "Micro"
   },
@@ -6396,6 +6948,12 @@
    "cap": "Micro"
   },
   {
+   "s": "KRITI",
+   "n": "Kriti Industries (India)",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "KRITIKA",
    "n": "Kritika Wires",
    "sec": "Metals & Mining",
@@ -6405,6 +6963,12 @@
    "s": "KRITINUT",
    "n": "Kriti Nutrients",
    "sec": "Fast Moving Consumer Goods",
+   "cap": "Micro"
+  },
+  {
+   "s": "KRN",
+   "n": "KRN Heat Exchanger and Refrigeration",
+   "sec": "Capital Goods",
    "cap": "Micro"
   },
   {
@@ -6445,9 +7009,21 @@
    "cap": "Micro"
   },
   {
+   "s": "KSE",
+   "n": "KSE",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "KSHINTL",
    "n": "KSH International",
    "sec": "Capital Goods",
+   "cap": "Micro"
+  },
+  {
+   "s": "KSHITIJPOL",
+   "n": "Kshitij Polyline",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -6493,6 +7069,12 @@
    "cap": "Micro"
   },
   {
+   "s": "LADDERUP",
+   "n": "Ladderup Finance",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "LAGNAM",
    "n": "Lagnam Spintex",
    "sec": "Textiles",
@@ -6501,6 +7083,12 @@
   {
    "s": "LAHOTIOV",
    "n": "Lahoti Overseas",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "LAKSHMIMIL",
+   "n": "Lakshmi Mills Company",
    "sec": "Other",
    "cap": "Micro"
   },
@@ -6520,6 +7108,12 @@
    "s": "LAMBODHARA",
    "n": "Lambodhara Textiles",
    "sec": "Textiles",
+   "cap": "Micro"
+  },
+  {
+   "s": "LANCER",
+   "n": "Lancer Container Lines",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -6565,6 +7159,12 @@
    "cap": "Small"
   },
   {
+   "s": "LATTEYS",
+   "n": "Latteys Industries",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "LAURUSLABS",
    "n": "Laurus Labs",
    "sec": "Healthcare",
@@ -6584,6 +7184,12 @@
    "cap": "Micro"
   },
   {
+   "s": "LAXMIINDIA",
+   "n": "Laxmi India Finance",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "LCCINFOTEC",
    "n": "LCC Infotech",
    "sec": "Consumer Services",
@@ -6593,6 +7199,18 @@
    "s": "LCL",
    "n": "Lohia Corp",
    "sec": "Capital Goods",
+   "cap": "Micro"
+  },
+  {
+   "s": "LEAPIND",
+   "n": "LEAP India",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "LEENEE",
+   "n": "Lee & Nee Softwares Exports",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -6695,6 +7313,12 @@
    "curated": true
   },
   {
+   "s": "LKPSEC",
+   "n": "LKP Securities",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "LLOYDSENGG",
    "n": "LLOYDS ENGINEERING WORKS",
    "sec": "Capital Goods",
@@ -6733,11 +7357,10 @@
    "cap": "Micro"
   },
   {
-   "s": "LOTUSDEV",
-   "n": "Sri Lotus Developers and Realty",
-   "sec": "Realty",
-   "cap": "Micro",
-   "curated": true
+   "s": "LOTUSCHO",
+   "n": "Lotus Chocolate Company",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "LOTUSEYE",
@@ -6900,12 +7523,6 @@
    "cap": "Micro"
   },
   {
-   "s": "MAHASTEEL",
-   "n": "Mahamaya Steel Industries",
-   "sec": "Metals & Mining",
-   "cap": "Micro"
-  },
-  {
    "s": "MAHEPC",
    "n": "Mahindra EPC Irrigation",
    "sec": "Capital Goods",
@@ -6940,6 +7557,12 @@
    "s": "MAITHANALL",
    "n": "Maithan Alloys",
    "sec": "Metals & Mining",
+   "cap": "Micro"
+  },
+  {
+   "s": "MAKERSL",
+   "n": "Makers Laboratories",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -7004,6 +7627,12 @@
    "cap": "Micro"
   },
   {
+   "s": "MANBRO",
+   "n": "Manbro Industries",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "MANCREDIT",
    "n": "Mangal Credit and Fincorp",
    "sec": "NBFC / Finance",
@@ -7059,6 +7688,12 @@
    "cap": "Micro"
   },
   {
+   "s": "MANORG",
+   "n": "Mangalam Organics",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "MANYAVAR",
    "n": "Vedant Fashions",
    "sec": "Consumer Services",
@@ -7069,6 +7704,12 @@
    "n": "C.E. Info Systems",
    "sec": "Information Technology",
    "cap": "Small"
+  },
+  {
+   "s": "MARALOVER",
+   "n": "Maral Overseas",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "MARATHON",
@@ -7121,6 +7762,12 @@
    "cap": "Micro"
   },
   {
+   "s": "MASKINVEST",
+   "n": "Mask Investments",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "MASTEK",
    "n": "Mastek",
    "sec": "Information Technology",
@@ -7136,6 +7783,12 @@
    "s": "MATRIMONY",
    "n": "Matrimony.Com",
    "sec": "New Age / Internet",
+   "cap": "Micro"
+  },
+  {
+   "s": "MAWANASUG",
+   "n": "Mawana Sugars",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -7182,6 +7835,12 @@
    "cap": "Micro"
   },
   {
+   "s": "MBLINFRA",
+   "n": "MBL Infrastructure",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "MCCHRLS-B",
    "n": "Mac Charles India",
    "sec": "Other",
@@ -7191,6 +7850,12 @@
    "s": "MCL",
    "n": "M TEK COPPER",
    "sec": "Metals & Mining",
+   "cap": "Micro"
+  },
+  {
+   "s": "MCLEODRUSS",
+   "n": "Mcleod Russel India",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -7222,6 +7887,12 @@
    "s": "MEDICAMEQ",
    "n": "Medicamen Biotech",
    "sec": "Healthcare",
+   "cap": "Micro"
+  },
+  {
+   "s": "MEDICAPQ",
+   "n": "Medi Caps",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -7309,12 +7980,6 @@
    "cap": "Small"
   },
   {
-   "s": "MHLXMIRU",
-   "n": "Mahalaxmi Rubtech",
-   "sec": "Textiles",
-   "cap": "Micro"
-  },
-  {
    "s": "MHRIL",
    "n": "Mahindra Holidays & Resorts India",
    "sec": "Hotels / Travel",
@@ -7331,6 +7996,24 @@
    "s": "MIDWESTLTD",
    "n": "Midwest",
    "sec": "Construction Materials",
+   "cap": "Micro"
+  },
+  {
+   "s": "MIIL",
+   "n": "Meghna Infracon Infrastructure",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "MILKYMIST",
+   "n": "Milky Mist Dairy Food",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "MINALIND",
+   "n": "Minal Industries",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -7358,9 +8041,21 @@
    "cap": "Micro"
   },
   {
+   "s": "MKEXIM",
+   "n": "M.K. Exim (India)",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "MKPL",
    "n": "M K Proteins",
    "sec": "Fast Moving Consumer Goods",
+   "cap": "Micro"
+  },
+  {
+   "s": "MLKFOOD",
+   "n": "Milkfood",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -7380,6 +8075,12 @@
    "n": "MMTC",
    "sec": "Services",
    "cap": "Small"
+  },
+  {
+   "s": "MMWL",
+   "n": "Media Matrix Worldwide",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "MOBIKWIK",
@@ -7403,6 +8104,12 @@
    "s": "MODTHREAD",
    "n": "Modern Threads (India)",
    "sec": "Textiles",
+   "cap": "Micro"
+  },
+  {
+   "s": "MOHITE",
+   "n": "Mohite Industries",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -7430,9 +8137,9 @@
    "cap": "Micro"
   },
   {
-   "s": "MOLDTECH",
-   "n": "Mold-Tek Technologies",
-   "sec": "Construction",
+   "s": "MOLBIO",
+   "n": "Molbio Diagnostics",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -7491,6 +8198,12 @@
    "cap": "Micro"
   },
   {
+   "s": "MPDL",
+   "n": "MPDL",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "MPHASIS",
    "n": "MphasiS",
    "sec": "Information Technology",
@@ -7513,6 +8226,12 @@
    "n": "Mangalore Refinery and Petrochemicals",
    "sec": "Oil Gas & Consumable Fuels",
    "cap": "Small"
+  },
+  {
+   "s": "MSL",
+   "n": "Mangalam Seeds",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "MSPL",
@@ -7554,6 +8273,12 @@
    "s": "MUKANDLTD",
    "n": "Mukand",
    "sec": "Metals & Mining",
+   "cap": "Micro"
+  },
+  {
+   "s": "MUKESHB",
+   "n": "Mukesh Babu Financial Services",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -7615,6 +8340,12 @@
    "s": "MWL",
    "n": "Mangalam Worldwide",
    "sec": "Metals & Mining",
+   "cap": "Micro"
+  },
+  {
+   "s": "MYSORPETRO",
+   "n": "Mysore Petro Chemicals",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -7804,6 +8535,12 @@
    "cap": "Micro"
   },
   {
+   "s": "NECLIFE",
+   "n": "Nectar Lifesciences",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "NELCAST",
    "n": "Nelcast",
    "sec": "Capital Goods",
@@ -7916,6 +8653,12 @@
    "cap": "Micro"
   },
   {
+   "s": "NICCOPAR",
+   "n": "Nicco Parks & Resorts",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "NIITLTD",
    "n": "NIIT",
    "sec": "Consumer Services",
@@ -7952,9 +8695,27 @@
    "cap": "Micro"
   },
   {
+   "s": "NIMBSPROJ",
+   "n": "Nimbus Projects",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "NINSYS",
+   "n": "NINtec Systems",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "NIPPOBATRY",
    "n": "Indo-National",
    "sec": "Capital Goods",
+   "cap": "Micro"
+  },
+  {
+   "s": "NIRAJ",
+   "n": "Niraj Cement Structurals",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -8074,6 +8835,12 @@
    "cap": "Small"
   },
   {
+   "s": "NTCIND",
+   "n": "NTC Industries",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "NTPC",
    "n": "NTPC",
    "sec": "Power",
@@ -8091,12 +8858,6 @@
    "s": "NUCLEUS",
    "n": "Nucleus Software Exports",
    "sec": "Information Technology",
-   "cap": "Micro"
-  },
-  {
-   "s": "NURECA",
-   "n": "Nureca",
-   "sec": "Healthcare",
    "cap": "Micro"
   },
   {
@@ -8138,6 +8899,18 @@
    "curated": true
   },
   {
+   "s": "ODIGMA",
+   "n": "Odigma Consultancy Solutions",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "ODYCORP",
+   "n": "Odyssey Corporation",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "OFSS",
    "n": "Oracle Financial Services Software",
    "sec": "Information Technology",
@@ -8161,6 +8934,12 @@
    "n": "Olectra Greentech",
    "sec": "Automobile and Auto Components",
    "cap": "Small"
+  },
+  {
+   "s": "OMAXAUTO",
+   "n": "Omax Autos",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "OMAXE",
@@ -8187,6 +8966,12 @@
    "cap": "Micro"
   },
   {
+   "s": "ONEGLOBAL",
+   "n": "One Global Service Provider",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "ONEPOINT",
    "n": "One Point One Solutions",
    "sec": "Services",
@@ -8206,6 +8991,18 @@
    "curated": true
   },
   {
+   "s": "ONIDA",
+   "n": "Onida Electronics",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "ONIXSOLAR",
+   "n": "Onix Solar Energy",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "ONWARDTEC",
    "n": "Onward Technologies",
    "sec": "Information Technology",
@@ -8215,6 +9012,12 @@
    "s": "OPTIEMUS",
    "n": "Optiemus Infracom",
    "sec": "Telecommunication",
+   "cap": "Micro"
+  },
+  {
+   "s": "OPTIFIN",
+   "n": "Optimus Finance",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -8284,6 +9087,12 @@
    "cap": "Micro"
   },
   {
+   "s": "ORIRAIL",
+   "n": "Oriental Rail Infrastructure",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "ORISSAMINE",
    "n": "The Orissa Minerals Development Company",
    "sec": "Metals & Mining",
@@ -8293,6 +9102,12 @@
    "s": "ORKLAINDIA",
    "n": "Orkla India",
    "sec": "Fast Moving Consumer Goods",
+   "cap": "Micro"
+  },
+  {
+   "s": "ORTINGLOBE",
+   "n": "ORTIN GLOBAL",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -8324,6 +9139,12 @@
    "s": "PACEDIGITK",
    "n": "Pace Digitek",
    "sec": "Telecommunication",
+   "cap": "Micro"
+  },
+  {
+   "s": "PACIFICI",
+   "n": "Pacific Industries",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -8360,6 +9181,18 @@
    "s": "PANAMAPET",
    "n": "Panama Petrochem",
    "sec": "Oil Gas & Consumable Fuels",
+   "cap": "Micro"
+  },
+  {
+   "s": "PANCHMAHQ",
+   "n": "Panchmahal Steel",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "PANORAMA",
+   "n": "Panorama Studios International",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -8419,6 +9252,12 @@
    "cap": "Micro"
   },
   {
+   "s": "PARNAXLAB",
+   "n": "Parnax Lab",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "PASHUPATI",
    "n": "Pashupati Cotspin",
    "sec": "Textiles",
@@ -8462,6 +9301,12 @@
    "curated": true
   },
   {
+   "s": "PBMPOLY",
+   "n": "PBM Polytex",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "PCBL",
    "n": "PCBL Chemical",
    "sec": "Chemicals",
@@ -8488,9 +9333,21 @@
    "cap": "Micro"
   },
   {
+   "s": "PEARLPOLY",
+   "n": "Pearl Polymers",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "PENIND",
    "n": "Pennar Industries",
    "sec": "Capital Goods",
+   "cap": "Micro"
+  },
+  {
+   "s": "PERMAGN",
+   "n": "Permanent Magnets",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -8565,6 +9422,12 @@
    "curated": true
   },
   {
+   "s": "PHOENXINTL",
+   "n": "Phoenix International",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "PICCADIL",
    "n": "Piccadily Agro Industries",
    "sec": "Fast Moving Consumer Goods",
@@ -8594,6 +9457,12 @@
    "s": "PILANIINVS",
    "n": "Pilani Investment and Industries Corporation",
    "sec": "Capital Markets",
+   "cap": "Micro"
+  },
+  {
+   "s": "PILITA",
+   "n": "PIL ITALICA LIFESTYLE",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -8642,6 +9511,12 @@
    "s": "PLATIND",
    "n": "Platinum Industries",
    "sec": "Chemicals",
+   "cap": "Micro"
+  },
+  {
+   "s": "PLAZACABLE",
+   "n": "Plaza Wires",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -8707,6 +9582,12 @@
    "cap": "Micro"
   },
   {
+   "s": "POEL",
+   "n": "POCL Enterprises",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "POKARNA",
    "n": "Pokarna",
    "sec": "Construction Materials",
@@ -8736,6 +9617,12 @@
    "s": "POLYPLEX",
    "n": "Polyplex Corporation",
    "sec": "Chemicals",
+   "cap": "Micro"
+  },
+  {
+   "s": "POLYSPIN",
+   "n": "Polyspin Exports",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -8901,6 +9788,12 @@
    "cap": "Micro"
   },
   {
+   "s": "PRISMX",
+   "n": "Prismx Global Ventures",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "PRIVISCL",
    "n": "Privi Speciality Chemicals",
    "sec": "Chemicals",
@@ -9013,9 +9906,9 @@
    "cap": "Micro"
   },
   {
-   "s": "QMSMEDI",
-   "n": "QMS Medical Allied Services",
-   "sec": "Healthcare",
+   "s": "QPOWER",
+   "n": "Quality Power Electrical Equipments",
+   "sec": "Capital Goods",
    "cap": "Micro"
   },
   {
@@ -9285,6 +10178,12 @@
    "cap": "Micro"
   },
   {
+   "s": "REGAAL",
+   "n": "Regaal Resources",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "REGENCERAM",
    "n": "Regency Ceramics",
    "sec": "Construction Materials",
@@ -9542,12 +10441,6 @@
    "cap": "Micro"
   },
   {
-   "s": "RPPL",
-   "n": "Rajshree Polypack",
-   "sec": "Capital Goods",
-   "cap": "Micro"
-  },
-  {
    "s": "RPSGVENT",
    "n": "RPSG VENTURES",
    "sec": "Information Technology",
@@ -9557,6 +10450,12 @@
    "s": "RPTECH",
    "n": "Rashi Peripherals",
    "sec": "Electronics / EMS",
+   "cap": "Micro"
+  },
+  {
+   "s": "RRECL",
+   "n": "RDB Real Estate Constructions",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -9579,6 +10478,12 @@
    "cap": "Micro"
   },
   {
+   "s": "RSSOFTWARE",
+   "n": "R. S. Software (India)",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "RSYSTEMS",
    "n": "R Systems International",
    "sec": "Information Technology",
@@ -9596,6 +10501,12 @@
    "sec": "Power",
    "cap": "Micro",
    "curated": true
+  },
+  {
+   "s": "RTSPOWR",
+   "n": "RTS Power Corporation",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "RUBFILA",
@@ -9678,6 +10589,12 @@
    "curated": true
   },
   {
+   "s": "SAB",
+   "n": "SAB Industries",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "SADBHAV",
    "n": "Sadbhav Engineering",
    "sec": "Construction",
@@ -9718,6 +10635,12 @@
    "s": "SAHYADRI",
    "n": "Sahyadri Industries",
    "sec": "Construction Materials",
+   "cap": "Micro"
+  },
+  {
+   "s": "SAICAPI",
+   "n": "Sai Capital",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -9785,6 +10708,12 @@
    "s": "SALZERELEC",
    "n": "Salzer Electronics",
    "sec": "Capital Goods",
+   "cap": "Micro"
+  },
+  {
+   "s": "SAMBANDAM",
+   "n": "Sambandam Spinning Mills",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -9944,6 +10873,12 @@
    "cap": "Micro"
   },
   {
+   "s": "SAYAJIIND",
+   "n": "Sayaji Industries",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "SBC",
    "n": "SBC Exports",
    "sec": "Diversified",
@@ -10073,9 +11008,27 @@
    "cap": "Micro"
   },
   {
+   "s": "SEJALLTD",
+   "n": "Sejal Glass",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "SEKURITIND",
+   "n": "Saint Gobain Sekurit India",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "SELMC",
    "n": "SEL Manufacturing Company",
    "sec": "Textiles",
+   "cap": "Micro"
+  },
+  {
+   "s": "SEMAC",
+   "n": "Semac Construction",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -10141,9 +11094,21 @@
    "cap": "Micro"
   },
   {
+   "s": "SGLRES",
+   "n": "SGL Resources",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "SGMART",
    "n": "SG Mart",
    "sec": "Capital Goods",
+   "cap": "Micro"
+  },
+  {
+   "s": "SGRL",
+   "n": "Shree Ganesh Remedies",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -10234,15 +11199,21 @@
    "cap": "Micro"
   },
   {
-   "s": "SHEKHAWATI",
-   "n": "Shekhawati Industries",
-   "sec": "Textiles",
+   "s": "SHERVANI",
+   "n": "Shervani Industrial Syndicate",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
    "s": "SHILCTECH",
    "n": "Shilchar Technologies",
    "sec": "Capital Goods",
+   "cap": "Micro"
+  },
+  {
+   "s": "SHILGRAVQ",
+   "n": "Shilp Gravures",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -10254,6 +11225,24 @@
   {
    "s": "SHINDL",
    "n": "Sharat Industries",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "SHIVAAGRO",
+   "n": "Shiva Global Agro Industries",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "SHIVACEM",
+   "n": "Shiva Cement",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "SHIVAMILLS",
+   "n": "Shiva Mills",
    "sec": "Other",
    "cap": "Micro"
   },
@@ -10279,6 +11268,12 @@
    "s": "SHOPERSTOP",
    "n": "Shoppers Stop",
    "sec": "Consumer Services",
+   "cap": "Micro"
+  },
+  {
+   "s": "SHRADDHA",
+   "n": "Shraddha Prime Projects",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -10355,11 +11350,29 @@
    "cap": "Micro"
   },
   {
+   "s": "SHRJAGP",
+   "n": "Shri Jagdamba Polymers",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "SHUKRAPHAR",
+   "n": "Shukra Pharmaceuticals",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "SHYAMMETL",
    "n": "Shyam Metalics and Energy",
    "sec": "Capital Goods",
    "cap": "Small",
    "curated": true
+  },
+  {
+   "s": "SHYAMTEL",
+   "n": "Shyam Telecom",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "SICAGEN",
@@ -10368,11 +11381,23 @@
    "cap": "Micro"
   },
   {
+   "s": "SIEL",
+   "n": "Superior Industrial Enterprises",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "SIEMENS",
    "n": "Siemens",
    "sec": "Capital Goods",
    "cap": "Large",
    "curated": true
+  },
+  {
+   "s": "SIGACHI",
+   "n": "Sigachi Industries",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "SIGIND",
@@ -10384,6 +11409,12 @@
    "s": "SIGMA",
    "n": "Sigma Solve",
    "sec": "Information Technology",
+   "cap": "Micro"
+  },
+  {
+   "s": "SIGMAADV",
+   "n": "SIGMA ADVANCED SYSTEMS",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -10403,12 +11434,6 @@
    "s": "SIKA",
    "n": "Sika Interplant Systems",
    "sec": "Other",
-   "cap": "Micro"
-  },
-  {
-   "s": "SIKKO",
-   "n": "Sikko Industries",
-   "sec": "Agri",
    "cap": "Micro"
   },
   {
@@ -10445,6 +11470,12 @@
    "s": "SIMPLEXINF",
    "n": "Simplex Infrastructures",
    "sec": "Construction",
+   "cap": "Micro"
+  },
+  {
+   "s": "SIMPLXREA",
+   "n": "Simplex Realty",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -10580,6 +11611,12 @@
    "curated": true
   },
   {
+   "s": "SOFTTECH",
+   "n": "Softtech Engineers",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "SOLARA",
    "n": "Solara Active Pharma Sciences",
    "sec": "Healthcare",
@@ -10690,15 +11727,9 @@
    "cap": "Micro"
   },
   {
-   "s": "SPECIALITY",
-   "n": "Speciality Restaurants",
-   "sec": "Consumer Services",
-   "cap": "Micro"
-  },
-  {
-   "s": "SPECTRUM",
-   "n": "Spectrum Electrical Industries",
-   "sec": "Capital Goods",
+   "s": "SPELS",
+   "n": "SPEL Semiconductor",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -10770,6 +11801,12 @@
    "cap": "Micro"
   },
   {
+   "s": "SRIKPRIND",
+   "n": "Sri KPR Industries",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "SRM",
    "n": "SRM Contractors",
    "sec": "Construction",
@@ -10791,12 +11828,6 @@
    "s": "SSWL",
    "n": "Steel Strips Wheels",
    "sec": "Automobile and Auto Components",
-   "cap": "Micro"
-  },
-  {
-   "s": "STALLION",
-   "n": "Stallion India Fluorochemicals",
-   "sec": "Chemicals",
    "cap": "Micro"
   },
   {
@@ -10866,6 +11897,18 @@
    "cap": "Micro"
   },
   {
+   "s": "STLNETWORK",
+   "n": "STL Networks",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "STLSTRINF",
+   "n": "Steel Strips Infrastructures",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "STOVEKRAFT",
    "n": "Stove Kraft",
    "sec": "Consumer Durables",
@@ -10890,11 +11933,23 @@
    "cap": "Micro"
   },
   {
+   "s": "STYLEBAAZA",
+   "n": "Baazar Style Retail",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "STYRENIX",
    "n": "Styrenix Performance Materials",
    "sec": "Chemicals",
    "cap": "Micro",
    "curated": true
+  },
+  {
+   "s": "SUBEXLTD",
+   "n": "Subex",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "SUBROS",
@@ -10933,6 +11988,12 @@
    "s": "SULA",
    "n": "Sula Vineyards",
    "sec": "Fast Moving Consumer Goods",
+   "cap": "Micro"
+  },
+  {
+   "s": "SUMEDHA",
+   "n": "Sumedha Fiscal Services",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -10997,11 +12058,29 @@
    "cap": "Micro"
   },
   {
+   "s": "SUNLOC",
+   "n": "Sunil Healthcare",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "SUNPHARMA",
    "n": "Sun Pharmaceutical Industries",
    "sec": "Healthcare",
    "cap": "Large",
    "curated": true
+  },
+  {
+   "s": "SUNRAKSHAK",
+   "n": "Sunrakshakk Industries India",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "SUNSHIEL",
+   "n": "Sunshield Chemicals",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "SUNTECK",
@@ -11051,6 +12130,12 @@
    "s": "SUPRIYA",
    "n": "Supriya Lifescience",
    "sec": "Healthcare",
+   "cap": "Micro"
+  },
+  {
+   "s": "SUPTANERY",
+   "n": "Super Tannery",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -11134,6 +12219,18 @@
    "curated": true
   },
   {
+   "s": "SVGLOBAL",
+   "n": "S V Global Mill",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "SVPGLOB",
+   "n": "SVP GLOBAL TEXTILES",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "SWANCORP",
    "n": "SWAN CORP",
    "sec": "Chemicals",
@@ -11141,9 +12238,21 @@
    "curated": true
   },
   {
+   "s": "SWARAJ",
+   "n": "Swaraj Suiting",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "SWARAJENG",
    "n": "Swaraj Engines",
    "sec": "Automobile and Auto Components",
+   "cap": "Micro"
+  },
+  {
+   "s": "SWARNSAR",
+   "n": "Swarnsarita Jewels India",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -11158,6 +12267,12 @@
    "sec": "New Age / Internet",
    "cap": "Mid",
    "curated": true
+  },
+  {
+   "s": "SWISSMLTRY",
+   "n": "Swiss Military Consumer Goods",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "SWSOLAR",
@@ -11210,7 +12325,7 @@
   },
   {
    "s": "TAKE",
-   "n": "Take Solutions",
+   "n": "TAKE",
    "sec": "Healthcare",
    "cap": "Micro"
   },
@@ -11218,6 +12333,12 @@
    "s": "TALBROAUTO",
    "n": "Talbros Automotive Components",
    "sec": "Automobile and Auto Components",
+   "cap": "Micro"
+  },
+  {
+   "s": "TANAA",
+   "n": "Taneja Aerospace & Aviation",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -11405,6 +12526,12 @@
    "curated": true
   },
   {
+   "s": "TECHNOCRAF",
+   "n": "Technocraft Ventures",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "TECHNOE",
    "n": "Techno Electric & Engineering Company",
    "sec": "Construction",
@@ -11449,6 +12576,12 @@
    "cap": "Small"
   },
   {
+   "s": "TERAI",
+   "n": "Terai Tea Company",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "TERASOFT",
    "n": "Tera Software",
    "sec": "Information Technology",
@@ -11489,6 +12622,12 @@
    "s": "TGBHOTELS",
    "n": "TGB Banquets And Hotels",
    "sec": "Hotels / Travel",
+   "cap": "Micro"
+  },
+  {
+   "s": "TGVSL",
+   "n": "TGV Sraac",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -11560,6 +12699,12 @@
    "cap": "Micro"
   },
   {
+   "s": "TIGERLOGS",
+   "n": "Tiger Logistics (India)",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "TIIL",
    "n": "Technocraft Industries (India)",
    "sec": "Capital Goods",
@@ -11576,12 +12721,6 @@
    "s": "TIJARIA",
    "n": "Tijaria Polypipes",
    "sec": "Construction Materials",
-   "cap": "Micro"
-  },
-  {
-   "s": "TIL",
-   "n": "TIL",
-   "sec": "Capital Goods",
    "cap": "Micro"
   },
   {
@@ -11680,6 +12819,12 @@
    "cap": "Micro"
   },
   {
+   "s": "TOKYOPLAST",
+   "n": "Tokyo Plast International",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "TOLINS",
    "n": "Tolins Tyres",
    "sec": "Automobile and Auto Components",
@@ -11712,6 +12857,12 @@
    "cap": "Micro"
   },
   {
+   "s": "TOYAMSL",
+   "n": "Toyam Sports",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "TPHQ",
    "n": "Teamo Productions HQ",
    "sec": "Construction",
@@ -11730,9 +12881,9 @@
    "cap": "Micro"
   },
   {
-   "s": "TRANSPEK",
-   "n": "Transpek Industry",
-   "sec": "Chemicals",
+   "s": "TRANSCOR",
+   "n": "Transcorp International",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -11789,6 +12940,12 @@
    "s": "TRIGYN",
    "n": "Trigyn Technologies",
    "sec": "Information Technology",
+   "cap": "Micro"
+  },
+  {
+   "s": "TRITONV",
+   "n": "Triton Valves",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -11853,6 +13010,12 @@
    "cap": "Micro"
   },
   {
+   "s": "TUTIALKA",
+   "n": "Tuticorin Alkali Chemicals & Fertilizers",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "TVSELECT",
    "n": "TVS Electronics",
    "sec": "Information Technology",
@@ -11908,6 +13071,12 @@
    "cap": "Small"
   },
   {
+   "s": "UDAYJEW",
+   "n": "Uday Jewellery Industries",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "UDS",
    "n": "Updater Services",
    "sec": "Services",
@@ -11917,12 +13086,6 @@
    "s": "UEL",
    "n": "Ujaas Energy",
    "sec": "Power",
-   "cap": "Micro"
-  },
-  {
-   "s": "UFBL",
-   "n": "United Foodbrands",
-   "sec": "Consumer Services",
    "cap": "Micro"
   },
   {
@@ -11999,6 +13162,12 @@
    "cap": "Micro"
   },
   {
+   "s": "UNIINFO",
+   "n": "Uniinfo Telecom Services",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "UNIMECH",
    "n": "Unimech Aerospace and Manufacturing",
    "sec": "Defence",
@@ -12047,6 +13216,12 @@
    "sec": "Automobile and Auto Components",
    "cap": "Mid",
    "curated": true
+  },
+  {
+   "s": "UPHOT",
+   "n": "U P Hotels",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "UPL",
@@ -12106,12 +13281,6 @@
    "cap": "Micro"
   },
   {
-   "s": "UYFINCORP",
-   "n": "U. Y. Fincorp",
-   "sec": "NBFC / Finance",
-   "cap": "Micro"
-  },
-  {
    "s": "V2RETAIL",
    "n": "V2 Retail",
    "sec": "Consumer Services",
@@ -12121,6 +13290,12 @@
    "s": "VADILALIND",
    "n": "Vadilal Industries",
    "sec": "Fast Moving Consumer Goods",
+   "cap": "Micro"
+  },
+  {
+   "s": "VADILENT",
+   "n": "Vadilal Enterprises",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -12143,6 +13318,12 @@
    "cap": "Micro"
   },
   {
+   "s": "VALIANTLAB",
+   "n": "Valiant Laboratories",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "VAML",
    "n": "Vedanta Aluminium Metal",
    "sec": "Metals & Mining",
@@ -12158,6 +13339,18 @@
    "s": "VARROC",
    "n": "Varroc Engineering",
    "sec": "Automobile and Auto Components",
+   "cap": "Micro"
+  },
+  {
+   "s": "VASCONEQ",
+   "n": "Vascon Engineers",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "VASUPRADA",
+   "n": "Shri Vasuprada Plantations",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -12177,6 +13370,12 @@
    "s": "VCL",
    "n": "Vaxtex Cotfab",
    "sec": "Textiles",
+   "cap": "Micro"
+  },
+  {
+   "s": "VEDAVAAG",
+   "n": "VEDAVAAG Systems",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -12229,6 +13428,12 @@
    "cap": "Micro"
   },
   {
+   "s": "VGCL",
+   "n": "Vibrant Global Capital",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "VGL",
    "n": "VARVEE GLOBAL",
    "sec": "Textiles",
@@ -12264,6 +13469,12 @@
    "n": "Vijaya Diagnostic Centre",
    "sec": "Healthcare",
    "cap": "Small"
+  },
+  {
+   "s": "VIJSOLX",
+   "n": "Vijay Solvex",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "VIKASECO",
@@ -12316,6 +13527,12 @@
    "cap": "Micro"
   },
   {
+   "s": "VINEETLAB",
+   "n": "Vineet Laboratories",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "VINNY",
    "n": "Vinny Overseas",
    "sec": "Textiles",
@@ -12328,11 +13545,23 @@
    "cap": "Micro"
   },
   {
+   "s": "VIPCLOTHNG",
+   "n": "VIP Clothing",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "VIPIND",
    "n": "VIP Industries",
    "sec": "Consumer Durables",
    "cap": "Micro",
    "curated": true
+  },
+  {
+   "s": "VIRAT",
+   "n": "Virat Industries",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "VIRINCHI",
@@ -12341,9 +13570,27 @@
    "cap": "Micro"
   },
   {
+   "s": "VIRTUALG",
+   "n": "Virtual Global Education",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "VISACHROME",
+   "n": "VISA Chrome",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "VISAKAIND",
    "n": "Visaka Industries",
    "sec": "Construction Materials",
+   "cap": "Micro"
+  },
+  {
+   "s": "VISHAL",
+   "n": "Vishal Fabrics",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -12371,6 +13618,12 @@
    "cap": "Micro"
   },
   {
+   "s": "VIVOBIOT",
+   "n": "Vivo Bio Tech",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "VIYASH",
    "n": "Viyash Scientific",
    "sec": "Healthcare",
@@ -12395,6 +13648,12 @@
    "cap": "Mid"
   },
   {
+   "s": "VMSTMT",
+   "n": "VMS TMT",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "VOEPL",
    "n": "Virtuoso Optoelectronics",
    "sec": "Consumer Durables",
@@ -12404,6 +13663,12 @@
    "s": "VOGL",
    "n": "Vedanta Oil and Gas",
    "sec": "Metals & Mining",
+   "cap": "Micro"
+  },
+  {
+   "s": "VOITHPAPR",
+   "n": "Voith Paper Fabrics India",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -12419,6 +13684,12 @@
    "sec": "Consumer Durables",
    "cap": "Mid",
    "curated": true
+  },
+  {
+   "s": "VPRPL",
+   "n": "Vishnu Prakash R Punglia",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "VRAJ",
@@ -12463,6 +13734,12 @@
    "cap": "Small"
   },
   {
+   "s": "VTMLTD",
+   "n": "VTM",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "WAAREEENER",
    "n": "Waaree Energies",
    "sec": "Capital Goods",
@@ -12505,6 +13782,18 @@
    "s": "WANBURY",
    "n": "Wanbury",
    "sec": "Healthcare",
+   "cap": "Micro"
+  },
+  {
+   "s": "WARDINMOBI",
+   "n": "Wardwizard Innovations & Mobility",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
+   "s": "WATERBASE",
+   "n": "Waterbase",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -12576,9 +13865,21 @@
    "cap": "Micro"
   },
   {
+   "s": "WEWIN",
+   "n": "WE WIN",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "WEWORK",
    "n": "WeWork India Management",
    "sec": "Services",
+   "cap": "Micro"
+  },
+  {
+   "s": "WHBRADY",
+   "n": "WH Brady & Company",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -12686,6 +13987,12 @@
    "cap": "Micro"
   },
   {
+   "s": "XTRANET",
+   "n": "Xtranet Technologies",
+   "sec": "Other",
+   "cap": "Micro"
+  },
+  {
    "s": "YASHO",
    "n": "Yasho Industries",
    "sec": "Chemicals",
@@ -12708,6 +14015,12 @@
    "n": "Yes Bank",
    "sec": "Financial Services",
    "cap": "Mid"
+  },
+  {
+   "s": "YOGI",
+   "n": "Yogi",
+   "sec": "Other",
+   "cap": "Micro"
   },
   {
    "s": "YUKEN",
@@ -12768,6 +14081,12 @@
    "s": "ZFSTEERING",
    "n": "ZF Steering Gear (India)",
    "sec": "Automobile and Auto Components",
+   "cap": "Micro"
+  },
+  {
+   "s": "ZIMLAB",
+   "n": "Zim Laboratories",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
