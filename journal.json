@@ -1,6 +1,6 @@
 {
-  "lastSession": "17/08/2026",
-  "equity": 619195.8,
+  "lastSession": "18/08/2026",
+  "equity": 604927,
   "positions": [
     {
       "picked": "4 May",
@@ -17,9 +17,9 @@
       "qty": 16,
       "invested": 36288,
       "booked": true,
-      "daysSinceTrigger": 71,
+      "daysSinceTrigger": 72,
       "triggerDate": "6 May",
-      "curPnlPct": 57.95
+      "curPnlPct": 64.74
     },
     {
       "picked": "18 Jun",
@@ -36,9 +36,9 @@
       "qty": 38,
       "invested": 70566,
       "booked": true,
-      "daysSinceTrigger": 40,
+      "daysSinceTrigger": 41,
       "triggerDate": "19 Jun",
-      "curPnlPct": 17.18
+      "curPnlPct": 18.19
     },
     {
       "picked": "23 Jun",
@@ -55,9 +55,9 @@
       "qty": 50,
       "invested": 71950,
       "booked": true,
-      "daysSinceTrigger": 36,
+      "daysSinceTrigger": 37,
       "triggerDate": "25 Jun",
-      "curPnlPct": 30.79
+      "curPnlPct": 33.22
     },
     {
       "picked": "2 Jul",
@@ -74,22 +74,9 @@
       "qty": 112,
       "invested": 72004.8,
       "booked": true,
-      "daysSinceTrigger": 31,
+      "daysSinceTrigger": 32,
       "triggerDate": "3 Jul",
-      "curPnlPct": 15.73
-    },
-    {
-      "picked": "12 Aug",
-      "pickedTs": 1786506300,
-      "symbol": "UJJIVANSFB",
-      "sector": "Financial Services",
-      "gear": 3,
-      "fullSize": 24,
-      "sizePct": 24,
-      "pivot": 73.3,
-      "sl": 70,
-      "entryStatus": "pending",
-      "daysWaiting": 3
+      "curPnlPct": 15.75
     },
     {
       "picked": "13 Aug",
@@ -102,43 +89,7 @@
       "pivot": 2048,
       "sl": 1956,
       "entryStatus": "pending",
-      "daysWaiting": 2
-    },
-    {
-      "picked": "14 Aug",
-      "pickedTs": 1786679100,
-      "symbol": "MBAPL",
-      "sector": "Agri",
-      "gear": 3,
-      "fullSize": 24,
-      "sizePct": 24,
-      "pivot": 170.9,
-      "sl": 163.2,
-      "entryStatus": "open",
-      "daysWaiting": 0,
-      "entry": 172,
-      "qty": 863,
-      "invested": 148436,
-      "daysSinceTrigger": 0,
-      "triggerDate": "17 Aug"
-    },
-    {
-      "picked": "14 Aug",
-      "pickedTs": 1786679100,
-      "symbol": "KRISHANA",
-      "sector": "Agri",
-      "gear": 3,
-      "fullSize": 24,
-      "sizePct": 24,
-      "pivot": 193.9,
-      "sl": 185.2,
-      "entryStatus": "open",
-      "daysWaiting": 0,
-      "entry": 193.9,
-      "qty": 766,
-      "invested": 148527.4,
-      "daysSinceTrigger": 0,
-      "triggerDate": "17 Aug"
+      "daysWaiting": 3
     },
     {
       "picked": "17 Aug",
@@ -150,8 +101,13 @@
       "sizePct": 24,
       "pivot": 665.5,
       "sl": 635.6,
-      "entryStatus": "pending",
-      "daysWaiting": 0
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 665.5,
+      "qty": 218,
+      "invested": 145079,
+      "daysSinceTrigger": 0,
+      "triggerDate": "18 Aug"
     },
     {
       "picked": "17 Aug",
@@ -163,6 +119,37 @@
       "sizePct": 24,
       "pivot": 743,
       "sl": 709.6,
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 743,
+      "qty": 195,
+      "invested": 144885,
+      "daysSinceTrigger": 0,
+      "triggerDate": "18 Aug"
+    },
+    {
+      "picked": "18 Aug",
+      "pickedTs": 1787024700,
+      "symbol": "DATAPATTNS",
+      "sector": "Defence",
+      "gear": 3,
+      "fullSize": 24,
+      "sizePct": 24,
+      "pivot": 4750,
+      "sl": 4536,
+      "entryStatus": "pending",
+      "daysWaiting": 0
+    },
+    {
+      "picked": "18 Aug",
+      "pickedTs": 1787024700,
+      "symbol": "UJJIVANSFB",
+      "sector": "Financial Services",
+      "gear": 3,
+      "fullSize": 24,
+      "sizePct": 24,
+      "pivot": 73.3,
+      "sl": 70,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
@@ -1695,10 +1682,55 @@
       "exitTs": 1786938300,
       "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi",
       "live": true
+    },
+    {
+      "picked": "14 Aug",
+      "ts": 1786679100,
+      "symbol": "MBAPL",
+      "sector": "Agri",
+      "gear": 3,
+      "entry": 172,
+      "qty": 863,
+      "invested": 148436,
+      "status": "sl",
+      "pnlPct": -5.12,
+      "exitDate": "18 Aug",
+      "exitTs": 1787024700,
+      "reason": "SL hit 163.2 pe — out, end of story. Sell is a sell.",
+      "live": true
+    },
+    {
+      "picked": "14 Aug",
+      "ts": 1786679100,
+      "symbol": "KRISHANA",
+      "sector": "Agri",
+      "gear": 3,
+      "entry": 193.9,
+      "qty": 766,
+      "invested": 148527.4,
+      "status": "sl",
+      "pnlPct": -4.49,
+      "exitDate": "18 Aug",
+      "exitTs": 1787024700,
+      "reason": "SL hit 185.2 pe — out, end of story. Sell is a sell.",
+      "live": true
+    },
+    {
+      "picked": "12 Aug",
+      "ts": 1786506300,
+      "symbol": "UJJIVANSFB",
+      "sector": "Financial Services",
+      "gear": 3,
+      "entry": 73.3,
+      "status": "no-trigger",
+      "pnlPct": 0,
+      "exitTs": 1787024700,
+      "reason": "Pivot cross nahi hua 4 session me — list se bahar, paisa laga hi nahi",
+      "live": true
     }
   ],
   "backtestedAt": "2026-08-10T18:55:11.967Z",
-  "lastBhav": "17/08/2026",
+  "lastBhav": "18/08/2026",
   "backtestWindow": 600000,
   "startCapital": 600000,
   "sizeByGear": [
