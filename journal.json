@@ -1,6 +1,6 @@
 {
-  "lastSession": "20/08/2026",
-  "equity": 616003.78,
+  "lastSession": "21/08/2026",
+  "equity": 609483.96,
   "positions": [
     {
       "picked": "4 May",
@@ -17,9 +17,9 @@
       "qty": 16,
       "invested": 36288,
       "booked": true,
-      "daysSinceTrigger": 74,
+      "daysSinceTrigger": 75,
       "triggerDate": "6 May",
-      "curPnlPct": 59.49
+      "curPnlPct": 58.81
     },
     {
       "picked": "18 Jun",
@@ -36,9 +36,9 @@
       "qty": 38,
       "invested": 70566,
       "booked": true,
-      "daysSinceTrigger": 43,
+      "daysSinceTrigger": 44,
       "triggerDate": "19 Jun",
-      "curPnlPct": 16.91
+      "curPnlPct": 17.82
     },
     {
       "picked": "23 Jun",
@@ -55,9 +55,9 @@
       "qty": 50,
       "invested": 71950,
       "booked": true,
-      "daysSinceTrigger": 39,
+      "daysSinceTrigger": 40,
       "triggerDate": "25 Jun",
-      "curPnlPct": 39.35
+      "curPnlPct": 60.66
     },
     {
       "picked": "2 Jul",
@@ -74,9 +74,9 @@
       "qty": 112,
       "invested": 72004.8,
       "booked": true,
-      "daysSinceTrigger": 34,
+      "daysSinceTrigger": 35,
       "triggerDate": "3 Jul",
-      "curPnlPct": 17.11
+      "curPnlPct": 16.66
     },
     {
       "picked": "17 Aug",
@@ -93,29 +93,10 @@
       "entry": 665.5,
       "qty": 109,
       "invested": 72539.5,
-      "daysSinceTrigger": 2,
+      "daysSinceTrigger": 3,
       "triggerDate": "18 Aug",
-      "curPnlPct": 15.27,
+      "curPnlPct": 9.59,
       "booked": true
-    },
-    {
-      "picked": "17 Aug",
-      "pickedTs": 1786938300,
-      "symbol": "CYIENTDLM",
-      "sector": "Defence",
-      "gear": 3,
-      "fullSize": 24,
-      "sizePct": 24,
-      "pivot": 743,
-      "sl": 709.6,
-      "entryStatus": "open",
-      "daysWaiting": 0,
-      "entry": 743,
-      "qty": 195,
-      "invested": 144885,
-      "daysSinceTrigger": 2,
-      "triggerDate": "18 Aug",
-      "curPnlPct": -1.72
     },
     {
       "picked": "20 Aug",
@@ -127,19 +108,37 @@
       "sizePct": 24,
       "pivot": 398,
       "sl": 380.1,
+      "entryStatus": "open",
+      "daysWaiting": 0,
+      "entry": 398,
+      "qty": 367,
+      "invested": 146066,
+      "daysSinceTrigger": 0,
+      "triggerDate": "21 Aug"
+    },
+    {
+      "picked": "21 Aug",
+      "pickedTs": 1787283900,
+      "symbol": "PAYTM",
+      "sector": "New Age / Internet",
+      "gear": 2,
+      "fullSize": 24,
+      "sizePct": 24,
+      "pivot": 1658,
+      "sl": 1583,
       "entryStatus": "pending",
       "daysWaiting": 0
     },
     {
-      "picked": "20 Aug",
-      "pickedTs": 1787197500,
-      "symbol": "GAEL",
+      "picked": "21 Aug",
+      "pickedTs": 1787283900,
+      "symbol": "DIAMONDYD",
       "sector": "Fast Moving Consumer Goods",
-      "gear": 3,
+      "gear": 2,
       "fullSize": 24,
       "sizePct": 24,
-      "pivot": 184.7,
-      "sl": 176.4,
+      "pivot": 1229,
+      "sl": 1174,
       "entryStatus": "pending",
       "daysWaiting": 0
     }
@@ -1772,10 +1771,39 @@
       "exitTs": 1787197500,
       "reason": "Breakout to aaya, par capital pehle se lagi hui thi (₹4,68,233 deployed) — ye trade chhoot gayi. Cash bhi ek position hai.",
       "live": true
+    },
+    {
+      "picked": "17 Aug",
+      "ts": 1786938300,
+      "symbol": "CYIENTDLM",
+      "sector": "Defence",
+      "gear": 3,
+      "entry": 743,
+      "qty": 195,
+      "invested": 144885,
+      "status": "sl",
+      "pnlPct": -4.5,
+      "exitDate": "21 Aug",
+      "exitTs": 1787283900,
+      "reason": "SL hit 709.6 pe — out, end of story. Sell is a sell.",
+      "live": true
+    },
+    {
+      "picked": "20 Aug",
+      "ts": 1787197500,
+      "symbol": "GAEL",
+      "sector": "Fast Moving Consumer Goods",
+      "gear": 3,
+      "entry": 184.7,
+      "status": "no-cash",
+      "pnlPct": 0,
+      "exitTs": 1787283900,
+      "reason": "Breakout to aaya, par capital pehle se lagi hui thi (₹4,69,414 deployed) — ye trade chhoot gayi. Cash bhi ek position hai.",
+      "live": true
     }
   ],
   "backtestedAt": "2026-08-10T18:55:11.967Z",
-  "lastBhav": "20/08/2026",
+  "lastBhav": "21/08/2026",
   "backtestWindow": 600000,
   "startCapital": 600000,
   "sizeByGear": [
