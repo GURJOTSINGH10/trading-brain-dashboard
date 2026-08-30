@@ -493,8 +493,35 @@ async function main() {
     }
     ret5 /= list.length; volR = vn ? volR / vn : 1;
     const heat = ret5 + (up / list.length) * 3 + (volR - 1) * 4;
+    // ★ "AAG LAG JAANI CHAHIYE" ka naap — abhi sirf DIKHANE ke liye.
+    // Vault (Sector Chunne Ka Tareeka §🔥): "ek-do din ka move ek REACTION hai;
+    // sector tab garam hota hai jab HAFTON tak, KAI NAAM ek saath chalein."
+    // Upar wala heat sirf 5 din dekhta hai — wo bar dheela hai. Ye gehra naap
+    // scoring ko NAHI chhoo raha (wo change untested hai, rules.json me
+    // 'sector.heat.persistence' = proposed). Pehle user isse dekhega.
+    let ret20 = 0, ret60 = 0, pack = 0, nearHi = 0;
+    for (const ch of list) {
+      const c = ch.c, n = c.length;
+      if (n > 21) ret20 += (c[n - 1] - c[n - 21]) / c[n - 21] * 100;
+      if (n > 61) ret60 += (c[n - 1] - c[n - 61]) / c[n - 61] * 100;
+      // pack breakout: pichhle 10 din me 20-din ka high toda?
+      if (n > 31) {
+        const prior = Math.max(...ch.h.slice(-31, -11));
+        if (Math.max(...ch.h.slice(-10)) > prior) pack++;
+      }
+      if (n > 60) { const hi = Math.max(...ch.h.slice(-252)); if (c[n - 1] >= hi * 0.9) nearHi++; }
+    }
+    ret20 /= list.length; ret60 /= list.length;
+    const depth = { ret20: round2(ret20), ret60: round2(ret60), pack, nearHi, count: list.length };
     if (ret5 > 1.5 && (up / list.length >= 0.4 || volR > 1.15)) {
-      hotSectors.push({ name, heat, note: `5 din me avg ${ret5 > 0 ? '+' : ''}${round2(ret5)}% · ${up}/${list.length} stocks me lagatar action${volR > 1.15 ? ' · volumes badhe hue' : ''}` });
+      hotSectors.push({
+        name, heat, depth,
+        note: `5 din me avg ${ret5 > 0 ? '+' : ''}${round2(ret5)}% · ${up}/${list.length} stocks me lagatar action${volR > 1.15 ? ' · volumes badhe hue' : ''}`,
+        // "Aag" ka faisla: hafton ka move + kai naam. Ye sirf ek PADHNE wali raay hai.
+        fire: (ret20 > 4 && ret60 > 6 && pack >= Math.max(2, list.length * 0.2)) ? 'aag'
+          : (ret20 > 2 && pack >= 2) ? 'garam' : 'reaction',
+        depthNote: `20 din ${ret20 > 0 ? '+' : ''}${round2(ret20)}% · 60 din ${ret60 > 0 ? '+' : ''}${round2(ret60)}% · ${pack}/${list.length} naamon ne 20-din ka high toda · ${nearHi} 52W-high zone me`
+      });
     }
   }
   hotSectors.sort((a, b) => b.heat - a.heat);
@@ -686,6 +713,30 @@ async function main() {
   }));
   console.log(`Candidates: ${candidates.length} (ready: ${readyCands.length}), picks: ${picks.length}, watchlist: ${watchlist.length}, gear: ${gear}`);
 
+  // ★ SECTOR PLAYS — "ye sector garam hai, isme ye 5 stock strategy pe fit baith rahe".
+  // candidates pehle se _score pe sorted hain, to filter karne se rank bacha rehta hai:
+  // rank 1 = us sector ka sabse strong naam = LEADER candidate.
+  // ⚠️ Ye DISPLAY hai, trade nahi. Journal sirf picks (top-2) ko track karta hai.
+  // Vault (Best of the Best §2b): "screen pe dono pass ho jaate hain — farak ye hai
+  // ki jab LEADER chalta hai to KITNA chalta hai." Isliye rank dikhana zaroori hai.
+  const sectorPlays = hotSectors.slice(0, 4).map(sec => ({
+    name: sec.name,
+    note: sec.note,
+    depthNote: sec.depthNote,
+    fire: sec.fire,
+    stocks: candidates.filter(c => c.sector === sec.name).slice(0, 5).map((c, i) => ({
+      rank: i + 1,
+      symbol: c.symbol, name: c.name, cap: c.cap,
+      cmp: c.cmp, pivot: c.pivot, sl: c.sl,
+      prox: c.detail.proxPivot, range: c.detail.rangePct, baseDays: c.detail.baseDays,
+      stage: c._ready ? (c.detail.proxPivot <= 2 ? 'Pivot pe khada' : 'Ready')
+        : (c.detail.rangePct <= 16 ? 'Base ban raha' : 'Abhi shor hai'),
+      flags: c.flags.filter(f => f !== 'Hot sector'),
+      isPick: pickSyms.has(c.symbol)
+    }))
+  })).filter(s => s.stocks.length);
+  console.log('Sector plays: ' + (sectorPlays.map(s => `${s.name}[${s.fire}]=${s.stocks.length}`).join(', ') || 'koi nahi'));
+
   // --- risk ramp ka faisla ---
   // KAL ke close pe (curPnlPct pichhle run ka hai), aaj ke bhaav pe nahi — jab tumhara
   // order aaj subah bharta hai tab tumhe kal tak ka hi pata hota hai.
@@ -858,6 +909,39 @@ async function main() {
     }))
   ];
 
+  // ★ POSITIONS BLOCK — dashboard ka apna "Positions" tab isse chalta hai.
+  // Pehle khuli positions Track Record ki journal TABLE me ek row thi — jahan wo
+  // history ke beech dabi rehti thi aur "abhi kya karna hai" kahin nahi dikhta tha.
+  // Ye block wahi batata hai: abhi ka bhaav, trail kahan hai, agla kadam kya hai.
+  // NOTE: ye sirf DISPLAY hai. Faisle upar wala journal-update loop hi leta hai.
+  const positionsOut = state.positions.filter(p => p.entryStatus === 'open').map(p => {
+    const ch = charts[p.symbol];
+    const c = ch?.c;
+    const cmp = c ? roundPrice(c[c.length - 1]) : p.entry;
+    const pnlPct = round2((cmp - p.entry) / p.entry * 100);
+    const trail = c && c.length >= TRAIL_MA ? roundPrice(sma(c, TRAIL_MA)) : null;
+    const bookAt = roundPrice(p.entry * (1 + BOOK_AT / 100));
+    // Agla kadam — wahi tarteeb jo journal loop use karta hai
+    let next;
+    if (cmp <= p.sl) next = `⚠️ SL (${p.sl}) ke neeche — exit zone`;
+    else if (!p.booked && cmp < bookAt) next = `+${BOOK_AT}% pe (₹${bookAt}) aadha book hoga — abhi ${round2((bookAt - cmp) / cmp * 100)}% door`;
+    else if (trail) next = `Aadha book ho chuka. Ab ${TRAIL_MA} DMA (₹${trail}) ke neeche CLOSE = bahar`;
+    else next = `${TRAIL_MA} DMA abhi bani nahi — SL ${p.sl} hi chalega`;
+    return {
+      symbol: p.symbol, sector: p.sector, gear: p.gear, sizePct: p.sizePct ?? p.fullSize ?? null,
+      picked: p.picked, pickedTs: p.pickedTs || null, triggerDate: p.triggerDate || null,
+      daysHeld: p.daysSinceTrigger ?? null,
+      entry: p.entry, qty: p.qty, invested: p.invested,
+      cmp, pnlPct, pnlAmt: round2((p.invested || 0) * pnlPct / 100),
+      sl: p.sl, slDistPct: round2((cmp - p.sl) / cmp * 100),
+      booked: !!p.booked, bookAt, trail, next,
+      stale: !ch,   // chart nahi mila — bhaav purana ho sakta hai
+      spark: c ? c.slice(-17).map(roundPrice) : []
+    };
+  });
+  const deployedNow = positionsOut.reduce((a, p) => a + (p.invested || 0), 0);
+  console.log(`Positions block: ${positionsOut.length} open, ₹${Math.round(deployedNow).toLocaleString('en-IN')} lagi hui`);
+
   // --- 5-saal ka strategy test (alag file, backtest.mjs --summary se banti hai) ---
   let strategyTest = null;
   try { strategyTest = JSON.parse(readFileSync(join(ROOT, 'strategy-test.json'), 'utf8')); } catch { }
@@ -891,6 +975,7 @@ async function main() {
     strategyTest,
     market: { gear, gearLabel, verdict: verdicts[gear], checks },
     hotSectors: hotSectors.slice(0, 4).map(({ name, note }) => ({ name, note })),
+    sectorPlays,
     // Universe health — system ab bata sakta hai ki wo kitna DEKH paa raha hai.
     // Ye isliye hai kyunki 272 stocks 4 mahine se chup-chaap skip ho rahe the
     // (NSE pe naya ticker = chhoti history) aur kahin koi ginti nahi thi.
@@ -909,6 +994,8 @@ async function main() {
     },
     picks,
     watchlist,
+    positions: positionsOut,
+    deployed: round2(deployedNow),
     journal: journalOut
   };
 
