@@ -178,6 +178,12 @@ const MIN_BARS = Math.max(60, parseInt(argVal('--min-bars', '100'), 10));
 // Cache hamesha 70+ bars wale sab stocks laati hai; MIN_BARS sirf setup-eligibility
 // decide karta hai. Isse ek hi fetch se saari min-bars settings test ho jaati hain.
 const FETCH_MIN_BARS = 70;
+// --fix-52w : 52W-high bonus SIRF tab jab sach me 252 bars ka itihaas ho.
+// Abhi rollMax(h,252) utne hi bars pe chalta hai jitne maujood hain — to
+// 100-bar wale stock ka "52W high" asal me 100 DIN ka high hota hai, aur use
+// jhootha +3 mil jaata hai. Ye bilkul wahi bug-class hai jo BSE stitch me tha
+// (92-bar wala stock "52W high zone" me dikh raha tha).
+const FIX_52W = args.includes('--fix-52w');
 // --book-at N : +N% pe profit book. 0 = bilkul book mat karo, sirf 10 DMA trail chale.
 // --book-part F : +N% pe sirf F fraction becho (creator PARTIAL karta hai), baaki trail pe.
 // Kyun: abhi 100% book +8% pe hota hai, aur wo rule trail se PEHLE chalta hai —
@@ -456,7 +462,8 @@ function setupAt(S, si, hot) {
 
   const v5 = smaAt(S.pv, si, 5), v20 = smaAt(S.pv, si, 20);
   const volShrink = v5 < v20;
-  const near52 = close >= S.hi252[si] * 0.9;
+  // FIX_52W: itihaas hi 252 bars ka nahi hai to "52 week high" kehna jhooth hai
+  const near52 = (FIX_52W && si < 252) ? false : close >= S.hi252[si] * 0.9;
   const big = S.pbig[si + 1] - S.pbig[si + 1 - 60];
   const fivePct = big >= 3;
 
