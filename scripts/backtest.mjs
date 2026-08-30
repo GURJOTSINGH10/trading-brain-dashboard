@@ -138,6 +138,33 @@ const PERSIST_R60 = parseFloat(argVal('--persist-r60', '6'));
 //   BANTWARA test kar rahe hain, bonus ka size nahi. (Warna pata hi nahi chalta
 //   ki fayda leadership se hua ya bade bonus se.)
 const LEADER_BONUS = args.includes('--leader-bonus');
+// --no-bse : stitched history ko IGNORE karke sirf asli NSE bars pe chalao.
+// Cache me har stitched chart pe nsLen likha hota hai, isliye iske liye DOBARA
+// fetch nahi chahiye — ek hi cache se SAAF A/B nikal jaata hai (sirf stitch
+// on/off badalta hai, baaki sab bilkul same).
+// ★★ DEFAULT: BACKTEST ME STITCHED HISTORY USE NAHI HOTI (30 Aug 2026)
+//
+// Stitched BSE bars "NSE ka asli tape" hain hi nahi — wo LIVE scanner ka auzaar
+// hain (aaj ka 52W high theek karne ke liye, aur us stock ko dikhane ke liye jo
+// NSE pe naya listed hai). Historical replay ke liye wo data valid nahi hai:
+//   - VOLUME synthetic hai (overlap ke ratio se scale, jo 5-7x tak nikla —
+//     TIMEX x5.38, HAWKINCOOK x7.03). To 2022 ka Rs 1 Cr/din wala stock yahan
+//     Rs 6 Cr dikh ke liquidity floor paar kar leta hai. Wo trade us waqt ho
+//     hi nahi sakti thi.
+//   - Aur nuksaan sirf candidate-list tak nahi rukta: ye stocks marketAt() ki
+//     breadth/adv-dec aur hotAt() ki sector-heat me bhi ghus jaate hain, yani
+//     GEAR aur HOT SECTOR dono ganda kar dete hain.
+//
+// SAAF A/B (ek hi cache, sirf stitch on/off) —
+//   Rs 6L FULL:  bina +231.28% (PF 2.20, DD -11.36%)  |  saath +92.33% (PF 1.64)
+//   Rs 6L H1:    bina  +65.37%                        |  saath +13.29%
+//   Rs 1L FULL:  bina +167.81% (PF 2.00)              |  saath +87.43%
+// Sirf 1L-H2 me farak +1.63 tha; baaki paanch window me bhaari nuksaan.
+//
+// Sirf candidacy rokne ki koshish ki thi — wo NAAKAAFI nikli (+82.97%), kyunki
+// pollution aggregates me bhi tha. Isliye poori stitched history hi bahar.
+// --with-bse se experiment ke liye wapas laga sakte ho.
+const NO_BSE = !args.includes('--with-bse');
 // --min-bars N : stock ke paas kam se kam itne din ka data ho tabhi setup ban sakta hai.
 // Default 120 (~6 mahine) = abhi ka behaviour. Isse kam karne se NAYE LISTINGS dikhne
 // lagte hain — abhi 51 liquid naye stocks (INDOMIM ₹1433Cr/din, SBIFUNDS ₹649Cr/din
@@ -198,7 +225,9 @@ const RANGE = KEEP_BARS <= 480 ? '2y' : KEEP_BARS <= 1200 ? '5y' : '10y';
 // v2 = naye listings bhi included (fetch threshold 130 se 70 bars ho gaya)
 // v3 = BSE history backfill (NSE pe naye ticker ki purani history .BO se) — cache
 //      ka naam badalna ZAROORI hai, warna purani (adhuri) history reuse ho jaati.
-const CACHE_FILE = join(CACHE_DIR, `charts-${RANGE}-v3.json.gz`);
+// v4 = seam-continuity guard (v3 me stitch ne BATLIBOI -80%, RAJPALAYAM -59%
+//      jaise JHOOTHE moves bana diye the — purane BSE data me split adjust nahi tha)
+const CACHE_FILE = join(CACHE_DIR, `charts-${RANGE}-v4.json.gz`);
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const round2 = x => Math.round(x * 100) / 100;
@@ -245,6 +274,21 @@ async function fetchChart(ticker, range = RANGE) {
   return null;
 }
 
+// --no-bse: stitched charts ko unke ASLI NSE hisse pe wapas kaat do. Isse ek hi
+// cache se saaf A/B nikalta hai — koi doosra fetch nahi.
+function stripBse(charts) {
+  let cut = 0, dropped = 0;
+  const out = {};
+  for (const [sym, ch] of Object.entries(charts)) {
+    if (!ch.nsLen) { out[sym] = ch; continue; }
+    if (ch.nsLen < FETCH_MIN_BARS) { dropped++; continue; }   // asli NSE data itna hi kam tha
+    const c = {}; for (const k of ['t','o','h','l','c','v']) c[k] = ch[k].slice(-ch.nsLen);
+    out[sym] = c; cut++;
+  }
+  console.log(`--no-bse: ${cut} charts wapas NSE-only kiye, ${dropped} bilkul hata diye`);
+  return out;
+}
+
 // 2000+ stocks ki 2-saal history laane me ~10 min lagte hain. Ek baar la ke gzip
 // cache me rakho — rules tweak karke dobara backtest chalana turant ho jaata hai.
 async function loadCharts(universe) {
@@ -253,12 +297,12 @@ async function loadCharts(universe) {
       const j = JSON.parse(gunzipSync(readFileSync(CACHE_FILE)).toString('utf8'));
       const ageH = (Date.now() - new Date(j.builtAt).getTime()) / 3600000;
       console.log(`Chart cache mila (${RANGE}): ${Object.keys(j.charts).length} stocks, ${ageH.toFixed(1)}h purana (--refresh se naya laao)`);
-      return j.charts;
+      return NO_BSE ? stripBse(j.charts) : j.charts;
     } catch { console.log('Cache corrupt — dobara fetch.'); }
   }
   console.log(`${universe.length} stocks ki ${RANGE} history laa rahe (ek hi baar, phir cache se)...`);
   const charts = {};
-  let idx = 0, ok = 0, bse = 0, t0 = Date.now();
+  let idx = 0, ok = 0, bse = 0, seamReject = 0, t0 = Date.now();
   async function worker() {
     while (idx < universe.length) {
       const u = universe[idx++];
@@ -276,10 +320,12 @@ async function loadCharts(universe) {
         if (bo) {
           const r = stitchHistory(ch, bo, null);
           if (r.boBars) {
+            const nsLen = r.bars.c.length - r.boBars;
             ch = r.bars;
             if (ch.c.length > KEEP_BARS) for (const k of ['t','o','h','l','c','v']) ch[k] = ch[k].slice(-KEEP_BARS);
+            ch.nsLen = Math.min(nsLen, ch.c.length);   // --no-bse iske sahaare wapas kaat deta hai
             bse++;
-          }
+          } else if (/seam jump/.test(r.reason)) seamReject++;
         }
       }
       if (ch) { charts[u.s] = ch; ok++; }
@@ -290,9 +336,9 @@ async function loadCharts(universe) {
   await Promise.all(Array.from({ length: 8 }, () => worker()));
   mkdirSync(CACHE_DIR, { recursive: true });
   writeFileSync(CACHE_FILE, gzipSync(JSON.stringify({ builtAt: new Date().toISOString(), range: RANGE, charts })));
-  console.log(`BSE backfill: ${bse} stocks ki purani history .BO se joddi`);
+  console.log(`BSE backfill: ${bse} stocks ki purani history .BO se joddi | ${seamReject} REJECT (seam jump — corporate action adjust nahi tha)`);
   console.log(`Charts: ${ok}/${universe.length} — cache likh diya (${(existsSync(CACHE_FILE) ? readFileSync(CACHE_FILE).length / 1e6 : 0).toFixed(1)} MB)`);
-  return charts;
+  return NO_BSE ? stripBse(charts) : charts;
 }
 
 // ---------- rolling helpers ----------
