@@ -704,12 +704,19 @@ async function main() {
   const maxPicks = 2;
   const readyCands = candidates.filter(c => c._ready);
   const picks = noTrade ? [] : readyCands.slice(0, maxPicks).map(({ _score, _ready, ...p }) => p);
-  // Watchlist ab HAMESHA dikhti hai — agle 3 ranked candidates. Ye sirf nazar rakhne
+  // Watchlist ab HAMESHA dikhti hai — agle ranked candidates. Ye sirf nazar rakhne
   // ke liye hain, journal inhe track NAHI karta (warna backtest se match nahi karega).
+  // ★ 3 se 10 kiya. Wajah: gear 1-2 wale din picks 0 hote hain aur dashboard pe
+  // "Aaj koi setup nahi" ke alawa kuch bachta hi nahi — jabki andar 200+ ready
+  // setups pade hote hain. Wo khalipan jhootha hai: market ka saath nahi hai, par
+  // NAAM to maujood hain. Agle din market palte to ye list hi kaam aati hai.
+  // ⚠️ Ye TRADE nahi hai. Journal inhe chhuata bhi nahi.
   const pickSyms = new Set(picks.map(p => p.symbol));
-  const watchlist = candidates.filter(c => !pickSyms.has(c.symbol)).slice(0, 3).map(c => ({
+  const watchlist = candidates.filter(c => !pickSyms.has(c.symbol)).slice(0, 10).map(c => ({
     symbol: c.symbol, name: c.name, sector: c.sector, cap: c.cap,
-    cmp: c.cmp, pivot: c.pivot, prox: c.detail.proxPivot, range: c.detail.rangePct
+    cmp: c.cmp, pivot: c.pivot, sl: c.sl, prox: c.detail.proxPivot, range: c.detail.rangePct,
+    baseDays: c.detail.baseDays, ready: !!c._ready,
+    flags: c.flags, hot: c.flags.includes('Hot sector')
   }));
   console.log(`Candidates: ${candidates.length} (ready: ${readyCands.length}), picks: ${picks.length}, watchlist: ${watchlist.length}, gear: ${gear}`);
 
@@ -994,6 +1001,10 @@ async function main() {
     },
     picks,
     watchlist,
+    // Gear 1-2 pe picks 0 hote hain. Tab bhi user ko pata hona chahiye ki andar
+    // kitna maal hai — warna lagta hai scanner ne kuch dhoonda hi nahi.
+    readyCount: readyCands.length,
+    candidateCount: candidates.length,
     positions: positionsOut,
     deployed: round2(deployedNow),
     journal: journalOut

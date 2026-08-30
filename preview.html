@@ -249,6 +249,27 @@
   .sp-lvl small { color: var(--muted); display: block; font-size: 10.5px; }
   .sp-note { font-size: 11.5px; color: var(--muted); padding: 10px 14px 0; line-height: 1.6; }
 
+  /* Har stock row/card click karne pe TradingView khulta hai */
+  [data-tv] { cursor: pointer; }
+  [data-tv]:hover { border-color: rgba(84,169,255,0.55); }
+  tr[data-tv]:hover { background: rgba(84,169,255,0.06); }
+
+  /* ===== Watchlist ===== */
+  .wl-table { width: 100%; border-collapse: collapse; background: var(--surface); min-width: 0;
+    border: 1px solid var(--border-soft); border-radius: 15px; overflow: hidden; }
+  .wl-table td { padding: 10px 13px; font-size: 12.5px; border-top: 1px solid var(--border-soft); vertical-align: middle; }
+  .wl-table tr:first-child td { border-top: none; }
+  .wl-sym b { font-size: 13.5px; }
+  .wl-sym .note { display: block; font-size: 11px; }
+  .wl-lvl { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .wl-lvl small { color: var(--muted); display: block; font-size: 10.5px; }
+  .wl-badge { font-size: 10.5px; padding: 2px 8px; border-radius: 20px; white-space: nowrap;
+    background: rgba(148,163,184,0.12); color: var(--muted); border: 1px solid var(--border); }
+  .wl-badge.ready { background: rgba(49,212,146,0.13); color: #4fe0a8; border-color: rgba(49,212,146,0.35); }
+  .wl-note { font-size: 11.5px; color: var(--muted); padding: 10px 4px 0; line-height: 1.6; }
+  .empty-why { line-height: 1.7; }
+  .empty-why b { color: var(--text); }
+
   /* ===== Positions tab ===== */
   .pos-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
   .pos-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
@@ -534,6 +555,9 @@
 
     <h2 id="picksHeading">Ready Stocks — High Priority List</h2>
     <div class="picks" id="picks"></div>
+
+    <h2>👀 Watchlist — Nazar Me Rakho</h2>
+    <div id="watchlist"></div>
   </div>
 
   <!-- ============ POSITIONS VIEW ============ -->
@@ -768,7 +792,7 @@
     el.innerHTML = sp.map(sec => {
       const rows = sec.stocks.map(st => {
         const cls = st.stage === 'Pivot pe khada' ? 'atpivot' : st.stage === 'Ready' ? 'ready' : '';
-        return '<tr>' +
+        return '<tr data-tv="' + st.symbol + '" title="' + st.symbol + ' ka chart kholo">' +
           '<td class="sp-rank ' + (st.rank === 1 ? 'leader' : '') + '">' + (st.rank === 1 ? '👑' : '#' + st.rank) + '</td>' +
           '<td class="sp-sym"><b>' + st.symbol + '</b><span class="note">' + st.name + ' · ' + st.cap +
             (st.isPick ? ' · <b style="color:var(--accent)">AAJ KA PICK</b>' : '') + '</span></td>' +
@@ -869,37 +893,69 @@
 
   const tvUrl = sym => `https://in.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(sym.replace(/[^A-Za-z0-9]/g, '_'))}`;
 
+  // Kisi bhi stock row/card pe click = us stock ka TradingView chart.
+  // Pehle sirf chhota avatar clickable tha — kisi ko pata hi nahi chalta tha.
+  // Andar ka asli <a> (Chart ↗ wagairah) apna kaam khud kare, isliye guard.
+  document.addEventListener('click', e => {
+    if (e.target.closest('a')) return;
+    const el = e.target.closest('[data-tv]');
+    if (!el) return;
+    window.open(tvUrl(el.dataset.tv), '_blank', 'noopener');
+  });
+
   const picksEl = document.getElementById('picks');
   const curGearPct = sizeByGear[d.market.gear - 1];
   // Watchlist ab HAMESHA banti hai (pehle sirf 0-picks wale din). Kyunki ab roz sirf
   // top-2 picks aate hain, to agle 3 candidates dekhna kaam ka hai — par ye TRADE
   // nahi hain, sirf nazar ke liye. Journal inhe track nahi karta.
+  /* ---- WATCHLIST — ab apna section, 10 naam ----
+     Pehle ye picks ke ANDAR ek chhota card tha, sirf 3 naam. Gear 1-2 wale din
+     picks 0 hote hain, to poore scan tab pe "Aaj koi setup nahi" ke alawa kuch
+     bachta hi nahi tha — jabki andar 200+ ready setups pade hote hain. Wo
+     khalipan JHOOTHA hai: market ka saath nahi hai, par NAAM maujood hain.
+     Agle din market palte to yahi list kaam aati hai. */
   const wl = d.watchlist || [];
-  const wlCard = wl.length ? `
-      <div class="card pick">
-        <div class="hero-label" style="margin-bottom:4px;">👀 Nazar Me Rakho — TRADE NAHI, sirf tracking</div>
-        ${wl.map((w, i) => `
-        <div class="watch-row">
-          <a class="avatar" href="${tvUrl(w.symbol)}" target="_blank" rel="noopener" style="--h:${(i * 67 + 30) % 360}" title="${w.symbol} ka chart kholo">${w.symbol.slice(0, 2)}</a>
-          <div style="flex:1; min-width:0;">
-            <b>${w.symbol}</b> <span class="cap-badge cap-${w.cap || 'Small'}">${w.cap || 'Small'} Cap</span>
-            <div class="pick-name">${w.sector} · pivot ${w.pivot.toLocaleString('en-IN')} se <b>${w.prox}% door</b> · range ${w.range}%</div>
-          </div>
-          <div class="pick-cmp" style="font-size:14px;">₹${w.cmp.toLocaleString('en-IN')}</div>
-        </div>`).join('')}
-        <div class="pick-name" style="margin-top:6px;">Ye setup ke kareeb hain, par abhi trigger door hai — buy NAHI, sirf chart pe nazar. Ready honge to picks me aayenge.</div>
-      </div>` : '';
+  (function watchlistSection() {
+    const el = document.getElementById('watchlist');
+    if (!el) return;
+    if (!wl.length) { el.innerHTML = '<div class="card"><span class="note">Abhi watchlist khali hai.</span></div>'; return; }
+    el.innerHTML = '<table class="wl-table">' + wl.map(w =>
+      '<tr data-tv="' + w.symbol + '" title="' + w.symbol + ' ka TradingView chart kholo">' +
+        '<td class="wl-sym"><b>' + w.symbol + '</b> <span class="cap-badge cap-' + (w.cap || 'Small') + '">' + (w.cap || 'Small') + '</span>' +
+          '<span class="note">' + w.name + ' · ' + w.sector + (w.hot ? ' · 🔥 hot sector' : '') + '</span></td>' +
+        '<td><span class="wl-badge' + (w.ready ? ' ready' : '') + '">' + (w.ready ? 'Ready' : 'Base ban raha') + '</span></td>' +
+        '<td class="wl-lvl">₹' + w.pivot.toLocaleString('en-IN') + '<small>pivot · ' + w.prox + '% door</small></td>' +
+        '<td class="wl-lvl">₹' + (w.sl != null ? w.sl.toLocaleString('en-IN') : '—') + '<small>SL</small></td>' +
+        '<td class="wl-lvl">₹' + w.cmp.toLocaleString('en-IN') + '<small>abhi · base ' + (w.baseDays || '?') + 'd / ' + w.range + '%</small></td>' +
+      '</tr>').join('') + '</table>' +
+      '<div class="wl-note">Ye <b>TRADE NAHI</b> hain — journal inhe track nahi karta. Ye wo naam hain jo pivot ke sabse kareeb hain: ' +
+      '<b>pivot cross ho tabhi</b> baat banti hai, usse pehle jo bhi hai sirf indication hai. Kisi bhi row pe click karke chart kholo.</div>';
+  })();
+  const wlCard = '';
 
   if (!d.picks.length) {
-    document.getElementById('picksHeading').textContent = 'Aaj Koi Setup Nahi';
-    picksEl.innerHTML = `<div class="card pick"><div class="comment">Cash bhi ek position hai bhaiya. Environment hi nahi hai to setup ka kya karna. Wait for the right opportunity.</div></div>` + wlCard;
+    // "Aaj koi setup nahi" ADHURA sach tha — setups to hote hain, MARKET ka
+    // saath nahi hota. Ab dono cheezein alag-alag saaf likhi hain, aur neeche
+    // watchlist apne section me hai. (A-Plus scorecard ki saatvi shart:
+    // "market ka support BAHUT HI ZYADA zaroori hai".)
+    document.getElementById('picksHeading').textContent = 'Aaj Koi Buy Nahi';
+    const rc = d.readyCount, cc = d.candidateCount;
+    picksEl.innerHTML = '<div class="card pick"><div class="comment empty-why">' +
+      'Setup ki kami nahi hai bhaiya — <b>' + (rc != null ? rc : '?') + ' stock aaj "ready" hain</b>' +
+      (cc != null ? ' (' + cc + ' candidates me se)' : '') + '. Kami <b>MARKET ke saath</b> ki hai: ' +
+      d.market.gearLabel + ' me hum buy nahi karte.<br><br>' +
+      'Chart pe setup hona aur trade lena do alag cheezein hain. Market ka support na ho to wahi setup paisa nahi banata — ' +
+      '<b>cash bhi ek position hai.</b><br><br>' +
+      'Neeche watchlist me wo naam hain jo pivot ke sabse kareeb hain. Market palte hi inhi me se picks banenge. ' +
+      'Wait, wait for the right opportunity.' +
+      '</div></div>';
   } else {
     picksEl.innerHTML = d.picks.map((p, i) => {
       const alloc = equity * rampSizePct / 100;
       const qty = Math.max(1, Math.floor(alloc / p.cmp));
       const cap = p.cap || 'Small';
       return `
-      <div class="card pick">
+      <div class="card pick" data-tv="${p.symbol}" title="${p.symbol} ka TradingView chart kholo">
         <div class="pick-head">
           <div class="pick-id">
             <a class="avatar" href="${tvUrl(p.symbol)}" target="_blank" rel="noopener" style="--h:${(i * 67 + 190) % 360}" title="${p.symbol} ka TradingView chart kholo">${p.symbol.slice(0, 2)}</a>
@@ -987,7 +1043,7 @@
       if (p.booked) tags.push('<span class="flag">Aadha book ho chuka</span>');
       if (p.stale) tags.push('<span class="flag">⚠️ Bhaav purana</span>');
       if (p.daysHeld != null) tags.push('<span class="flag">' + p.daysHeld + ' session hold</span>');
-      return '<div class="card poscard" style="animation-delay:' + (i * 0.05) + 's">' +
+      return '<div class="card poscard" data-tv="' + p.symbol + '" title="' + p.symbol + ' ka chart kholo" style="animation-delay:' + (i * 0.05) + 's">' +
         '<div class="pos-head"><div class="pos-sym"><b>' + p.symbol + '</b><span class="note">' +
           p.sector + ' · ' + p.picked + ' ko pick' + (p.triggerDate ? ' · ' + p.triggerDate + ' ko trigger' : '') +
         '</span></div>' +

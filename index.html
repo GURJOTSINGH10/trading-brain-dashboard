@@ -221,6 +221,81 @@
   .sector-chip b { color: var(--accent); }
   .sector-chip span { color: var(--muted); font-size: 12px; }
 
+  /* ===== Sector Plays — "ye sector garam hai, isme ye 5" ===== */
+  .sector-block { margin-bottom: 16px; }
+  .sector-head {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding: 12px 16px; border-radius: 15px 15px 0 0;
+    background: rgba(84,169,255,0.09); border: 1px solid rgba(84,169,255,0.3); border-bottom: none;
+  }
+  .sector-head b { font-size: 15px; color: var(--accent); }
+  .fire-badge { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; letter-spacing: 0.3px; }
+  .fire-aag { background: rgba(255,107,118,0.16); color: #ff8f96; border: 1px solid rgba(255,107,118,0.4); }
+  .fire-garam { background: rgba(255,183,77,0.14); color: #ffc46b; border: 1px solid rgba(255,183,77,0.38); }
+  .fire-reaction { background: rgba(148,163,184,0.12); color: var(--muted); border: 1px solid var(--border); }
+  .sector-metrics { width: 100%; font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+  .sp-table { width: 100%; border-collapse: collapse; background: var(--surface); min-width: 0;
+    border: 1px solid var(--border-soft); border-radius: 0 0 15px 15px; overflow: hidden; }
+  .sp-table td { padding: 9px 13px; font-size: 12.5px; border-top: 1px solid var(--border-soft); vertical-align: middle; }
+  .sp-rank { width: 34px; color: var(--muted); font-weight: 700; }
+  .sp-rank.leader { color: #ffc46b; }
+  .sp-sym b { font-size: 13.5px; }
+  .sp-sym .note { display: block; font-size: 11px; }
+  .sp-stage { font-size: 11px; padding: 2px 8px; border-radius: 20px; white-space: nowrap;
+    background: rgba(148,163,184,0.12); color: var(--muted); border: 1px solid var(--border); }
+  .sp-stage.ready { background: rgba(49,212,146,0.13); color: #4fe0a8; border-color: rgba(49,212,146,0.35); }
+  .sp-stage.atpivot { background: rgba(255,183,77,0.15); color: #ffc46b; border-color: rgba(255,183,77,0.4); }
+  .sp-lvl { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .sp-lvl small { color: var(--muted); display: block; font-size: 10.5px; }
+  .sp-note { font-size: 11.5px; color: var(--muted); padding: 10px 14px 0; line-height: 1.6; }
+
+  /* Har stock row/card click karne pe TradingView khulta hai */
+  [data-tv] { cursor: pointer; }
+  [data-tv]:hover { border-color: rgba(84,169,255,0.55); }
+  tr[data-tv]:hover { background: rgba(84,169,255,0.06); }
+
+  /* ===== Watchlist ===== */
+  .wl-table { width: 100%; border-collapse: collapse; background: var(--surface); min-width: 0;
+    border: 1px solid var(--border-soft); border-radius: 15px; overflow: hidden; }
+  .wl-table td { padding: 10px 13px; font-size: 12.5px; border-top: 1px solid var(--border-soft); vertical-align: middle; }
+  .wl-table tr:first-child td { border-top: none; }
+  .wl-sym b { font-size: 13.5px; }
+  .wl-sym .note { display: block; font-size: 11px; }
+  .wl-lvl { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .wl-lvl small { color: var(--muted); display: block; font-size: 10.5px; }
+  .wl-badge { font-size: 10.5px; padding: 2px 8px; border-radius: 20px; white-space: nowrap;
+    background: rgba(148,163,184,0.12); color: var(--muted); border: 1px solid var(--border); }
+  .wl-badge.ready { background: rgba(49,212,146,0.13); color: #4fe0a8; border-color: rgba(49,212,146,0.35); }
+  .wl-note { font-size: 11.5px; color: var(--muted); padding: 10px 4px 0; line-height: 1.6; }
+  .empty-why { line-height: 1.7; }
+  .empty-why b { color: var(--text); }
+
+  /* ===== Positions tab ===== */
+  .pos-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .pos-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
+  .poscard { display: flex; flex-direction: column; gap: 11px; animation: fadeUp 0.45s ease both; }
+  .pos-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .pos-sym b { font-size: 17px; letter-spacing: -0.2px; }
+  .pos-sym .note { display: block; font-size: 11.5px; margin-top: 2px; }
+  .pos-pnl { text-align: right; white-space: nowrap; }
+  .pos-pnl b { font-size: 19px; display: block; font-variant-numeric: tabular-nums; }
+  .pos-pnl span { font-size: 11.5px; color: var(--muted); }
+  .pos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+  .pos-grid div { background: rgba(148,163,184,0.06); border-radius: 10px; padding: 8px 10px; }
+  .pos-grid small { display: block; color: var(--muted); font-size: 10.5px; margin-bottom: 3px; }
+  .pos-grid b { font-size: 13px; font-variant-numeric: tabular-nums; }
+  /* Patli line: stock SL aur book-target ke beech kahan khada hai */
+  .pos-rail { position: relative; height: 6px; border-radius: 6px; background: rgba(148,163,184,0.15); }
+  .pos-rail i { position: absolute; top: -3px; width: 3px; height: 12px; border-radius: 2px; background: var(--text); }
+  .pos-rail em { position: absolute; top: 0; height: 6px; border-radius: 6px; background: rgba(49,212,146,0.4); }
+  .pos-rail-lbl { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--muted); margin-top: 5px; }
+  .pos-next { font-size: 12px; line-height: 1.55; padding: 9px 12px; border-radius: 10px;
+    background: rgba(84,169,255,0.07); border: 1px solid rgba(84,169,255,0.22); }
+  .pos-next.warn { background: rgba(255,107,118,0.09); border-color: rgba(255,107,118,0.3); }
+  .pos-tags { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .pos-empty { padding: 34px; text-align: center; color: var(--muted); }
+  @media (max-width: 560px) { .pos-cards { grid-template-columns: 1fr; } }
+
   /* Picks */
   .picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 18px; }
   .pick { display: flex; flex-direction: column; gap: 12px; transition: transform 0.18s, border-color 0.18s; }
@@ -436,6 +511,7 @@
 
   <div class="tabs">
     <button class="tab active" data-view="scan">📋 Aaj ka Scan</button>
+    <button class="tab" data-view="positions">📊 Positions</button>
     <button class="tab" data-view="track">📈 Track Record</button>
   </div>
 
@@ -470,14 +546,25 @@
     <h2>Market Health Check</h2>
     <div class="checks" id="checks"></div>
 
-    <h2>Hot Sectors</h2>
+    <h2>Hot Sectors — aur unme kaunse stock</h2>
     <div class="sectors" id="sectors"></div>
+    <div id="sectorPlays" style="margin-top:16px;"></div>
 
     <h2>Result Calendar — kis pick ka result kab</h2>
     <div id="earnCal"></div>
 
     <h2 id="picksHeading">Ready Stocks — High Priority List</h2>
     <div class="picks" id="picks"></div>
+
+    <h2>👀 Watchlist — Nazar Me Rakho</h2>
+    <div id="watchlist"></div>
+  </div>
+
+  <!-- ============ POSITIONS VIEW ============ -->
+  <div class="view" id="view-positions">
+    <h2 style="margin-top:4px;">Abhi Kya Chal Raha Hai</h2>
+    <div class="pos-strip" id="posStrip"></div>
+    <div class="pos-cards" id="posCards"></div>
   </div>
 
   <!-- ============ TRACK RECORD VIEW ============ -->
@@ -691,6 +778,39 @@
     ? d.hotSectors.map((s, i) => `<div class="sector-chip" style="animation-delay:${i * 0.06}s"><b>${s.name}</b> · <span>${s.note}</span></div>`).join('')
     : '<div class="sector-chip"><span>Koi hot sector nahi — action ka wait karo</span></div>';
 
+  /* ---- Sector Plays — "ye sector garam hai, isme ye 5 stock" ----
+     Hot-sector chip pehle sirf NAAM batata tha. Asli sawaal wo nahi hai — asli
+     sawaal hai "to isme LOON kya?". Ye block wahi jawab deta hai, stocks ko RANK
+     ke saath. Vault (Best of the Best): dono base achhe ho sakte hain — farak ye
+     hai ki jab LEADER chalta hai to KITNA chalta hai. */
+  (function sectorPlays() {
+    const el = document.getElementById('sectorPlays');
+    if (!el) return;
+    const sp = d.sectorPlays || [];
+    if (!sp.length) { el.innerHTML = ''; return; }
+    const fireLabel = { aag: '🔥 AAG LAGI HAI', garam: '🌡️ GARAM', reaction: '⚡ SIRF REACTION' };
+    el.innerHTML = sp.map(sec => {
+      const rows = sec.stocks.map(st => {
+        const cls = st.stage === 'Pivot pe khada' ? 'atpivot' : st.stage === 'Ready' ? 'ready' : '';
+        return '<tr data-tv="' + st.symbol + '" title="' + st.symbol + ' ka chart kholo">' +
+          '<td class="sp-rank ' + (st.rank === 1 ? 'leader' : '') + '">' + (st.rank === 1 ? '👑' : '#' + st.rank) + '</td>' +
+          '<td class="sp-sym"><b>' + st.symbol + '</b><span class="note">' + st.name + ' · ' + st.cap +
+            (st.isPick ? ' · <b style="color:var(--accent)">AAJ KA PICK</b>' : '') + '</span></td>' +
+          '<td><span class="sp-stage ' + cls + '">' + st.stage + '</span></td>' +
+          '<td class="sp-lvl">₹' + st.pivot.toLocaleString('en-IN') + '<small>pivot · ' + st.prox + '% door</small></td>' +
+          '<td class="sp-lvl">₹' + st.cmp.toLocaleString('en-IN') + '<small>abhi · base ' + st.baseDays + 'd / ' + st.range + '%</small></td>' +
+        '</tr>';
+      }).join('');
+      return '<div class="sector-block">' +
+        '<div class="sector-head"><b>' + sec.name + '</b>' +
+        '<span class="fire-badge fire-' + sec.fire + '">' + (fireLabel[sec.fire] || sec.fire) + '</span>' +
+        '<div class="sector-metrics">' + (sec.depthNote || sec.note) + '</div></div>' +
+        '<table class="sp-table">' + rows + '</table></div>';
+    }).join('') +
+    '<div class="sp-note">👑 = us sector ka sabse strong candidate. Ye <b>trade nahi</b> hai — journal sirf top-2 picks ko track karta hai.<br>' +
+    '"Aag lagi hai" ka matlab: <b>hafton ka move + kai naam ek saath</b> — sirf 2-3 din ka uchhaal nahi. Ye label abhi sirf padhne ke liye hai, scoring ise use nahi karti.</div>';
+  })();
+
   /* ---- Result Calendar — kis pick ka result kab (NSE board meetings) ---- */
   (function () {
     const el = document.getElementById('earnCal');
@@ -773,37 +893,69 @@
 
   const tvUrl = sym => `https://in.tradingview.com/chart/?symbol=NSE%3A${encodeURIComponent(sym.replace(/[^A-Za-z0-9]/g, '_'))}`;
 
+  // Kisi bhi stock row/card pe click = us stock ka TradingView chart.
+  // Pehle sirf chhota avatar clickable tha — kisi ko pata hi nahi chalta tha.
+  // Andar ka asli <a> (Chart ↗ wagairah) apna kaam khud kare, isliye guard.
+  document.addEventListener('click', e => {
+    if (e.target.closest('a')) return;
+    const el = e.target.closest('[data-tv]');
+    if (!el) return;
+    window.open(tvUrl(el.dataset.tv), '_blank', 'noopener');
+  });
+
   const picksEl = document.getElementById('picks');
   const curGearPct = sizeByGear[d.market.gear - 1];
   // Watchlist ab HAMESHA banti hai (pehle sirf 0-picks wale din). Kyunki ab roz sirf
   // top-2 picks aate hain, to agle 3 candidates dekhna kaam ka hai — par ye TRADE
   // nahi hain, sirf nazar ke liye. Journal inhe track nahi karta.
+  /* ---- WATCHLIST — ab apna section, 10 naam ----
+     Pehle ye picks ke ANDAR ek chhota card tha, sirf 3 naam. Gear 1-2 wale din
+     picks 0 hote hain, to poore scan tab pe "Aaj koi setup nahi" ke alawa kuch
+     bachta hi nahi tha — jabki andar 200+ ready setups pade hote hain. Wo
+     khalipan JHOOTHA hai: market ka saath nahi hai, par NAAM maujood hain.
+     Agle din market palte to yahi list kaam aati hai. */
   const wl = d.watchlist || [];
-  const wlCard = wl.length ? `
-      <div class="card pick">
-        <div class="hero-label" style="margin-bottom:4px;">👀 Nazar Me Rakho — TRADE NAHI, sirf tracking</div>
-        ${wl.map((w, i) => `
-        <div class="watch-row">
-          <a class="avatar" href="${tvUrl(w.symbol)}" target="_blank" rel="noopener" style="--h:${(i * 67 + 30) % 360}" title="${w.symbol} ka chart kholo">${w.symbol.slice(0, 2)}</a>
-          <div style="flex:1; min-width:0;">
-            <b>${w.symbol}</b> <span class="cap-badge cap-${w.cap || 'Small'}">${w.cap || 'Small'} Cap</span>
-            <div class="pick-name">${w.sector} · pivot ${w.pivot.toLocaleString('en-IN')} se <b>${w.prox}% door</b> · range ${w.range}%</div>
-          </div>
-          <div class="pick-cmp" style="font-size:14px;">₹${w.cmp.toLocaleString('en-IN')}</div>
-        </div>`).join('')}
-        <div class="pick-name" style="margin-top:6px;">Ye setup ke kareeb hain, par abhi trigger door hai — buy NAHI, sirf chart pe nazar. Ready honge to picks me aayenge.</div>
-      </div>` : '';
+  (function watchlistSection() {
+    const el = document.getElementById('watchlist');
+    if (!el) return;
+    if (!wl.length) { el.innerHTML = '<div class="card"><span class="note">Abhi watchlist khali hai.</span></div>'; return; }
+    el.innerHTML = '<table class="wl-table">' + wl.map(w =>
+      '<tr data-tv="' + w.symbol + '" title="' + w.symbol + ' ka TradingView chart kholo">' +
+        '<td class="wl-sym"><b>' + w.symbol + '</b> <span class="cap-badge cap-' + (w.cap || 'Small') + '">' + (w.cap || 'Small') + '</span>' +
+          '<span class="note">' + w.name + ' · ' + w.sector + (w.hot ? ' · 🔥 hot sector' : '') + '</span></td>' +
+        '<td><span class="wl-badge' + (w.ready ? ' ready' : '') + '">' + (w.ready ? 'Ready' : 'Base ban raha') + '</span></td>' +
+        '<td class="wl-lvl">₹' + w.pivot.toLocaleString('en-IN') + '<small>pivot · ' + w.prox + '% door</small></td>' +
+        '<td class="wl-lvl">₹' + (w.sl != null ? w.sl.toLocaleString('en-IN') : '—') + '<small>SL</small></td>' +
+        '<td class="wl-lvl">₹' + w.cmp.toLocaleString('en-IN') + '<small>abhi · base ' + (w.baseDays || '?') + 'd / ' + w.range + '%</small></td>' +
+      '</tr>').join('') + '</table>' +
+      '<div class="wl-note">Ye <b>TRADE NAHI</b> hain — journal inhe track nahi karta. Ye wo naam hain jo pivot ke sabse kareeb hain: ' +
+      '<b>pivot cross ho tabhi</b> baat banti hai, usse pehle jo bhi hai sirf indication hai. Kisi bhi row pe click karke chart kholo.</div>';
+  })();
+  const wlCard = '';
 
   if (!d.picks.length) {
-    document.getElementById('picksHeading').textContent = 'Aaj Koi Setup Nahi';
-    picksEl.innerHTML = `<div class="card pick"><div class="comment">Cash bhi ek position hai bhaiya. Environment hi nahi hai to setup ka kya karna. Wait for the right opportunity.</div></div>` + wlCard;
+    // "Aaj koi setup nahi" ADHURA sach tha — setups to hote hain, MARKET ka
+    // saath nahi hota. Ab dono cheezein alag-alag saaf likhi hain, aur neeche
+    // watchlist apne section me hai. (A-Plus scorecard ki saatvi shart:
+    // "market ka support BAHUT HI ZYADA zaroori hai".)
+    document.getElementById('picksHeading').textContent = 'Aaj Koi Buy Nahi';
+    const rc = d.readyCount, cc = d.candidateCount;
+    picksEl.innerHTML = '<div class="card pick"><div class="comment empty-why">' +
+      'Setup ki kami nahi hai bhaiya — <b>' + (rc != null ? rc : '?') + ' stock aaj "ready" hain</b>' +
+      (cc != null ? ' (' + cc + ' candidates me se)' : '') + '. Kami <b>MARKET ke saath</b> ki hai: ' +
+      d.market.gearLabel + ' me hum buy nahi karte.<br><br>' +
+      'Chart pe setup hona aur trade lena do alag cheezein hain. Market ka support na ho to wahi setup paisa nahi banata — ' +
+      '<b>cash bhi ek position hai.</b><br><br>' +
+      'Neeche watchlist me wo naam hain jo pivot ke sabse kareeb hain. Market palte hi inhi me se picks banenge. ' +
+      'Wait, wait for the right opportunity.' +
+      '</div></div>';
   } else {
     picksEl.innerHTML = d.picks.map((p, i) => {
       const alloc = equity * rampSizePct / 100;
       const qty = Math.max(1, Math.floor(alloc / p.cmp));
       const cap = p.cap || 'Small';
       return `
-      <div class="card pick">
+      <div class="card pick" data-tv="${p.symbol}" title="${p.symbol} ka TradingView chart kholo">
         <div class="pick-head">
           <div class="pick-id">
             <a class="avatar" href="${tvUrl(p.symbol)}" target="_blank" rel="noopener" style="--h:${(i * 67 + 190) % 360}" title="${p.symbol} ka TradingView chart kholo">${p.symbol.slice(0, 2)}</a>
@@ -851,8 +1003,77 @@
       const p10 = l10.reduce((s, r) => s + r.t.pnlPct, 0);
       return `<div class="card stat"><small>Recent form (last ${l10.length})</small><b class="${p10 >= 0 ? 'pos' : 'neg'}">${w10}W / ${l10.length - w10}L</b><span class="sub">net ${p10 >= 0 ? '+' : ''}${p10.toFixed(1)}% — abhi ki form</span></div>`;
     })()}
-    <div class="card stat"><small>Open positions</small><b>${opens}</b><span class="sub">${inr(deployed)} lagi hui (${Math.round(deployed / equity * 100)}% capital)</span></div>
+    <div class="card stat" id="openPosCard" style="cursor:pointer" title="Positions tab kholo"><small>Open positions</small><b>${opens}</b><span class="sub">${inr(deployed)} lagi hui — <b style="color:var(--accent)">Positions tab →</b></span></div>
     <div class="card stat"><small>Chhoote mauke</small><b>${noCash}</b><span class="sub">breakout aaya, cash nahi thi</span></div>`;
+
+  /* ---- POSITIONS TAB ----
+     Pehle khuli positions Track Record ki journal TABLE me ek row thi — history ke
+     beech dabi hui, aur "abhi karna kya hai" kahin likha hi nahi tha. Position
+     HISTORY nahi hai, ABHI ki haalat hai — isliye apna tab. */
+  (function positionsTab() {
+    const wrap = document.getElementById('posCards'), strip = document.getElementById('posStrip');
+    if (!wrap || !strip) return;
+    const ps = d.positions || [];
+    const dep = d.deployed || ps.reduce((a, p) => a + (p.invested || 0), 0);
+    const unreal = ps.reduce((a, p) => a + (p.pnlAmt || 0), 0);
+    const bookedN = ps.filter(p => p.booked).length;
+    const card = (label, val, sub, cls) =>
+      '<div class="card stat"><small>' + label + '</small><b class="' + (cls || '') + '">' + val +
+      '</b><span class="sub">' + sub + '</span></div>';
+    strip.innerHTML =
+      card('Khuli positions', ps.length, bookedN ? bookedN + ' me aadha book ho chuka' : 'koi half-booked nahi') +
+      card('Lagi hui capital', inr(dep), Math.round(dep / equity * 100) + '% deployed') +
+      card('Unrealised P&L', (unreal >= 0 ? '+' : '−') + inr(Math.abs(unreal)), 'abhi ke bhaav pe', unreal >= 0 ? 'pos' : 'neg') +
+      card('Free cash', inr(Math.max(0, equity - dep)), 'naye breakout ke liye');
+
+    if (!ps.length) {
+      wrap.innerHTML = '<div class="card pos-empty">Abhi koi position khuli nahi hai.<br><span class="note">Cash bhi ek position hai, bhaiya.</span></div>';
+      return;
+    }
+    wrap.innerHTML = ps.map((p, i) => {
+      const up = p.pnlPct >= 0;
+      // Rail sirf UN positions pe jo abhi book-target tak nahi pahunchi.
+      // Book ho chuki position ka asli sawaal alag hai: trail se kitna CUSHION bacha hai.
+      const showRail = !(p.booked && p.trail);
+      const lo = p.sl, hi = p.bookAt, span = Math.max(1e-9, hi - lo);
+      const pct = Math.max(0, Math.min(100, (p.cmp - lo) / span * 100));
+      const entryPct = Math.max(0, Math.min(100, (p.entry - lo) / span * 100));
+      const cushionPct = p.trail ? Math.round((p.cmp - p.trail) / p.cmp * 1000) / 10 : null;
+      const tags = [];
+      if (p.booked) tags.push('<span class="flag">Aadha book ho chuka</span>');
+      if (p.stale) tags.push('<span class="flag">⚠️ Bhaav purana</span>');
+      if (p.daysHeld != null) tags.push('<span class="flag">' + p.daysHeld + ' session hold</span>');
+      return '<div class="card poscard" data-tv="' + p.symbol + '" title="' + p.symbol + ' ka chart kholo" style="animation-delay:' + (i * 0.05) + 's">' +
+        '<div class="pos-head"><div class="pos-sym"><b>' + p.symbol + '</b><span class="note">' +
+          p.sector + ' · ' + p.picked + ' ko pick' + (p.triggerDate ? ' · ' + p.triggerDate + ' ko trigger' : '') +
+        '</span></div>' +
+        '<div class="pos-pnl"><b class="' + (up ? 'pos' : 'neg') + '">' + (up ? '+' : '') + p.pnlPct + '%</b>' +
+        '<span>' + (up ? '+' : '−') + inr(Math.abs(p.pnlAmt)) + '</span></div></div>' +
+        '<div class="pos-grid">' +
+          '<div><small>Entry</small><b>₹' + p.entry.toLocaleString('en-IN') + '</b></div>' +
+          '<div><small>Abhi</small><b>₹' + p.cmp.toLocaleString('en-IN') + '</b></div>' +
+          '<div><small>Lagi hui</small><b>' + inr(p.invested) + '</b></div>' +
+          '<div><small>Qty</small><b>' + p.qty + '</b></div>' +
+          '<div><small>SL</small><b>₹' + p.sl.toLocaleString('en-IN') + '</b></div>' +
+          '<div><small>' + (p.trail ? '40 DMA' : 'Book at') + '</small><b>₹' + (p.trail || p.bookAt).toLocaleString('en-IN') + '</b></div>' +
+        '</div>' +
+        (showRail
+          ? '<div><div class="pos-rail">' +
+              '<em style="left:0; width:' + pct + '%"></em>' +
+              '<i style="left:calc(' + entryPct + '% - 1px); background:var(--muted)" title="entry"></i>' +
+              '<i style="left:calc(' + pct + '% - 1px)" title="abhi"></i>' +
+            '</div><div class="pos-rail-lbl"><span>SL ₹' + p.sl.toLocaleString('en-IN') +
+            '</span><span>book ₹' + p.bookAt.toLocaleString('en-IN') + '</span></div></div>'
+          : '<div class="pos-rail-lbl" style="margin:0"><span>40 DMA se cushion</span><span style="color:' +
+            (cushionPct > 4 ? 'var(--green)' : cushionPct > 1.5 ? '#ffc46b' : 'var(--red)') + '"><b>' +
+            cushionPct + '%</b> (₹' + Math.round(p.cmp - p.trail).toLocaleString('en-IN') + ')</span></div>') +
+        '<div class="pos-next' + (p.cmp <= p.sl ? ' warn' : '') + '">' + p.next + '</div>' +
+        '<div class="pos-tags">' + tags.join('') +
+          '<a class="flag" style="text-decoration:none" href="https://in.tradingview.com/chart/?symbol=NSE%3A' +
+          p.symbol + '" target="_blank" rel="noopener">Chart ↗</a></div>' +
+      '</div>';
+    }).join('');
+  })();
 
   /* ---- Equity curve + time-range selector (1D / 1W / 1M / 1Y / 5Y / All) ----
      Backtest ab 5 saal ka hai, to poori curve ek saath dekhna bekaar hai — 2000+
@@ -978,7 +1199,8 @@
     // OPEN positions HAR range me dikhti hain. Wo history nahi, ABHI ki haalat hain —
     // 3 Aug ki khuli position 1D (sirf aaj) me chhup jaati thi aur lagta tha "gayab
     // ho gayi". Baaki rows apne exit-time se filter hoti hain.
-    let list = displayRows.filter(r => r.t.status === 'open' || rowTime(r.t) > from);
+    // Open positions ab apne "Positions" tab me hain — yahan sirf ITIHAAS rehta hai.
+    let list = displayRows.filter(r => r.t.status !== 'open' && rowTime(r.t) > from);
     if (journalFilter) list = list.filter(r => r.t.status === journalFilter);
     if (journalQuery) list = list.filter(r => r.t.symbol.includes(journalQuery));
     document.getElementById('journalRangeNote').textContent = journalQuery
@@ -1031,6 +1253,12 @@
         Charges (STT/DP/GST) ${inr(s.charges)} kaat ke. Universe aaj ki NSE list hai,
         to delist hue stocks isme nahi (numbers thode upar honge).
       </div>`;
+  })();
+
+  // "Open positions" card se seedha Positions tab
+  (function () {
+    const c = document.getElementById('openPosCard');
+    if (c) c.addEventListener('click', () => document.querySelector('.tab[data-view="positions"]').click());
   })();
 
   /* range tabs wiring — chart, period stats aur journal teeno saath badalte hain */
