@@ -182,6 +182,7 @@ export const INDUSTRY_MAP = {
   'Consulting Services': 'Services',
   'Security & Protection Services': 'Services',
   'Waste Management': 'Services',
+  'Pollution & Treatment Controls': 'Services',
   'Rental & Leasing Services': 'Services',
   'Conglomerates': 'Diversified'
   // 'Shell Companies' jaan-bujh ke nahi — wo 'Other' hi rahe

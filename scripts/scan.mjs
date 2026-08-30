@@ -10,6 +10,7 @@ import { readFileSync, writeFileSync } from 'fs';
 import { execSync } from 'child_process';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
+import { stitchHistory, needsBseBackfill } from './history.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -327,10 +328,35 @@ async function main() {
   const earningsMap = await fetchEarningsDates();
   const charts = {};
   let idx = 0, failed = [];
+  // Universe-health counters. Pehle system CHUP-CHAAP andha tha — 272 stocks
+  // history ki kami se skip ho rahe the aur kahin koi ginti nahi dikhti thi.
+  const health = { stitched: 0, boOnly: 0, boRejected: 0, shortHistory: 0, illiquid: 0, noSector: 0, scanned: 0 };
   async function worker() {
     while (idx < universe.length) {
       const u = universe[idx++];
-      const ch = await fetchChart(u.s + '.NS');
+      let ch = await fetchChart(u.s + '.NS');
+      // ★ NSE pe naya ticker = chhoti history, chahe company 40 saal purani ho.
+      // NSE ne Apr+Aug 2026 me BSE ki ~250 companies BULK me admit ki thi — unki
+      // poori history .BO pe hai. Purana hissa wahan se bhar lo, warna MIN_BARS
+      // gate unhe chup-chaap reject karta hai AUR 52W-high 92 din ka ban jaata hai.
+      // Identity bhavcopy ke aaj ke close se verify hoti hai (history.mjs dekho).
+      if (needsBseBackfill(ch)) {
+        const bo = await fetchChart(u.s + '.BO');
+        if (bo) {
+          const r = stitchHistory(ch, bo, bhav?.stocks.get(u.s)?.close ?? null);
+          if (r.boBars) {
+            // BO-only stock ki liquidity BSE ke volume se nikalti hai — uske liye
+            // NSE ka aaj ka asli turnover bhi ₹5Cr+ chahiye, warna hum BSE ki
+            // liquidity pe NSE ki trade maan lenge.
+            const nseTv = bhav?.stocks.get(u.s)?.tv ?? 0;
+            if (r.src === 'BO' && nseTv < MIN_TRADED_VALUE) health.boRejected++;
+            else {
+              ch = r.bars; ch.src = r.src; ch.boBars = r.boBars;
+              if (r.src === 'BO') health.boOnly++; else health.stitched++;
+            }
+          } else if (/^(identity fail|drift)/.test(r.reason)) health.boRejected++;
+        }
+      }
       if (ch) {
         if (bhav && bhav.stocks.has(u.s)) {
           const b = bhav.stocks.get(u.s);
@@ -347,6 +373,7 @@ async function main() {
   // Universe ~2000 ka ho gaya hai — 9 workers taaki cloud ke 20-min timeout me aaram se aa jaye
   await Promise.all(Array.from({ length: 9 }, () => worker()));
   console.log(`Universe: ${Object.keys(charts).length}/${universe.length} fetched (fail: ${failed.length})`);
+  console.log(`BSE backfill: ${health.stitched} stitch + ${health.boOnly} BO-only | ${health.boRejected} reject`);
 
   // --- market health ---
   const sc = smallcap.c;
@@ -485,13 +512,15 @@ async function main() {
       // thi — 51 liquid naye stocks (INDOMIM ₹1433Cr/din, SBIFUNDS ₹649Cr/din) bilkul
       // nahi dikhte the. Backtest: 120→100 pe ₹6L FULL +150%→+201%, DD -11.7%→-9.9%.
       // 100 se aur neeche jaane ka koi fayda nahi mila, isliye wahin ruke.
-      if (n < MIN_BARS) continue;
+      if (n < MIN_BARS) { health.shortHistory++; continue; }
       const close = c[n - 1];
 
       // liquidity
       let tv = 0; for (let i = n - 20; i < n; i++) tv += c[i] * v[i];
       tv /= 20;
-      if (tv < MIN_TRADED_VALUE) continue;
+      if (tv < MIN_TRADED_VALUE) { health.illiquid++; continue; }
+      health.scanned++;
+      if (u.sec === 'Other') health.noSector++;
 
       // trend: above rising 50 DMA. Nayi listing (120 bars se kam) ke paas 50 DMA
       // kachchi hoti hai — uske liye 20 DMA se check karte hain. s50 display ke liye
@@ -862,6 +891,22 @@ async function main() {
     strategyTest,
     market: { gear, gearLabel, verdict: verdicts[gear], checks },
     hotSectors: hotSectors.slice(0, 4).map(({ name, note }) => ({ name, note })),
+    // Universe health — system ab bata sakta hai ki wo kitna DEKH paa raha hai.
+    // Ye isliye hai kyunki 272 stocks 4 mahine se chup-chaap skip ho rahe the
+    // (NSE pe naya ticker = chhoti history) aur kahin koi ginti nahi thi.
+    universeHealth: {
+      listed: fullUniverse.length,
+      prefiltered: universe.length,
+      fetched: Object.keys(charts).length,
+      scanned: health.scanned,
+      skippedShortHistory: health.shortHistory,
+      skippedIlliquid: health.illiquid,
+      noSector: health.noSector,
+      bseStitched: health.stitched,
+      bseOnly: health.boOnly,
+      bseRejected: health.boRejected,
+      sectorCoveragePct: Math.round((fullUniverse.length - fullUniverse.filter(u => u.sec === 'Other').length) / fullUniverse.length * 100)
+    },
     picks,
     watchlist,
     journal: journalOut
