@@ -527,6 +527,30 @@ async function main() {
   hotSectors.sort((a, b) => b.heat - a.heat);
   const hotNames = new Set(hotSectors.slice(0, 4).map(s => s.name));
 
+  // ★ SECTOR KE ANDAR LEADERSHIP (display-only, abhi scoring me NAHI)
+  // Vault, Best of the Best §2b: SHREDIGCEM ka base bhi ACHHA tha — par leader
+  // RPOWER tha. "Screen pe dono pass ho jaate hain"; farak ye hai ki jab leader
+  // chalta hai to KITNA chalta hai. Abhi hot-sector bonus FLAT +4 hai — sector ka
+  // #1 ho ya #12, dono ko barabar. Ye naap us bonus ko rank-weighted karne ka
+  // aadhaar hai, PAR wo scoring change abhi TEST NAHI hua
+  // (rules.json → selection.leader_rank = proposed), isliye filhaal sirf dikhta hai.
+  // Naap 60-din ka return hai, SCORE se bilkul alag — warna rank circular ho jaata.
+  const leaderPct = {};   // symbol -> 0..100 (100 = sector ka sabse strong)
+  {
+    const bySec = {};
+    for (const u of universe) {
+      const ch = charts[u.s]; if (!ch || ch.c.length < 61) continue;
+      const c = ch.c, n = c.length;
+      const r60 = (c[n - 1] - c[n - 61]) / c[n - 61] * 100;
+      (bySec[u.sec] = bySec[u.sec] || []).push([u.s, r60]);
+    }
+    for (const list of Object.values(bySec)) {
+      if (list.length < 3) continue;
+      list.sort((a, b) => a[1] - b[1]);            // sabse kamzor pehle
+      list.forEach(([sym], i) => { leaderPct[sym] = Math.round(i / (list.length - 1) * 100); });
+    }
+  }
+
   // --- stock scan ---
   // noTrade din pe bhi loop chalta hai — picks nahi milte, lekin "nazar-me-rakho"
   // watchlist ke liye relaxed candidates chahiye (ready ke KAREEB wale)
@@ -716,6 +740,7 @@ async function main() {
     symbol: c.symbol, name: c.name, sector: c.sector, cap: c.cap,
     cmp: c.cmp, pivot: c.pivot, sl: c.sl, prox: c.detail.proxPivot, range: c.detail.rangePct,
     baseDays: c.detail.baseDays, ready: !!c._ready,
+    leaderPct: leaderPct[c.symbol] ?? null,
     flags: c.flags, hot: c.flags.includes('Hot sector')
   }));
   console.log(`Candidates: ${candidates.length} (ready: ${readyCands.length}), picks: ${picks.length}, watchlist: ${watchlist.length}, gear: ${gear}`);
@@ -733,6 +758,10 @@ async function main() {
     fire: sec.fire,
     stocks: candidates.filter(c => c.sector === sec.name).slice(0, 5).map((c, i) => ({
       rank: i + 1,
+      // Sector ke andar 60-din ke return ka percentile. 100 = sabse strong.
+      // Ye setup-score se ALAG cheez hai: setup batata hai "kab", leadership
+      // batati hai "kaun". Dono ek hi stock me mil jaayein to wahi best-of-best.
+      leaderPct: leaderPct[c.symbol] ?? null,
       symbol: c.symbol, name: c.name, cap: c.cap,
       cmp: c.cmp, pivot: c.pivot, sl: c.sl,
       prox: c.detail.proxPivot, range: c.detail.rangePct, baseDays: c.detail.baseDays,
@@ -903,6 +932,145 @@ async function main() {
   writeFileSync(join(ROOT, 'journal.json'), JSON.stringify(state, null, 2));
   } // end !alreadyProcessed
 
+  // ★ #3 WATCHLIST TRACKER — "watchlist ki ranking predictive hai ya nahi?"
+  // Watchlist roz naye sire se banti hai, to kisi ko yaad hi nahi rehta ki us
+  // naam ka aage hua kya. Ye har watchlist naam ko WATCH_DAYS tak track karta
+  // hai: uska pivot yaad rakhta hai aur dekhta hai ki wo cross hua ya nahi.
+  // Isse ek imaandaar sawaal ka jawab milta hai — jinhe scanner "pivot ke
+  // kareeb" bata raha tha, unme se sach me kitne bhaage?
+  // ⚠️ Ye TRADE nahi hai aur journal se iska koi lena-dena nahi. Ye scanner ka
+  // apna report card hai.
+  const WATCH_DAYS = 15;
+  // ⚠️ Tracker ka state JOURNAL ke andar rehta hai, apni alag file me NAHI.
+  // Wajah: cloud workflow sirf `git add data.js journal.json universe.json` karta
+  // hai. Alag file cloud run me likhi to jaati, par COMMIT kabhi nahi hoti — to
+  // tracker local run pe aage badhta aur cloud run pe chup-chaap reset ho jaata.
+  // Bilkul wahi khaamoshi jo is project ko pehle mehngi pad chuki hai.
+  // (scan.yml edit nahi kar sakte — GitHub token me 'workflow' scope nahi hai.)
+  // backtest.mjs ka writeJournal() unknown keys ko chhuata nahi, to ye safe hai.
+  let track = state.watchTrack || { names: {}, done: [] };
+
+  // Pehli baar (file hai hi nahi) to aaj ki watchlist se SEED kar do — chahe
+  // session pehle se processed ho. Warna tracker agle naye session tak khali
+  // rehta aur dashboard pe report card gayab dikhta.
+  const bootstrap = !state.watchTrack;
+  if (bootstrap) {
+    for (const w of watchlist) {
+      track.names[w.symbol] = {
+        firstSeen: sessionTs, firstSeenLabel: fmtShort(sessionTs),
+        pivot: w.pivot, sector: w.sector, sessions: 0, crossed: false, maxHighPct: 0,
+        lastSeen: sessionTs
+      };
+    }
+    track.updated = new Date().toISOString();
+    state.watchTrack = track;
+    writeFileSync(join(ROOT, 'journal.json'), JSON.stringify(state, null, 2));
+    console.log(`Watchlist tracker seed: ${watchlist.length} naam`);
+  }
+
+  if (!alreadyProcessed) {
+    // 1) aaj ki watchlist ke naye naam jodo
+    for (const w of watchlist) {
+      if (!track.names[w.symbol]) {
+        track.names[w.symbol] = {
+          firstSeen: sessionTs, firstSeenLabel: fmtShort(sessionTs),
+          pivot: w.pivot, sector: w.sector, sessions: 0, crossed: false, maxHighPct: 0
+        };
+      }
+      track.names[w.symbol].lastSeen = sessionTs;
+    }
+    // 2) har tracked naam pe aaj ka bhaav dekho
+    for (const [sym, t] of Object.entries(track.names)) {
+      const ch = charts[sym];
+      t.sessions = (t.sessions || 0) + 1;
+      if (ch) {
+        const n = ch.c.length, hi = ch.h[n - 1];
+        const gainPct = round2((hi - t.pivot) / t.pivot * 100);
+        if (gainPct > (t.maxHighPct || 0)) t.maxHighPct = gainPct;
+        if (!t.crossed && hi > t.pivot) {
+          t.crossed = true; t.crossedTs = sessionTs;
+          t.crossedInSessions = t.sessions;
+        }
+      }
+      // 3) window khatam — nateeja done[] me daal ke naam hata do
+      if (t.sessions >= WATCH_DAYS) {
+        track.done.push({
+          symbol: sym, sector: t.sector, from: t.firstSeenLabel,
+          crossed: !!t.crossed, inSessions: t.crossedInSessions ?? null,
+          maxHighPct: t.maxHighPct ?? 0
+        });
+        delete track.names[sym];
+      }
+    }
+    if (track.done.length > 500) track.done = track.done.slice(-500);
+    track.updated = new Date().toISOString();
+    state.watchTrack = track;
+    writeFileSync(join(ROOT, 'journal.json'), JSON.stringify(state, null, 2));
+  }
+
+  // Report card hamesha banta hai (--force pe bhi), file se
+  const watchStats = (() => {
+    const done = track.done || [];
+    const live = Object.entries(track.names || {}).map(([symbol, t]) => ({
+      symbol, sector: t.sector, from: t.firstSeenLabel, sessions: t.sessions || 0,
+      crossed: !!t.crossed, inSessions: t.crossedInSessions ?? null,
+      maxHighPct: t.maxHighPct ?? 0
+    })).sort((a, b) => b.sessions - a.sessions);
+    if (!done.length && !live.length) return null;
+    const crossedDone = done.filter(d => d.crossed);
+    const avgDays = crossedDone.length
+      ? round2(crossedDone.reduce((a, d) => a + (d.inSessions || 0), 0) / crossedDone.length) : null;
+    return {
+      windowDays: WATCH_DAYS,
+      settled: done.length,
+      settledCrossed: crossedDone.length,
+      crossRate: done.length ? Math.round(crossedDone.length / done.length * 100) : null,
+      avgSessionsToCross: avgDays,
+      tracking: live.slice(0, 12),
+      trackingCount: live.length
+    };
+  })();
+  if (watchStats) console.log(`Watchlist tracker: ${watchStats.trackingCount} chal rahe, ${watchStats.settled} settle hue` +
+    (watchStats.crossRate != null ? ` — ${watchStats.crossRate}% ne pivot cross kiya` : ''));
+
+  // ★ #2 PICKS KA REPORT CARD — "kal jo diye the, unka kya hua?"
+  // Creator ka #1 signal "breakouts working?" market ke liye hai. Ye uska
+  // PERSONAL version hai: hamare apne picks chal rahe hain ya nahi.
+  // Sabse recent pick-date ke saare picks, unka abhi ka haal.
+  const pickHistory = [
+    ...state.closed.filter(t => t.ts).map(t => ({
+      ts: t.ts, picked: t.picked, symbol: t.symbol, sector: t.sector,
+      status: t.status, pnlPct: t.pnlPct ?? 0, reason: t.reason
+    })),
+    ...state.positions.map(p => ({
+      ts: p.pickedTs, picked: p.picked, symbol: p.symbol, sector: p.sector,
+      status: p.entryStatus === 'open' ? 'open' : 'pending',
+      pnlPct: p.curPnlPct ?? 0,
+      reason: p.entryStatus === 'open'
+        ? `Trigger hua ${p.triggerDate || ''} ko — abhi chal rahi hai`
+        : `Abhi tak pivot ${p.pivot} cross nahi hua (${p.daysWaiting || 0} din wait)`
+    }))
+  ].filter(x => x.ts).sort((a, b) => b.ts - a.ts);
+
+  const lastPicks = (() => {
+    if (!pickHistory.length) return null;
+    // sabse recent pick-date (aaj ke picks abhi trigger nahi hue honge, to
+    // pichhli AISI date lo jispe kuch nateeja aa chuka ho)
+    const dayOf = ts => Math.floor((ts + 19800) / 86400);
+    const today = dayOf(sessionTs);
+    const prior = pickHistory.filter(x => dayOf(x.ts) < today);
+    if (!prior.length) return null;
+    const d = dayOf(prior[0].ts);
+    const group = prior.filter(x => dayOf(x.ts) === d);
+    const triggered = group.filter(x => x.status !== 'no-trigger' && x.status !== 'no-cash').length;
+    return {
+      date: group[0].picked,
+      picks: group.map(({ ts, ...g }) => g),
+      triggered, total: group.length
+    };
+  })();
+  if (lastPicks) console.log(`Pichhle picks (${lastPicks.date}): ${lastPicks.triggered}/${lastPicks.total} trigger hue`);
+
   // --- display journal (closed + open/pending) ---
   const journalOut = [
     // Backtest ab 5 saal ka hai (~2900 trades). Kaatna nahi hai — warna equity
@@ -1005,6 +1173,8 @@ async function main() {
     // kitna maal hai — warna lagta hai scanner ne kuch dhoonda hi nahi.
     readyCount: readyCands.length,
     candidateCount: candidates.length,
+    lastPicks,
+    watchStats,
     positions: positionsOut,
     deployed: round2(deployedNow),
     journal: journalOut

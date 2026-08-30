@@ -1855,5 +1855,111 @@
     24,
     24,
     24
-  ]
+  ],
+  "watchTrack": {
+    "names": {
+      "VRLLOG": {
+        "firstSeen": 1787891400,
+        "firstSeenLabel": "28 Aug",
+        "pivot": 304.2,
+        "sector": "Logistics / Shipping",
+        "sessions": 0,
+        "crossed": false,
+        "maxHighPct": 0,
+        "lastSeen": 1787891400
+      },
+      "SYRMA": {
+        "firstSeen": 1787891400,
+        "firstSeenLabel": "28 Aug",
+        "pivot": 1526,
+        "sector": "Electronics / EMS",
+        "sessions": 0,
+        "crossed": false,
+        "maxHighPct": 0,
+        "lastSeen": 1787891400
+      },
+      "HOMEFIRST": {
+        "firstSeen": 1787891400,
+        "firstSeenLabel": "28 Aug",
+        "pivot": 1228,
+        "sector": "Financial Services",
+        "sessions": 0,
+        "crossed": false,
+        "maxHighPct": 0,
+        "lastSeen": 1787891400
+      },
+      "ARMANFIN": {
+        "firstSeen": 1787891400,
+        "firstSeenLabel": "28 Aug",
+        "pivot": 2045,
+        "sector": "NBFC / Finance",
+        "sessions": 0,
+        "crossed": false,
+        "maxHighPct": 0,
+        "lastSeen": 1787891400
+      },
+      "SHREEJISPG": {
+        "firstSeen": 1787891400,
+        "firstSeenLabel": "28 Aug",
+        "pivot": 667.2,
+        "sector": "Logistics / Shipping",
+        "sessions": 0,
+        "crossed": false,
+        "maxHighPct": 0,
+        "lastSeen": 1787891400
+      },
+      "SEAMECLTD": {
+        "firstSeen": 1787891400,
+        "firstSeenLabel": "28 Aug",
+        "pivot": 1720,
+        "sector": "Logistics / Shipping",
+        "sessions": 0,
+        "crossed": false,
+        "maxHighPct": 0,
+        "lastSeen": 1787891400
+      },
+      "KRN": {
+        "firstSeen": 1787891400,
+        "firstSeenLabel": "28 Aug",
+        "pivot": 1612,
+        "sector": "Capital Goods",
+        "sessions": 0,
+        "crossed": false,
+        "maxHighPct": 0,
+        "lastSeen": 1787891400
+      },
+      "CNL": {
+        "firstSeen": 1787891400,
+        "firstSeenLabel": "28 Aug",
+        "pivot": 1275,
+        "sector": "Electronics / EMS",
+        "sessions": 0,
+        "crossed": false,
+        "maxHighPct": 0,
+        "lastSeen": 1787891400
+      },
+      "ANANDRATHI": {
+        "firstSeen": 1787891400,
+        "firstSeenLabel": "28 Aug",
+        "pivot": 2242,
+        "sector": "Financial Services",
+        "sessions": 0,
+        "crossed": false,
+        "maxHighPct": 0,
+        "lastSeen": 1787891400
+      },
+      "MARKSANS": {
+        "firstSeen": 1787891400,
+        "firstSeenLabel": "28 Aug",
+        "pivot": 336.4,
+        "sector": "Healthcare",
+        "sessions": 0,
+        "crossed": false,
+        "maxHighPct": 0,
+        "lastSeen": 1787891400
+      }
+    },
+    "done": [],
+    "updated": "2026-08-30T12:25:39.535Z"
+  }
 }

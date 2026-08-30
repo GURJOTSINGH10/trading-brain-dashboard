@@ -36,6 +36,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { gzipSync, gunzipSync } from 'zlib';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
+import { stitchHistory, needsBseBackfill } from './history.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CACHE_DIR = join(ROOT, '.cache');
@@ -171,7 +172,9 @@ const WINDOW = parseInt(args.find(a => /^\d+$/.test(a)) || '', 10)
 const KEEP_BARS = WINDOW + WARMUP + 30;
 const RANGE = KEEP_BARS <= 480 ? '2y' : KEEP_BARS <= 1200 ? '5y' : '10y';
 // v2 = naye listings bhi included (fetch threshold 130 se 70 bars ho gaya)
-const CACHE_FILE = join(CACHE_DIR, `charts-${RANGE}-v2.json.gz`);
+// v3 = BSE history backfill (NSE pe naye ticker ki purani history .BO se) — cache
+//      ka naam badalna ZAROORI hai, warna purani (adhuri) history reuse ho jaati.
+const CACHE_FILE = join(CACHE_DIR, `charts-${RANGE}-v3.json.gz`);
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const round2 = x => Math.round(x * 100) / 100;
@@ -231,11 +234,30 @@ async function loadCharts(universe) {
   }
   console.log(`${universe.length} stocks ki ${RANGE} history laa rahe (ek hi baar, phir cache se)...`);
   const charts = {};
-  let idx = 0, ok = 0, t0 = Date.now();
+  let idx = 0, ok = 0, bse = 0, t0 = Date.now();
   async function worker() {
     while (idx < universe.length) {
       const u = universe[idx++];
-      const ch = await fetchChart(u.s + '.NS');
+      let ch = await fetchChart(u.s + '.NS');
+      // ★ scan.mjs ke BARABAR rakhna ZAROORI hai. NSE pe naya ticker = chhoti
+      // history, chahe company purani ho (Apr+Aug 2026 me BSE se ~250 companies
+      // aayi thi). Agar ye sirf live me hota aur backtest me nahi, to backtest
+      // ek ALAG universe pe chalta — bilkul wahi galti jo bug 7f me hui thi
+      // (cash constraint backtest me tha, live me nahi).
+      // NOTE: yahan bhavcopy nahi hai, to refClose null jaata hai — matlab jinki
+      // NS bars 5 se kam hain unka stitch nahi hoga (identity verify nahi ho
+      // sakti). Ye jaan-boojhkar conservative hai.
+      if (needsBseBackfill(ch)) {
+        const bo = await fetchChart(u.s + '.BO');
+        if (bo) {
+          const r = stitchHistory(ch, bo, null);
+          if (r.boBars) {
+            ch = r.bars;
+            if (ch.c.length > KEEP_BARS) for (const k of ['t','o','h','l','c','v']) ch[k] = ch[k].slice(-KEEP_BARS);
+            bse++;
+          }
+        }
+      }
       if (ch) { charts[u.s] = ch; ok++; }
       if (idx % 250 === 0) console.log(`  ${idx}/${universe.length} (mile ${ok}, ${Math.round((Date.now() - t0) / 1000)}s)`);
       await sleep(80);
@@ -244,6 +266,7 @@ async function loadCharts(universe) {
   await Promise.all(Array.from({ length: 8 }, () => worker()));
   mkdirSync(CACHE_DIR, { recursive: true });
   writeFileSync(CACHE_FILE, gzipSync(JSON.stringify({ builtAt: new Date().toISOString(), range: RANGE, charts })));
+  console.log(`BSE backfill: ${bse} stocks ki purani history .BO se joddi`);
   console.log(`Charts: ${ok}/${universe.length} — cache likh diya (${(existsSync(CACHE_FILE) ? readFileSync(CACHE_FILE).length / 1e6 : 0).toFixed(1)} MB)`);
   return charts;
 }

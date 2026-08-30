@@ -254,6 +254,22 @@
   [data-tv]:hover { border-color: rgba(84,169,255,0.55); }
   tr[data-tv]:hover { background: rgba(84,169,255,0.06); }
 
+  /* ===== Pichhle picks ka report card ===== */
+  .lp-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--border-soft); font-size: 12.5px; }
+  .lp-row:first-of-type { border-top: none; }
+  .lp-row b { min-width: 96px; }
+  .lp-res { font-size: 11px; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+  .lp-res.win { background: rgba(49,212,146,0.13); color: #4fe0a8; border: 1px solid rgba(49,212,146,0.35); }
+  .lp-res.loss { background: rgba(255,107,118,0.12); color: #ff8f96; border: 1px solid rgba(255,107,118,0.35); }
+  .lp-res.flat { background: rgba(148,163,184,0.12); color: var(--muted); border: 1px solid var(--border); }
+  .lp-why { color: var(--muted); font-size: 11.5px; flex: 1; min-width: 0; }
+
+  /* Leadership bar — sector ke andar kitna aage */
+  .ldr { display: inline-flex; align-items: center; gap: 6px; }
+  .ldr-bar { width: 42px; height: 5px; border-radius: 4px; background: rgba(148,163,184,0.18); position: relative; overflow: hidden; }
+  .ldr-bar i { position: absolute; left: 0; top: 0; height: 5px; border-radius: 4px; background: #ffc46b; }
+  .ldr small { color: var(--muted); font-size: 10.5px; font-variant-numeric: tabular-nums; }
+
   /* ===== Watchlist ===== */
   .wl-table { width: 100%; border-collapse: collapse; background: var(--surface); min-width: 0;
     border: 1px solid var(--border-soft); border-radius: 15px; overflow: hidden; }
@@ -553,6 +569,9 @@
     <h2>Result Calendar — kis pick ka result kab</h2>
     <div id="earnCal"></div>
 
+    <h2 id="lpHeading" style="display:none;">Pichhle Picks Ka Kya Hua</h2>
+    <div id="lastPicks"></div>
+
     <h2 id="picksHeading">Ready Stocks — High Priority List</h2>
     <div class="picks" id="picks"></div>
 
@@ -778,6 +797,36 @@
     ? d.hotSectors.map((s, i) => `<div class="sector-chip" style="animation-delay:${i * 0.06}s"><b>${s.name}</b> · <span>${s.note}</span></div>`).join('')
     : '<div class="sector-chip"><span>Koi hot sector nahi — action ka wait karo</span></div>';
 
+  /* ---- PICHHLE PICKS KA REPORT CARD ----
+     Creator ka #1 signal "breakouts working?" poore MARKET ke liye hai. Ye uska
+     personal version hai: HAMARE apne picks chal rahe hain ya nahi. Bina iske
+     dashboard roz naye naam deta rehta hai aur kabhi hisaab nahi deta. */
+  (function lastPicksCard() {
+    const lp = d.lastPicks;
+    const el = document.getElementById('lastPicks');
+    if (!el || !lp || !lp.picks.length) return;
+    document.getElementById('lpHeading').style.display = '';
+    const label = st => ({
+      win: 'Profit me bandh', sl: 'SL hit', fail: 'Loss me bandh',
+      open: 'Chal rahi hai', pending: 'Wait pe', 'no-trigger': 'Trigger nahi hua',
+      'no-cash': 'Cash nahi thi'
+    })[st] || st;
+    const cls = p => (p.status === 'win' || (p.status === 'open' && p.pnlPct > 0)) ? 'win'
+      : (p.status === 'sl' || p.status === 'fail' || (p.status === 'open' && p.pnlPct < 0)) ? 'loss' : 'flat';
+    el.innerHTML = '<div class="card">' +
+      '<div class="hero-label" style="margin-bottom:6px;">' + lp.date + ' ke picks — <b>' +
+        lp.triggered + '/' + lp.total + '</b> trigger hue</div>' +
+      lp.picks.map(p =>
+        '<div class="lp-row" data-tv="' + p.symbol + '">' +
+          '<b>' + p.symbol + '</b>' +
+          '<span class="lp-res ' + cls(p) + '">' + label(p.status) +
+            (['win','sl','fail','open'].includes(p.status) ? ' ' + (p.pnlPct >= 0 ? '+' : '') + p.pnlPct + '%' : '') +
+          '</span>' +
+          '<span class="lp-why">' + (p.reason || '') + '</span>' +
+        '</div>').join('') +
+      '</div>';
+  })();
+
   /* ---- Sector Plays — "ye sector garam hai, isme ye 5 stock" ----
      Hot-sector chip pehle sirf NAAM batata tha. Asli sawaal wo nahi hai — asli
      sawaal hai "to isme LOON kya?". Ye block wahi jawab deta hai, stocks ko RANK
@@ -790,15 +839,23 @@
     if (!sp.length) { el.innerHTML = ''; return; }
     const fireLabel = { aag: '🔥 AAG LAGI HAI', garam: '🌡️ GARAM', reaction: '⚡ SIRF REACTION' };
     el.innerHTML = sp.map(sec => {
+      // 👑 ab SETUP-rank pe nahi, ASLI leadership pe — sector ke andar 60-din ka
+      // return sabse zyada kiske. Setup batata hai "kab", leadership "kaun".
+      // Vault: dono base achhe ho sakte hain; farak ye ki leader KITNA chalta hai.
+      const best = sec.stocks.reduce((m, x) => (x.leaderPct ?? -1) > (m?.leaderPct ?? -1) ? x : m, null);
       const rows = sec.stocks.map(st => {
         const cls = st.stage === 'Pivot pe khada' ? 'atpivot' : st.stage === 'Ready' ? 'ready' : '';
+        const isLead = best && st.symbol === best.symbol && (st.leaderPct ?? 0) >= 50;
         return '<tr data-tv="' + st.symbol + '" title="' + st.symbol + ' ka chart kholo">' +
-          '<td class="sp-rank ' + (st.rank === 1 ? 'leader' : '') + '">' + (st.rank === 1 ? '👑' : '#' + st.rank) + '</td>' +
+          '<td class="sp-rank ' + (isLead ? 'leader' : '') + '">' + (isLead ? '👑' : '#' + st.rank) + '</td>' +
           '<td class="sp-sym"><b>' + st.symbol + '</b><span class="note">' + st.name + ' · ' + st.cap +
             (st.isPick ? ' · <b style="color:var(--accent)">AAJ KA PICK</b>' : '') + '</span></td>' +
           '<td><span class="sp-stage ' + cls + '">' + st.stage + '</span></td>' +
           '<td class="sp-lvl">₹' + st.pivot.toLocaleString('en-IN') + '<small>pivot · ' + st.prox + '% door</small></td>' +
           '<td class="sp-lvl">₹' + st.cmp.toLocaleString('en-IN') + '<small>abhi · base ' + st.baseDays + 'd / ' + st.range + '%</small></td>' +
+          '<td>' + (st.leaderPct == null ? '' :
+            '<span class="ldr"><span class="ldr-bar"><i style="width:' + st.leaderPct + '%"></i></span>' +
+            '<small>' + st.leaderPct + '</small></span>') + '</td>' +
         '</tr>';
       }).join('');
       return '<div class="sector-block">' +
@@ -807,7 +864,8 @@
         '<div class="sector-metrics">' + (sec.depthNote || sec.note) + '</div></div>' +
         '<table class="sp-table">' + rows + '</table></div>';
     }).join('') +
-    '<div class="sp-note">👑 = us sector ka sabse strong candidate. Ye <b>trade nahi</b> hai — journal sirf top-2 picks ko track karta hai.<br>' +
+    '<div class="sp-note">👑 = sector ka <b>asli leader</b> — 60-din ke return me sabse aage (peeli bar = sector ke andar percentile). Ye setup-rank (#2, #3…) se <b>alag</b> cheez hai: setup batata hai <b>kab</b>, leadership batati hai <b>kaun</b>. Dono ek hi naam me milein — wahi best of the best.<br>' +
+    'Ye <b>trade nahi</b> hai — journal sirf top-2 picks ko track karta hai.<br>' +
     '"Aag lagi hai" ka matlab: <b>hafton ka move + kai naam ek saath</b> — sirf 2-3 din ka uchhaal nahi. Ye label abhi sirf padhne ke liye hai, scoring ise use nahi karti.</div>';
   })();
 
@@ -923,11 +981,25 @@
       '<tr data-tv="' + w.symbol + '" title="' + w.symbol + ' ka TradingView chart kholo">' +
         '<td class="wl-sym"><b>' + w.symbol + '</b> <span class="cap-badge cap-' + (w.cap || 'Small') + '">' + (w.cap || 'Small') + '</span>' +
           '<span class="note">' + w.name + ' · ' + w.sector + (w.hot ? ' · 🔥 hot sector' : '') + '</span></td>' +
-        '<td><span class="wl-badge' + (w.ready ? ' ready' : '') + '">' + (w.ready ? 'Ready' : 'Base ban raha') + '</span></td>' +
+        '<td><span class="wl-badge' + (w.ready ? ' ready' : '') + '">' + (w.ready ? 'Ready' : 'Base ban raha') + '</span>' +
+          (w.leaderPct == null ? '' : '<span class="ldr" style="margin-left:6px"><span class="ldr-bar"><i style="width:' + w.leaderPct + '%"></i></span><small>' + w.leaderPct + '</small></span>') + '</td>' +
         '<td class="wl-lvl">₹' + w.pivot.toLocaleString('en-IN') + '<small>pivot · ' + w.prox + '% door</small></td>' +
         '<td class="wl-lvl">₹' + (w.sl != null ? w.sl.toLocaleString('en-IN') : '—') + '<small>SL</small></td>' +
         '<td class="wl-lvl">₹' + w.cmp.toLocaleString('en-IN') + '<small>abhi · base ' + (w.baseDays || '?') + 'd / ' + w.range + '%</small></td>' +
       '</tr>').join('') + '</table>' +
+      (function () {
+        const w = d.watchStats;
+        if (!w) return '';
+        const rate = w.crossRate != null
+          ? '<b>' + w.settledCrossed + '/' + w.settled + '</b> ne pivot cross kiya (<b>' + w.crossRate + '%</b>)' +
+            (w.avgSessionsToCross ? ' · average <b>' + w.avgSessionsToCross + '</b> session me' : '')
+          : 'abhi koi naam settle nahi hua — pehla nateeja ' + w.windowDays + ' session baad';
+        return '<div class="wl-note" style="border-top:1px solid var(--border-soft); margin-top:10px; padding-top:10px;">' +
+          '📋 <b>Watchlist ka report card</b> (' + w.windowDays + '-session window): ' + rate +
+          ' · abhi <b>' + w.trackingCount + '</b> naam track ho rahe hain.<br>' +
+          '<span style="opacity:.8">Ye naapta hai ki scanner ki "pivot ke kareeb" wali ranking sach me predictive hai ya nahi. ' +
+          'Ye trade ka hisaab NAHI hai — sirf scanner ka apna report card.</span></div>';
+      })() +
       '<div class="wl-note">Ye <b>TRADE NAHI</b> hain — journal inhe track nahi karta. Ye wo naam hain jo pivot ke sabse kareeb hain: ' +
       '<b>pivot cross ho tabhi</b> baat banti hai, usse pehle jo bhi hai sirf indication hai. Kisi bhi row pe click karke chart kholo.</div>';
   })();
