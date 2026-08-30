@@ -114,6 +114,30 @@ const MIN_TRADED_VALUE = MIN_TV_CR * 1e7;   // crore → rupees
 // "Defence names are doing something good", "metal me action hai" — dekhein weight
 // badhane se pick quality sudhrti hai ya nahi.
 const HOT_BONUS = parseFloat(argVal('--hot-bonus', '4'));
+// ★ DO EXPERIMENTAL FLAG (30 Aug 2026) — default OFF. Dono deep mining se aaye
+// hain aur dono SCORING badalte hain, isliye inhe gate paar kiye bina kabhi
+// default mat karna.
+//
+// --sector-persist : "AAG LAG JAANI CHAHIYE"
+//   Abhi sector 5-din ke return pe hot ban jaata hai. Vault kehta hai wo bar
+//   bahut dheela hai: "ek-do din ka move REACTION hai; sector tab garam hota
+//   hai jab HAFTON tak, KAI NAAM chalein." 24 Aug 2026 ke video me iska doosra,
+//   swatantra saboot bhi mila — sugar spot +20-30% tha par stocks beaten down:
+//   "no momentum as such — we are not going to buy them... ye hote hain BIG
+//   trends, abhi jo action hai wo SHORT trend hai."
+const SECTOR_PERSIST = args.includes('--sector-persist');
+const PERSIST_R20 = parseFloat(argVal('--persist-r20', '4'));
+const PERSIST_R60 = parseFloat(argVal('--persist-r60', '6'));
+//
+// --leader-bonus : hot-sector bonus FLAT nahi, sector ke andar LEADERSHIP se weighted
+//   Abhi hot sector ke har stock ko barabar +4 milta hai — sector ka #1 ho ya #12.
+//   Best of the Best (SHREDIGCEM vs RPOWER): dono base achhe the, farak ye tha ki
+//   LEADER kitna chalta hai. Leadership = sector ke andar 60-din return ka
+//   percentile (score se ALAG, warna rank circular ho jaata).
+//   Weight 0.5..1.5 hai — yaani AUSAT bonus wahi +4 rehta hai. Isse hum sirf
+//   BANTWARA test kar rahe hain, bonus ka size nahi. (Warna pata hi nahi chalta
+//   ki fayda leadership se hua ya bade bonus se.)
+const LEADER_BONUS = args.includes('--leader-bonus');
 // --min-bars N : stock ke paas kam se kam itne din ka data ho tabhi setup ban sakta hai.
 // Default 120 (~6 mahine) = abhi ka behaviour. Isse kam karne se NAYE LISTINGS dikhne
 // lagte hain — abhi 51 liquid naye stocks (INDOMIM ₹1433Cr/din, SBIFUNDS ₹649Cr/din
@@ -397,7 +421,7 @@ function setupAt(S, si, hot) {
   if (volShrink) score += 2.5;
   if (near52) score += 3;
   if (fivePct) score += 2;
-  if (hot) score += HOT_BONUS;
+  if (hot) score += HOT_BONUS * hot;
   score += S.capPref;
 
   let sl = Math.max(Math.min(...l.slice(si - 7, si + 1)), pivot * 0.955);
@@ -523,7 +547,7 @@ async function main() {
     const out = [];
     for (const [name, list] of Object.entries(bySector)) {
       if (name === 'Other' || name === 'Diversified' || list.length < 3) continue;
-      let ret5 = 0, up = 0, volR = 0, vn = 0, cnt = 0;
+      let ret5 = 0, up = 0, volR = 0, vn = 0, cnt = 0, r20 = 0, r60 = 0, c20 = 0, c60 = 0;
       for (const S of list) {
         const si = S.map[di];
         if (si < 25) continue;
@@ -533,13 +557,39 @@ async function main() {
         if (ups >= 3) up++;
         const v5 = smaAt(S.pv, si, 5), v20 = smaAt(S.pv, si, 20);
         if (v20 > 0) { volR += v5 / v20; vn++; }
+        if (si >= 21) { r20 += (S.c[si] - S.c[si - 20]) / S.c[si - 20] * 100; c20++; }
+        if (si >= 61) { r60 += (S.c[si] - S.c[si - 60]) / S.c[si - 60] * 100; c60++; }
       }
       if (cnt < 3) continue;
       ret5 /= cnt; volR = vn ? volR / vn : 1;
-      if (ret5 > 1.5 && (up / cnt >= 0.4 || volR > 1.15)) out.push({ name, heat: ret5 + (up / cnt) * 3 + (volR - 1) * 4 });
+      if (!(ret5 > 1.5 && (up / cnt >= 0.4 || volR > 1.15))) continue;
+      // ★ --sector-persist: 5-din ka pop kaafi nahi — hafton ka move chahiye
+      if (SECTOR_PERSIST) {
+        if (!c20 || !c60) continue;
+        if (!((r20 / c20) > PERSIST_R20 && (r60 / c60) > PERSIST_R60)) continue;
+      }
+      out.push({ name, heat: ret5 + (up / cnt) * 3 + (volR - 1) * 4 });
     }
     out.sort((a, b) => b.heat - a.heat);
-    return new Set(out.slice(0, 4).map(s => s.name));
+    const names = new Set(out.slice(0, 4).map(s => s.name));
+
+    // ★ --leader-bonus: hot sector ke andar leadership percentile
+    // 60-din ka return — SCORE se alag naap, warna rank circular ho jaata.
+    const lead = new Map();
+    if (LEADER_BONUS) {
+      for (const name of names) {
+        const arr = [];
+        for (const S of bySector[name]) {
+          const si = S.map[di];
+          if (si < 61) continue;
+          arr.push([S.sym, (S.c[si] - S.c[si - 60]) / S.c[si - 60] * 100]);
+        }
+        if (arr.length < 3) continue;
+        arr.sort((a, b) => a[1] - b[1]);
+        arr.forEach(([sym], i) => lead.set(sym, i / (arr.length - 1)));   // 0..1
+      }
+    }
+    return { names, lead };
   }
 
   // ---- replay ----
@@ -745,7 +795,7 @@ async function main() {
     const { gear } = marketAt(di);
     gearDays[gear]++;
     if (gear <= 1) continue;                                 // noTrade — cash bhi ek position hai
-    const hot = hotAt(di);
+    const { names: hotNames, lead: hotLead } = hotAt(di);
     const maxPicks = MAX_PICKS || (gear >= 5 ? 8 : gear === 4 ? 6 : gear >= 3 ? 5 : 3);
 
     const cands = [];
@@ -753,7 +803,11 @@ async function main() {
       if (active.has(S.sym)) continue;
       const si = S.map[di];
       if (si < MIN_BARS) continue;   // setupAt bhi yahi check karta hai, ye sirf tez raasta
-      const r = setupAt(S, si, hot.has(S.sec));
+      // hot ab boolean nahi, ek WEIGHT hai. 0 = sector hot nahi.
+      // Bina --leader-bonus ke hamesha 1 (yaani purana flat +4) — behaviour same.
+      const hotW = !hotNames.has(S.sec) ? 0
+        : (LEADER_BONUS ? 0.5 + (hotLead.get(S.sym) ?? 0.5) : 1);
+      const r = setupAt(S, si, hotW);
       if (r && r.isReady) cands.push({ S, ...r });
     }
     cands.sort((a, b) => b.score - a.score);
@@ -815,6 +869,8 @@ const fmtLongDate = ts => new Date(ts * 1000).toLocaleDateString('en-IN', { time
 // to wahi din do baar count hote the. Ab live ki sabse purani pick pe backtest
 // kaat dete hain — ek hi timeline, koi overlap nahi.
 const istDateStr = ts => new Date(ts * 1000).toLocaleDateString('en-IN', { timeZone: IST, year: 'numeric', month: '2-digit', day: '2-digit' });
+
+export const VARIANT_LABEL = (SECTOR_PERSIST ? 'sector-persist ' : '') + (LEADER_BONUS ? 'leader-bonus ' : '') || 'baseline';
 
 function writeJournal(closed, equity, T, positions, lastSessionTs) {
   const path = join(ROOT, 'journal.json');
