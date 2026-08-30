@@ -114,6 +114,30 @@ export function stitchHistory(ns, bo, refClose = null) {
   }
   if (!added) return { bars: ns, src: 'NS', boBars: 0, ratio, reason: 'BO me purana hissa nahi' };
 
+  // ★★ SEAM CONTINUITY GUARD (30 Aug 2026 — ye check pehle NAHI tha, aur uske
+  // bina stitch ne JHOOTHE moves bana diye the: BATLIBOI -80.3%, RAJPALAYAM
+  // -58.9%, SAYAJIHOTL -50.9% jodne wali jagah pe.)
+  //
+  // Overlap ka ratio ~1.000 aa sakta hai (dono series AAJ ek jaisi hain) aur
+  // phir bhi PURANA BSE data alag paimane pa ho sakta hai — kyunki us series me
+  // koi split/bonus adjust nahi hua. Ek recent ratio se poora itihaas theek
+  // nahi hota.
+  //
+  // Ilaaj: jodne wali jagah pe do bars ka farak dekho. Asli continuous series
+  // me wahan ek normal din jitna hi move hona chahiye. Bada jump = purane hisse
+  // me unadjusted corporate action = ye history bharosemand NAHI hai.
+  // Aise me jodo MAT — adhuri history galat history se behtar hai.
+  if (nsLen) {
+    const lastOld = out.c[added - 1], firstNew = ns.c[0];
+    const seam = Math.abs(firstNew / lastOld - 1);
+    if (seam > 0.10) {
+      return {
+        bars: ns, src: 'NS', boBars: 0, ratio,
+        reason: `seam jump ${(seam * 100).toFixed(1)}% — purane BSE data me corporate action adjust nahi hua`
+      };
+    }
+  }
+
   for (let i = 0; i < nsLen; i++) {
     out.t.push(ns.t[i]); out.o.push(ns.o[i]); out.h.push(ns.h[i]);
     out.l.push(ns.l[i]); out.c.push(ns.c[i]); out.v.push(ns.v[i]);
