@@ -387,17 +387,65 @@
   .pos-earn { font-size: 11.5px; padding: 7px 11px; border-radius: 9px; margin-top: 2px;
     background: rgba(255,183,77,.10); border: 1px solid rgba(255,183,77,.35); color: #ffc46b; }
 
-  /* ===== Mobile ===== */
-  @media (max-width: 560px) {
-    .rot-row { grid-template-columns: 96px 1fr; font-size: 11px; }
-    .sp-table td, .wl-table td { padding: 8px 8px; font-size: 11.5px; }
-    .sp-lvl small, .wl-lvl small { font-size: 9.5px; }
+  /* ===== Mobile =====
+     Phone pe sector/watchlist ki 6-7 column wali TABLE fit hoti hi nahi thi —
+     wo poore page ko chauda kar deti thi aur baaki cards ek patli column me
+     dab jaate the. Ilaaj: mobile pe row ko table ki jagah GRID bana do, do-teen
+     line me. Koi horizontal scroll nahi, sab kuch padha ja sakta hai. */
+  @media (max-width: 640px) {
+    .rot-row { grid-template-columns: 88px 1fr; font-size: 11px; }
     .mspark { display: none; }
     .pos-grid { grid-template-columns: repeat(2, 1fr); }
     .uh { grid-template-columns: repeat(2, 1fr); }
+    .wrap { padding-left: 12px; padding-right: 12px; }
+    /* tabs ek hi line me — warna 2 line le lete hain */
+    .tab { padding: 8px 11px; font-size: 12px; }
+    .tabs { gap: 6px; }
+    /* Naam badge ke neeche ghus raha tha — truncate karo */
+    .sp-sym, .wl-sym { overflow: hidden; }
+    .sp-sym .note, .wl-sym .note {
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;
+    }
+    .sp-stage, .wl-badge { white-space: nowrap; }
+
+    /* --- table ko block/grid me todo --- */
+    .sp-table, .wl-table,
+    .sp-table tbody, .wl-table tbody { display: block; width: 100%; min-width: 0; }
+    .sp-table td, .wl-table td { display: block; border: none; padding: 0; }
+    .sp-table tr, .wl-table tr {
+      display: grid; column-gap: 8px; row-gap: 5px;
+      padding: 11px 13px; border-top: 1px solid var(--border-soft); align-items: center;
+    }
+    .sp-table tr:first-child, .wl-table tr:first-child { border-top: none; }
+    /* level cells mobile pe ek line me — label saath me inline */
+    .sp-lvl, .wl-lvl { text-align: left; white-space: normal; font-size: 12px; }
+    .sp-lvl small, .wl-lvl small { display: inline; margin-left: 5px; font-size: 10px; }
+
+    /* SECTOR row:  [rank] [symbol]  [stage]  /  [pivot] [abhi]  /  [leader bar] */
+    .sp-table tr { grid-template-columns: 26px minmax(0,1fr) auto; }
+    .sp-table td:nth-child(1) { grid-area: 1 / 1; }
+    .sp-table td:nth-child(2) { grid-area: 1 / 2; min-width: 0; }
+    .sp-table td:nth-child(3) { grid-area: 1 / 3; justify-self: end; }
+    .sp-table td:nth-child(4) { grid-area: 2 / 1 / auto / 3; }
+    .sp-table td:nth-child(5) { grid-area: 2 / 3; text-align: right; white-space: nowrap; }
+    .sp-table td:nth-child(6) { display: none; }
+    .sp-table td:nth-child(7) { grid-area: 3 / 1 / auto / 4; }
+
+    /* WATCHLIST row: [symbol] [badge+leader] / [pivot] [SL] / [abhi] */
+    .wl-table tr { grid-template-columns: minmax(0,1fr) auto; }
+    .wl-table td:nth-child(1) { grid-area: 1 / 1; min-width: 0; }
+    .wl-table td:nth-child(2) { grid-area: 1 / 2; justify-self: end; }
+    .wl-table td:nth-child(3) { grid-area: 2 / 1; }
+    .wl-table td:nth-child(4) { grid-area: 2 / 2; text-align: right; white-space: nowrap; }
+    .wl-table td:nth-child(5) { grid-area: 3 / 1 / auto / 3; }
+    .wl-table td:nth-child(6) { display: none; }
+
+    /* journal (Track Record) — Size aur Invested column phone pe chhod do */
     table { min-width: 0; }
     .table-scroll table th:nth-child(3), .table-scroll table td:nth-child(3),
     .table-scroll table th:nth-child(4), .table-scroll table td:nth-child(4) { display: none; }
+    .table-scroll table th, .table-scroll table td { padding: 8px 9px; font-size: 11.5px; }
+    .wrap-cell { max-width: 40vw; }
   }
 
   /* Picks */
@@ -598,7 +646,12 @@
   }
   @media (max-width: 480px) {
     .levels { grid-template-columns: repeat(2, 1fr); }
-    .tab { padding: 9px 16px; font-size: 12.5px; }
+    /* Ye rule pehle .tab ko BADA karta tha (padding 9/16, 12.5px) — chhoti
+       screen pe teeno tab do-do line le lete the. Ab chhota + nowrap, aur
+       zaroorat pade to tabs khud horizontally scroll ho jaate hain. */
+    .tab { padding: 8px 11px; font-size: 12px; white-space: nowrap; }
+    .tabs { gap: 6px; overflow-x: auto; scrollbar-width: none; }
+    .tabs::-webkit-scrollbar { display: none; }
   }
 </style>
 </head>
