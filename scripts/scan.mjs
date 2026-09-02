@@ -623,20 +623,26 @@ async function main() {
       const hot = hotNames.has(u.sec);
       const superTight = rangePct <= 7.5;
 
+      // ★ scoreParts: har point KAHAN se aaya, ye DIKHANE ke liye.
+      // ⚠️ Arithmetic bilkul waisa ka waisa hai — sirf record ho raha hai.
+      // Wajah: user beginner hai; "ye naam upar kyun hai" ka jawab card pe dikhe
+      // to scanner sirf batata nahi, SIKHATA hai.
+      const parts = [];
+      const add = (pts, label, why) => { if (Math.abs(pts) >= 0.05) parts.push({ label, pts: round2(pts), why }); return pts; };
       let sc2 = 0;
-      sc2 += (13 - rangePct) * 0.8;           // tighter = better
-      sc2 += Math.min(3, (win - 6) * 0.15);   // lamba base = zyada safai ho chuki
-      sc2 += Math.max(0, 4.5 - prox);          // pivot ke paas
-      if (volShrink) sc2 += 2.5;
-      if (near52) sc2 += 3;
-      if (fivePct) sc2 += 2;
-      if (hot) sc2 += 4;
+      sc2 += add((13 - rangePct) * 0.8, 'Tight base', `${round2(rangePct)}% range — jitna tight, utna saaf breakout`);
+      sc2 += add(Math.min(3, (win - 6) * 0.15), 'Lamba base', `${win} din ki consolidation — utni der supply saaf hui`);
+      sc2 += add(Math.max(0, 4.5 - prox), 'Pivot ke paas', `pivot se sirf ${round2(prox)}% door`);
+      if (volShrink) sc2 += add(2.5, 'Volume shrink', 'base me volume sukh gaya — supply exhaust');
+      if (near52) sc2 += add(3, '52W high zone', 'upar phansa hua maal nahi — line of least resistance upar');
+      if (fivePct) sc2 += add(2, '5% stock', 'din me 5% chal sakta hai — isme jaan hai');
+      if (hot) sc2 += add(4, 'Hot sector', `${u.sec} me money flow — scoring ka sabse bhaari element`);
       // Creator ka focus small/midcap momentum hai — liquidity sirf floor hai (₹5Cr min),
       // usse upar size ka koi rank-bonus nahi. Chhote explosive movers ko preference.
       // Large-cap ko BHAARI penalty (-6): creator "hum large caps trade nahi karte" —
       // sirf truly generational setup hi is handicap ko paar karke pick me aa payega.
       const capPref = { Micro: 3, Small: 3, Mid: 1.5, Large: -6 };
-      sc2 += capPref[u.cap] ?? 2.5;
+      sc2 += add(capPref[u.cap] ?? 2.5, `${u.cap} cap`, u.cap === 'Large' ? 'large cap pe bhaari penalty — "hum large caps trade nahi karte"' : 'chhote explosive movers ko preference');
 
       // SL: swing low ya ~3.5% niche pivot se
       const swingLow = Math.min(...l.slice(-8));
@@ -677,7 +683,7 @@ async function main() {
       let comment = commentBits.join('. ') + '. Breakout aaye tabhi entry bhaiya — usse pehle jo bhi hai, sirf indication hai.';
       if (earnRisk) comment = `⚠️ RESULT ${earnInfo.earnOn} ko aa raha hai — is breakout pe abhi entry MAT lo. Numbers ek coin toss hai, setup nahi. Result nikal jaane do, phir setup dobara bane to dekhenge. ` + comment;
       // Result sar pe ho to ranking me neeche — takki wo pick hi na bane
-      if (earnRisk) sc2 -= 8;
+      if (earnRisk) sc2 += add(-8, 'Result sar pe', `${earnInfo.earnOn} ko numbers — breakout pe entry coin toss hai`);
 
       candidates.push({
         symbol: u.s, name: u.n, sector: u.sec, cap: u.cap || 'Small',
@@ -687,6 +693,7 @@ async function main() {
         setup: superTight ? `Super tight consolidation — ${win} din, ${round2(rangePct)}% range` : `Tight base — ${win} din, ${round2(rangePct)}% range, pivot ke paas`,
         volumeNote: volShrink ? 'Base me volume shrink — classic supply exhaustion.' : 'Volume abhi normal hai — breakout pe elevated chahiye.',
         comment, spark: c.slice(-17).map(roundPrice), flags, _score: sc2, _ready: isReady,
+        scoreParts: parts.sort((a, b) => Math.abs(b.pts) - Math.abs(a.pts)), scoreTotal: round2(sc2),
         detail: {
           dma10: roundPrice(s10), dma20: roundPrice(sma(c, 20)), dma50: roundPrice(s50),
           dma50Rising: s50 > s50p,
@@ -741,6 +748,7 @@ async function main() {
     cmp: c.cmp, pivot: c.pivot, sl: c.sl, prox: c.detail.proxPivot, range: c.detail.rangePct,
     baseDays: c.detail.baseDays, ready: !!c._ready,
     leaderPct: leaderPct[c.symbol] ?? null,
+    spark: c.spark, scoreParts: c.scoreParts, scoreTotal: c.scoreTotal,
     flags: c.flags, hot: c.flags.includes('Hot sector')
   }));
   console.log(`Candidates: ${candidates.length} (ready: ${readyCands.length}), picks: ${picks.length}, watchlist: ${watchlist.length}, gear: ${gear}`);
@@ -765,6 +773,7 @@ async function main() {
       symbol: c.symbol, name: c.name, cap: c.cap,
       cmp: c.cmp, pivot: c.pivot, sl: c.sl,
       prox: c.detail.proxPivot, range: c.detail.rangePct, baseDays: c.detail.baseDays,
+      spark: c.spark, scoreTotal: c.scoreTotal,
       stage: c._ready ? (c.detail.proxPivot <= 2 ? 'Pivot pe khada' : 'Ready')
         : (c.detail.rangePct <= 16 ? 'Base ban raha' : 'Abhi shor hai'),
       flags: c.flags.filter(f => f !== 'Hot sector'),
@@ -1071,6 +1080,52 @@ async function main() {
   })();
   if (lastPicks) console.log(`Pichhle picks (${lastPicks.date}): ${lastPicks.triggered}/${lastPicks.total} trigger hue`);
 
+  // ★ SESSION HISTORY — gear aur hot-sector ka itihaas.
+  // Gear poore framework ki jad hai par uski HISTORY kahin dikhti hi nahi thi
+  // ("kitne din se gear 1 hai?" ka jawab kahin nahi tha). Sector rotation bhi
+  // vault ka core concept hai (Leadership Rotation) aur dashboard sirf AAJ
+  // dikhata tha. Dono journal ke andar rehte hain — kyunki cloud workflow sirf
+  // data.js/journal.json/universe.json commit karta hai (Known Bugs #10).
+  const HIST_MAX = 90;
+  let history = Array.isArray(state.history) ? state.history : [];
+  const todayHist = {
+    d: sessionDate, ts: sessionTs, gear,
+    sec: hotSectors.slice(0, 4).map(x => x.name),
+    picks: picks.map(p => p.symbol)
+  };
+  if (!alreadyProcessed) {
+    history = history.filter(h => h.d !== sessionDate);
+    history.push(todayHist);
+    if (history.length > HIST_MAX) history = history.slice(-HIST_MAX);
+    state.history = history;
+    writeFileSync(join(ROOT, 'journal.json'), JSON.stringify(state, null, 2));
+  }
+  // display ke liye aaj ka entry hamesha shaamil (force-run pe bhi)
+  const histOut = [...history.filter(h => h.d !== sessionDate), todayHist].slice(-HIST_MAX);
+  // gear kitne din se wahi hai
+  let gearStreak = 0;
+  for (let i = histOut.length - 1; i >= 0; i--) { if (histOut[i].gear === gear) gearStreak++; else break; }
+
+  // ★ "AAPKI PICHHLI 4 TRADES" — creator ka apna thermometer
+  // "Aap INDEX TRADER ho kya? Aapki last 4 trades kaisi thi — EASY feel kara
+  // rahi hain ki TOUGH?" Market ka thermometer index nahi, apni trades hain.
+  const lastTrades = (() => {
+    const done = state.closed.filter(t => ['win', 'sl', 'fail'].includes(t.status) && t.ts)
+      .sort((a, b) => (a.exitTs || a.ts) - (b.exitTs || b.ts)).slice(-10)
+      .map(t => ({ symbol: t.symbol, status: t.status, pnlPct: t.pnlPct ?? 0, picked: t.picked }));
+    if (!done.length) return null;
+    const last4 = done.slice(-4);
+    const wins = last4.filter(t => t.pnlPct > 0).length;
+    const net = round2(last4.reduce((a, t) => a + t.pnlPct, 0));
+    const feel = wins >= 3 || net > 8 ? 'EASY' : wins <= 1 && net < -3 ? 'TOUGH' : 'MIXED';
+    return {
+      trades: done, last4, wins, net, feel,
+      note: feel === 'EASY' ? 'Pichhli chaar me paisa bana hai — market saath de raha hai. Par yaad rakho: sabse badi galti JEET ke baad hoti hai.'
+        : feel === 'TOUGH' ? 'Pichhli chaar tough rahi. Size chhoti rakho, selective raho — bura market khud ek risk-control hai.'
+          : 'Mila-jula. Na easy, na tough — normal size, normal selectivity.'
+    };
+  })();
+
   // --- display journal (closed + open/pending) ---
   const journalOut = [
     // Backtest ab 5 saal ka hai (~2900 trades). Kaatna nahi hai — warna equity
@@ -1110,12 +1165,57 @@ async function main() {
       cmp, pnlPct, pnlAmt: round2((p.invested || 0) * pnlPct / 100),
       sl: p.sl, slDistPct: round2((cmp - p.sl) / cmp * 100),
       booked: !!p.booked, bookAt, trail, next,
+      // Khuli position ko result ke aar-paar hold karna documented galti hai —
+      // isliye warning picks se zyada YAHAN zaroori hai
+      ...(earningsMap.get(p.symbol) ? {
+        earnIn: Math.round((earningsMap.get(p.symbol) - new Date(sessionTs * 1000)) / 86400000),
+        earnOn: earningsMap.get(p.symbol).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short' })
+      } : {}),
       stale: !ch,   // chart nahi mila — bhaav purana ho sakta hai
       spark: c ? c.slice(-17).map(roundPrice) : []
     };
   });
   const deployedNow = positionsOut.reduce((a, p) => a + (p.invested || 0), 0);
+
+  // ★ AAJ KYA BADLA — pichhle session se farak.
+  // ⚠️ Ye block positionsOut ke BAAD hona zaroori hai (const TDZ), warna
+  // "Cannot access before initialization" pe scan gir jaata hai.
+  const prev = histOut.length > 1 ? histOut[histOut.length - 2] : null;
+  const changes = (() => {
+    if (!prev) return null;
+    const out = [];
+    if (prev.gear !== gear) out.push({ kind: 'gear', text: `Gear ${prev.gear} se ${gear} ${gear > prev.gear ? '↑ badha' : '↓ gira'}` });
+    for (const x of todayHist.sec.filter(x => !prev.sec.includes(x))) out.push({ kind: 'sector-in', text: `${x} ab hot list me AAYA` });
+    for (const x of prev.sec.filter(x => !todayHist.sec.includes(x))) out.push({ kind: 'sector-out', text: `${x} hot list se NIKLA` });
+    for (const p of positionsOut) {
+      if (p.cmp <= p.sl) out.push({ kind: 'sl', text: `⚠️ ${p.symbol} SL (₹${p.sl}) ke neeche` });
+      else if (!p.booked && p.cmp >= p.bookAt) out.push({ kind: 'book', text: `${p.symbol} book-zone me (₹${p.bookAt}) — aadha book hoga` });
+      else if (p.trail && p.cmp <= p.trail * 1.02) out.push({ kind: 'trail', text: `${p.symbol} 40 DMA ke bilkul paas — cushion sirf ${round2((p.cmp - p.trail) / p.cmp * 100)}%` });
+    }
+    for (const [sym, t] of Object.entries(track.names || {})) {
+      if (t.crossed && t.crossedTs === sessionTs) out.push({ kind: 'cross', text: `${sym} ne pivot ₹${t.pivot} cross kiya (watchlist se)` });
+    }
+    return out.slice(0, 8);
+  })();
   console.log(`Positions block: ${positionsOut.length} open, ₹${Math.round(deployedNow).toLocaleString('en-IN')} lagi hui`);
+
+  // ★ RULE QUOTES — creator ke apne shabd card pe.
+  // Source of truth trading-brain/brain/rules.json hai, PAR cloud runner ke paas
+  // sirf dashboard repo hota hai. Isliye: local run pe source se padho aur
+  // dashboard/rules-ui.json me chhota snapshot likh do (wo commit hota hai);
+  // cloud me source na mile to snapshot se kaam chala lo. Self-healing —
+  // koi manual copy step nahi, aur drift bhi nahi (har local run refresh karta hai).
+  let ruleQuotes = {};
+  try {
+    const src = JSON.parse(readFileSync(join(ROOT, '..', 'brain', 'rules.json'), 'utf8'));
+    for (const r of src.rules) {
+      if (!r.quote && !r.gloss) continue;
+      ruleQuotes[r.id] = { title: r.title, quote: r.quote || null, gloss: r.gloss || null, status: r.status, note: r.vault?.note || null };
+    }
+    writeFileSync(join(ROOT, 'rules-ui.json'), JSON.stringify(ruleQuotes));
+  } catch {
+    try { ruleQuotes = JSON.parse(readFileSync(join(ROOT, 'rules-ui.json'), 'utf8')); } catch { ruleQuotes = {}; }
+  }
 
   // --- 5-saal ka strategy test (alag file, backtest.mjs --summary se banti hai) ---
   let strategyTest = null;
@@ -1175,6 +1275,11 @@ async function main() {
     candidateCount: candidates.length,
     lastPicks,
     watchStats,
+    history: histOut,
+    gearStreak,
+    changes,
+    lastTrades,
+    ruleQuotes,
     positions: positionsOut,
     deployed: round2(deployedNow),
     journal: journalOut
