@@ -11,6 +11,7 @@ import { execSync } from 'child_process';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { stitchHistory, needsBseBackfill } from './history.mjs';
+import { fetchFundamentals } from './fundamentals.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -1217,6 +1218,44 @@ async function main() {
     try { ruleQuotes = JSON.parse(readFileSync(join(ROOT, 'rules-ui.json'), 'utf8')); } catch { ruleQuotes = {}; }
   }
 
+  /* ★ NUMBERS CHECK — picks aur watchlist ke peeche ke NUMBERS.
+     Ye SELECTION nahi karta. Ranking, filter, score — kisi pe iska asar NAHI hai.
+     Creator fundamentals se stock chunta nahi ("वी आर प्लेइंग ब्रेकआउट्स"), par uska
+     core belief fundamental hai ("स्टॉक प्राइसेस आर स्लेव ऑफ अर्निंग्स") aur uska
+     asli test numbers nahi, numbers pe MARKET KA REACTION hai:
+       "नंबर्स अपने आप में कोई मैटर नहीं करते... प्राइस एक्शन क्या मैच कर रहा है?"
+     Isliye teen legs alag dikhti hain aur faisla aankh pe chhoda gaya hai.
+     rules.json: selection.fundamental_confidence (status: discretionary).
+     NSE block kare ya kuch bhi toote to fund = null aur scan bina ruke chalta hai. */
+  let fund = null;
+  try {
+    const syms = [...new Set([...picks.map(p => p.symbol), ...watchlist.map(w => w.symbol)])];
+    if (syms.length) {
+      const chMap = new Map();
+      for (const sym of syms) if (charts[sym]) chMap.set(sym, charts[sym]);
+      const got = await fetchFundamentals(syms, chMap);
+      const readySet = new Set([...picks.map(p => p.symbol), ...watchlist.filter(w => w.ready).map(w => w.symbol)]);
+      const bySymbol = {};
+      for (const [sym, f] of got) {
+        const legs = { ...f.legs, setup: readySet.has(sym) };
+        const n = (legs.growth ? 1 : 0) + (legs.reaction ? 1 : 0) + (legs.setup ? 1 : 0);
+        // agla result — wahi earningsMap jo earnings-guard use karta hai, dobara call nahi
+        const e = earningsMap.get(sym);
+        bySymbol[sym] = {
+          ...f, legs,
+          matchCount: n,
+          match: n === 3 ? 'triple' : n === 2 ? 'two' : n === 1 ? 'one' : 'none',
+          nextResult: e ? {
+            on: e.toLocaleDateString('en-IN', { timeZone: IST, day: 'numeric', month: 'short' }),
+            inDays: Math.max(0, Math.round((e - new Date(sessionTs * 1000)) / 86400000))
+          } : null
+        };
+      }
+      fund = { bySymbol, count: Object.keys(bySymbol).length };
+      console.log('Numbers Check: ' + fund.count + '/' + syms.length + ' naam pe numbers laga diye');
+    }
+  } catch (e) { console.log('Numbers Check skip (' + e.message + ') — baaki dashboard poora hai.'); }
+
   // --- 5-saal ka strategy test (alag file, backtest.mjs --summary se banti hai) ---
   let strategyTest = null;
   try { strategyTest = JSON.parse(readFileSync(join(ROOT, 'strategy-test.json'), 'utf8')); } catch { }
@@ -1269,6 +1308,8 @@ async function main() {
     },
     picks,
     watchlist,
+    // Numbers Check — sirf confidence panel, ranking ko chhuta nahi
+    fund,
     // Gear 1-2 pe picks 0 hote hain. Tab bhi user ko pata hona chahiye ki andar
     // kitna maal hai — warna lagta hai scanner ne kuch dhoonda hi nahi.
     readyCount: readyCands.length,

@@ -95,7 +95,12 @@
     position: sticky; top: 0; z-index: 20;
     background: linear-gradient(180deg, var(--bg) 75%, transparent);
     display: flex; gap: 8px; padding: 10px 0 16px; margin-bottom: 18px;
+    /* Watchlist chautha tab hai — phone pe chaaron ek line me nahi aate.
+       Wrap karne se sticky bar do line ki ho jaati hai, isliye scroll behtar hai. */
+    overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
   }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex: none; }
   .tab {
     background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid rgba(255,255,255,0.10);
     backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -282,6 +287,11 @@
   .wl-badge { font-size: 10.5px; padding: 2px 8px; border-radius: 20px; white-space: nowrap;
     background: rgba(148,163,184,0.12); color: var(--muted); border: 1px solid var(--border); }
   .wl-badge.ready { background: rgba(49,212,146,0.13); color: #4fe0a8; border-color: rgba(49,212,146,0.35); }
+  .wl-nm-chip { display: block; margin-top: 5px; }
+  /* Tablet chaudai (641-1100px) pe 6-column table page ko chauda kar deti thi.
+     Ye bug live index.html me bhi hai. Mobile pe table grid ban jaati hai to
+     wahan ye rule bekaar hai, beech ki chaudai me table khud scroll karegi. */
+  #watchlist { overflow-x: auto; }
   .wl-note { font-size: 11.5px; color: var(--muted); padding: 10px 4px 0; line-height: 1.6; }
   .empty-why { line-height: 1.7; }
   .empty-why b { color: var(--text); }
@@ -522,6 +532,112 @@
     border-radius: 11px; padding: 10px 12px; font-size: 12.5px; color: #ffc2c7;
   }
   .earn-warn b { color: var(--red); }
+
+  /* ===== Numbers Check (fundamentals confidence panel) =====
+     Ye SELECTION nahi karta — ranking pe iska koi asar nahi hai.
+     Creator: "नंबर्स अपने आप में कोई मैटर नहीं करते... प्राइस एक्शन क्या मैच कर रहा है?"
+     Isliye teen legs alag-alag dikhti hain aur faisla aankh pe chhoda hai. */
+  .nc {
+    background: rgba(255,255,255,0.045); border: 1px solid var(--border-soft);
+    border-radius: 12px; padding: 11px 13px; font-size: 12px;
+  }
+  .nc.triple { border-color: rgba(49,212,146,0.45); background: rgba(49,212,146,0.07); }
+  .nc-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+  .nc-title { font-weight: 700; font-size: 12px; letter-spacing: .2px; }
+  .nc-when { color: var(--muted); font-size: 10.5px; margin-left: auto; }
+  .nc-badge {
+    font-size: 10.5px; font-weight: 700; padding: 2px 9px; border-radius: 10px;
+    background: var(--surface-3); color: var(--muted);
+  }
+  .nc-badge.good { background: rgba(49,212,146,0.16); color: var(--green); }
+  .nc-badge.mid  { background: rgba(255,193,77,0.16); color: var(--amber); }
+  .nc-badge.bad  { background: rgba(255,107,118,0.16); color: var(--red); }
+  .nc-row {
+    display: grid; grid-template-columns: 1fr auto; gap: 4px 10px;
+    padding: 7px 0 2px; border-top: 1px solid var(--border-soft); align-items: baseline;
+  }
+  .nc-k { color: var(--muted); font-size: 11.5px; }
+  .nc-k i { display: block; font-style: normal; font-size: 10px; opacity: .75; margin-top: 1px; }
+  .nc-v { text-align: right; font-variant-numeric: tabular-nums; font-size: 11.5px; color: var(--muted); }
+  .nc-v b { font-size: 13.5px; }
+  .nc-v small { display: block; font-size: 10px; opacity: .85; margin-top: 1px; }
+  .nc-say { font-size: 11px; padding: 2px 0 4px; }
+  .nc-good { color: var(--green); } .nc-mid { color: var(--amber); }
+  .nc-bad { color: var(--red); }    .nc-na { color: var(--muted); }
+  .nc-legs {
+    display: flex; gap: 6px; flex-wrap: wrap; padding-top: 8px; margin-top: 4px;
+    border-top: 1px solid var(--border-soft);
+  }
+  .nc-leg {
+    font-size: 10.5px; padding: 2px 8px; border-radius: 9px;
+    background: var(--surface-2); color: var(--muted); border: 1px solid transparent;
+  }
+  .nc-leg.on { background: rgba(49,212,146,0.13); color: var(--green); border-color: rgba(49,212,146,0.3); }
+  .nc-foot { color: var(--muted); font-size: 10.5px; margin-top: 8px; line-height: 1.55; opacity: .9; }
+  .nc-foot .dev { font-style: italic; opacity: .95; }
+  .nc-mini {
+    display: inline-flex; gap: 6px; align-items: center; font-size: 10.5px;
+    padding: 2px 8px; border-radius: 9px; background: var(--surface-2);
+    color: var(--muted); font-variant-numeric: tabular-nums;
+  }
+  .nc-mini.triple { background: rgba(49,212,146,0.13); color: var(--green); }
+  .nc-mini { flex-wrap: wrap; max-width: 100%; }
+  .wl-nm-chip { min-width: 0; }
+  .nc-wrap { margin-top: 10px; }
+
+  /* ===== Watchlist detail cards (apna tab) ===== */
+  .wl-filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 2px 0 12px; }
+  .wl-fil {
+    font-size: 12px; padding: 5px 13px; border-radius: 20px; cursor: pointer;
+    background: var(--surface); border: 1px solid var(--border-soft); color: var(--muted);
+    transition: all .15s;
+  }
+  .wl-fil:hover { color: var(--text); border-color: var(--border); }
+  .wl-fil.active { background: var(--surface-3); color: var(--text); border-color: var(--accent); }
+  .wl-fil b { font-variant-numeric: tabular-nums; }
+
+  .wld-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(370px, 1fr)); gap: 14px; }
+  .wld {
+    background: var(--surface); border: 1px solid var(--border-soft); border-radius: 16px;
+    padding: 14px 15px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .wld.triple { border-color: rgba(49,212,146,0.4); }
+  .wld-head { display: flex; align-items: flex-start; gap: 10px; }
+  .wld-id { flex: 1; min-width: 0; }
+  .wld-sym { font-size: 16px; font-weight: 800; letter-spacing: .2px; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+  .wld-nm { color: var(--muted); font-size: 11.5px; margin-top: 2px; }
+  .wld-cmp { text-align: right; font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .wld-cmp small { display: block; font-size: 9.5px; font-weight: 600; color: var(--muted); letter-spacing: .5px; }
+  .wld-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .wld-lvls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+  .wld-lvls div {
+    background: var(--surface-2); border-radius: 9px; padding: 6px 8px; text-align: center;
+  }
+  .wld-lvls small { display: block; font-size: 9px; color: var(--muted); letter-spacing: .4px; text-transform: uppercase; }
+  .wld-lvls b { font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  .wld-lvls i { display: block; font-style: normal; font-size: 9.5px; color: var(--muted); margin-top: 1px; }
+
+  /* 5-quarter trend — units company-dar-company alag hain, isliye SHAPE + EPS */
+  .qt { background: var(--surface-2); border-radius: 11px; padding: 10px 12px; }
+  .qt-top { font-size: 10.5px; color: var(--muted); letter-spacing: .4px; text-transform: uppercase; margin-bottom: 9px; }
+  .qt-bars { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 7px; align-items: end; }
+  .qt-col { text-align: center; }
+  .qt-bar { height: 46px; display: flex; flex-direction: column; justify-content: flex-end; }
+  .qt-bar em { display: block; border-radius: 3px 3px 0 0; background: var(--green); min-height: 2px; }
+  .qt-bar.neg { justify-content: flex-start; }
+  .qt-bar.neg em { background: var(--red); border-radius: 0 0 3px 3px; }
+  .qt-q { font-size: 9.5px; color: var(--muted); margin-top: 5px; }
+  .qt-eps { font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 1px; }
+  .qt-foot { font-size: 10.5px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+
+  .wld-next {
+    font-size: 11.5px; border-radius: 9px; padding: 7px 10px;
+    background: rgba(255,193,77,0.11); border: 1px solid rgba(255,193,77,0.3); color: #ffd89a;
+  }
+  .wld-next.hot { background: rgba(255,107,118,0.12); border-color: rgba(255,107,118,0.4); color: #ffc2c7; }
+  .wl-empty { text-align: center; color: var(--muted); padding: 26px; font-size: 13px; }
+  @media (max-width: 640px) { .wld-grid { grid-template-columns: 1fr; } }
+
   .size-row b { color: var(--green); }
   .size-row span { color: var(--muted); }
   .comment {
@@ -668,6 +784,7 @@
 
   <div class="tabs">
     <button class="tab active" data-view="scan">📋 Aaj ka Scan</button>
+    <button class="tab" data-view="watch">👀 Watchlist</button>
     <button class="tab" data-view="positions">📊 Positions</button>
     <button class="tab" data-view="track">📈 Track Record</button>
   </div>
@@ -720,11 +837,23 @@
     <h2 id="picksHeading">Ready Stocks — High Priority List</h2>
     <div class="picks" id="picks"></div>
 
-    <h2>👀 Watchlist — Nazar Me Rakho</h2>
-    <div id="watchlist"></div>
+    <div id="wlTeaser"></div>
 
     <h2>🔭 Scanner Ne Aaj Kya Dekha</h2>
     <div id="uhealth"></div>
+  </div>
+
+  <!-- ============ WATCHLIST VIEW ============
+       Pehle ye scan tab ke pendhe me dabi hui ek table thi. Ab apna ghar hai —
+       kyunki 0-pick waale dinon me (aur wo aksar aate hain) yahi poora kaam hai. -->
+  <div class="view" id="view-watch">
+    <h2 style="margin-top:4px;">👀 Nazar Me Rakho</h2>
+    <div class="stats-grid" id="wlStrip"></div>
+    <div class="wl-filters" id="wlFilters"></div>
+    <div id="watchlist"></div>
+    <h2>Har Naam Ka Poora Hisaab</h2>
+    <div class="wld-grid" id="wlCards"></div>
+    <div id="wlFoot"></div>
   </div>
 
   <!-- ============ POSITIONS VIEW ============ -->
@@ -1135,6 +1264,78 @@
       '<div class="sb-total"><span>Kul</span><span>' + (total != null ? total.toFixed(1) : '') + '</span></div></details>';
   }
 
+  /* ================= NUMBERS CHECK =================
+     Creator fundamentals se stock CHUNTA nahi — wo breakout khelta hai. Par uska
+     core belief fundamental hai: "स्टॉक प्राइसेस आर स्लेव ऑफ अर्निंग्स". Aur uska
+     asli test numbers nahi, numbers pe MARKET KA REACTION hai (Transrail: earnings
+     shandaar, agle din se lower circuit — "द रिएक्शन इज नॉट गुड").
+     Isliye ye panel sirf DIKHATA hai, ranking ko chhuta nahi. */
+  const FUND = (d.fund && d.fund.bySymbol) || {};
+  const f1 = v => v == null ? '—' : (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
+  const f0 = v => v == null ? '—' : (v >= 0 ? '+' : '') + Math.round(v) + '%';
+
+  function ncBadge(f) {
+    if (f.match === 'triple') return '<span class="nc-badge good">Teeno match ✅</span>';
+    if (f.matchCount === 2)   return '<span class="nc-badge mid">2 me se 3 match</span>';
+    if (f.matchCount === 1)   return '<span class="nc-badge">1 hi leg match</span>';
+    return '<span class="nc-badge bad">koi leg match nahi</span>';
+  }
+
+  function numbersCheck(sym, opts) {
+    const f = FUND[sym]; if (!f) return '';
+    const g = f.growth, r = f.reaction, o = opts || {};
+    const legs = f.legs || {};
+    const rows = [];
+
+    if (g) {
+      // profit mila to wahi headline; na mila to sales ko upar le aao (khaali "—" bekaar hai)
+      const head = g.profit != null
+        ? { big: g.src + ' ' + f1(g.profit), sub: 'sales ' + f1(g.sales) }
+        : { big: 'sales ' + f1(g.sales), sub: g.src + ' report nahi hua' };
+      rows.push(
+        '<div class="nc-row"><span class="nc-k">Growth<i>' + (f.quarter || '') + ' · ' + g.tag + ' · ' + (f.basis || '') + '</i></span>' +
+        '<span class="nc-v"><b class="nc-' + g.cls + '">' + head.big + '</b>' +
+        '<small>' + head.sub + '</small></span></div>' +
+        '<div class="nc-say nc-' + g.cls + '">' + g.verdict + '</div>');
+    }
+
+    if (r) rows.push(
+      '<div class="nc-row"><span class="nc-k">Result pe market ne kya kaha<i>' + (f.resultOn || '') +
+      ' · ' + r.sessionsAgo + ' session pehle</i></span>' +
+      '<span class="nc-v"><b class="nc-' + r.cls + '">' + f1(r.moveDay) + '</b>' +
+      '<small>' + (r.volX != null ? r.volX.toFixed(1) + 'x volume · ' : '') + 'tab se ' + f1(r.since) +
+      (r.held != null ? ' · pop ka ' + Math.round(r.held * 100) + '% bacha' : '') + '</small></span></div>' +
+      '<div class="nc-say nc-' + r.cls + '">' + r.verdict + '</div>');
+
+    if (!rows.length) return '';
+    const leg = (on, txt) => '<span class="nc-leg' + (on ? ' on' : '') + '">' + (on ? '✓' : '·') + ' ' + txt + '</span>';
+    return '<div class="nc-wrap"><div class="nc' + (f.match === 'triple' ? ' triple' : '') + '">' +
+      '<div class="nc-top"><span class="nc-title">🔢 Numbers Check</span>' + ncBadge(f) +
+      '<span class="nc-when">' + (o.note || 'sirf confidence ke liye') + '</span></div>' +
+      rows.join('') +
+      '<div class="nc-legs">' + leg(legs.growth, '30%+ growth') + leg(legs.reaction, 'reaction accha') +
+      leg(legs.setup, 'setup ready') + '</div>' +
+      '<div class="nc-foot"><span class="dev">"नंबर्स अपने आप में कोई मैटर नहीं करते... ' +
+      'सेक्टर कैसा परफॉर्म कर रहा है फंडामेंटली। एंड द सेम टाइम प्राइस एक्शन क्या मैच कर रहा है?"</span><br>' +
+      'Isliye ye ranking nahi badalta. Hum fundamentals trade nahi karte — ye sirf batata hai ki ' +
+      'chart ke peeche numbers bhi saath de rahe hain ya nahi.</div>' +
+      '</div></div>';
+  }
+
+  /* watchlist row / compact jagah ke liye ek-line version */
+  function numbersMini(sym) {
+    const f = FUND[sym]; if (!f) return '';
+    const g = f.growth, r = f.reaction;
+    const bits = [];
+    if (g && g.profit != null) bits.push('<b class="nc-' + g.cls + '">' + g.src + ' ' + f0(g.profit) + '</b>');
+    else if (g && g.sales != null) bits.push('<b class="nc-' + g.cls + '">sales ' + f0(g.sales) + '</b>');
+    if (r && r.moveDay != null) bits.push('<b class="nc-' + r.cls + '">result ' + f0(r.moveDay) + '</b>');
+    if (!bits.length) return '';
+    return '<span class="nc-mini' + (f.match === 'triple' ? ' triple' : '') + '" title="Numbers Check — ' +
+      (g ? g.verdict : '') + ' · ' + (r ? r.verdict : '') + '">🔢 ' + bits.join(' · ') +
+      ' <span style="opacity:.7">' + f.matchCount + '/3</span></span>';
+  }
+
   /* ---- creator ka apna quote (rules.json se) ---- */
   const RQ = d.ruleQuotes || {};
   function quoteBox(id) {
@@ -1242,14 +1443,148 @@
      khalipan JHOOTHA hai: market ka saath nahi hai, par NAAM maujood hain.
      Agle din market palte to yahi list kaam aati hai. */
   const wl = d.watchlist || [];
+  /* ---- 5 quarter ka trend ----
+     income ki unit har company me alag hai (zyadatar ₹ lakh) — isliye RUPAYA kabhi
+     mat likhna. Bar sirf SHAPE dikhati hai, EPS per-share hai to wo asli number hai. */
+  function quarterTrend(sym) {
+    const f = FUND[sym]; if (!f || !f.series || f.series.length < 2) return '';
+    const ser = f.series;
+    const mx = Math.max(...ser.map(q => Math.abs(q.pat == null ? 0 : q.pat))) || 1;
+    const short = q => { const m = /([A-Za-z]{3})\s+(\d{4})/.exec(q || ''); return m ? m[1] + ' ' + m[2].slice(2) : (q || ''); };
+    return '<div class="qt"><div class="qt-top">Pichhle ' + ser.length + ' quarter — profit ka aakar</div>' +
+      '<div class="qt-bars">' + ser.map(q => {
+        const v = q.pat == null ? 0 : q.pat, h = Math.round(Math.abs(v) / mx * 44);
+        return '<div class="qt-col">' +
+          '<div class="qt-bar' + (v < 0 ? ' neg' : '') + '"><em style="height:' + Math.max(2, h) + 'px"></em></div>' +
+          '<div class="qt-q">' + short(q.q) + '</div>' +
+          '<div class="qt-eps' + (q.eps == null ? ' nc-na' : (q.eps < 0 ? ' nc-bad' : '')) + '">' +
+          (q.eps == null ? '—' : '₹' + q.eps) + '</div></div>';
+      }).join('') + '</div>' +
+      '<div class="qt-foot">Neeche ka number us quarter ki <b>EPS</b> (per share kamai). ' +
+      'Bar sirf profit ka ghatna-badhna dikhati hai — rupaye ka paimana har company me alag hota hai.</div></div>';
+  }
+
+  /* ---- ek watchlist naam ka poora card ---- */
+  function wlDetailCard(w, i) {
+    const f = FUND[w.symbol];
+    const cap = w.cap || 'Small';
+    const nr = f && f.nextResult;
+    const tags = [];
+    tags.push('<span class="wl-badge' + (w.ready ? ' ready' : '') + '">' + (w.ready ? 'Ready' : 'Base ban raha') + '</span>');
+    if (w.hot) tags.push('<span class="flag">🔥 hot sector</span>');
+    if (f) tags.push(ncBadge(f));
+    return '<div class="wld' + (f && f.match === 'triple' ? ' triple' : '') + '" data-tv="' + w.symbol +
+      '" title="' + w.symbol + ' ka TradingView chart kholo">' +
+      '<div class="wld-head"><div class="wld-id">' +
+        '<div class="wld-sym">' + w.symbol + ' <span class="cap-badge cap-' + cap + '">' + cap + '</span></div>' +
+        '<div class="wld-nm">' + w.name + ' · ' + w.sector + '</div></div>' +
+        '<div class="wld-cmp">₹' + w.cmp.toLocaleString('en-IN') + '<small>CMP</small></div></div>' +
+      '<div class="wld-tags">' + tags.join('') + '</div>' +
+      '<div class="spark-wrap">' + miniSpark(w.spark, w.pivot) + '</div>' +
+      '<div class="wld-lvls">' +
+        '<div><small>Pivot</small><b>' + w.pivot.toLocaleString('en-IN') + '</b><i>' + w.prox + '% door</i></div>' +
+        '<div><small>SL</small><b>' + (w.sl != null ? w.sl.toLocaleString('en-IN') : '—') + '</b><i>breakout pe</i></div>' +
+        '<div><small>Base</small><b>' + (w.baseDays || '?') + 'd</b><i>' + w.range + '% range</i></div>' +
+        '<div><small>Leader</small><b>' + (w.leaderPct == null ? '—' : w.leaderPct) + '</b><i>sector me</i></div>' +
+      '</div>' +
+      numbersCheck(w.symbol, { note: 'trade nahi — sirf nazar me' }) +
+      quarterTrend(w.symbol) +
+      (nr ? '<div class="wld-next' + (nr.inDays <= 3 ? ' hot' : '') + '">📅 <b>Agla result ' + nr.on + '</b> (' +
+        nr.inDays + ' din) — ' + (nr.inDays <= 3
+          ? 'itne paas me breakout pe entry mat lena. Numbers coin toss hain, setup nahi.'
+          : 'trade lete waqt yaad rakhna, result se pehle nikalna hota hai.') + '</div>' : '') +
+      (w.scoreParts && w.scoreParts.length
+        ? '<details class="sb"><summary>Score kaise bana — ' + (w.scoreTotal != null ? w.scoreTotal.toFixed(1) : '') + ' points</summary>' +
+          w.scoreParts.map(p => '<div class="sb-row"><span>' + p.label + '<span class="why">' + (p.why || '') +
+            '</span></span><b class="' + (p.pts >= 0 ? 'sb-pos' : 'sb-neg') + '">' + (p.pts > 0 ? '+' : '') + p.pts +
+            '</b></div>').join('') + '</details>'
+        : '') +
+      '</div>';
+  }
+
   (function watchlistSection() {
     const el = document.getElementById('watchlist');
     if (!el) return;
-    if (!wl.length) { el.innerHTML = '<div class="card"><span class="note">Abhi watchlist khali hai.</span></div>'; return; }
+
+    /* scan tab pe sirf ek chhota rasta — poora saamaan apne tab me */
+    const teaser = document.getElementById('wlTeaser');
+    if (teaser) {
+      const triple = wl.filter(w => FUND[w.symbol] && FUND[w.symbol].match === 'triple').length;
+      teaser.innerHTML = !wl.length ? '' :
+        '<h2>👀 Watchlist — Nazar Me Rakho</h2>' +
+        '<div class="card" id="wlJump" style="cursor:pointer">' +
+        '<b>' + wl.length + ' naam</b> pivot ke sabse kareeb hain' +
+        (triple ? ', inme <b style="color:var(--green)">' + triple + '</b> pe numbers bhi saath de rahe hain' : '') +
+        '. Har naam ka poora hisaab — levels, akhri result, uska reaction, quarter trend — ' +
+        '<b style="color:var(--accent)">Watchlist tab me →</b></div>';
+      const j = document.getElementById('wlJump');
+      if (j) j.addEventListener('click', () => document.querySelector('.tab[data-view="watch"]').click());
+    }
+
+    if (!wl.length) {
+      el.innerHTML = '<div class="card"><span class="note">Abhi watchlist khali hai.</span></div>';
+      return;
+    }
+
+    /* ---- strip ---- */
+    const strip = document.getElementById('wlStrip');
+    if (strip) {
+      const ready = wl.filter(w => w.ready).length;
+      const triple = wl.filter(w => FUND[w.symbol] && FUND[w.symbol].match === 'triple').length;
+      const grow = wl.filter(w => FUND[w.symbol] && FUND[w.symbol].legs.growth).length;
+      const soon = wl.filter(w => FUND[w.symbol] && FUND[w.symbol].nextResult && FUND[w.symbol].nextResult.inDays <= 7).length;
+      const c = (l, v, sub, cls) => '<div class="card stat"><small>' + l + '</small><b class="' + (cls || '') + '">' +
+        v + '</b><span class="sub">' + sub + '</span></div>';
+      strip.innerHTML =
+        c('Nazar me', wl.length, ready + ' abhi ready') +
+        c('Teeno match', triple, 'growth + reaction + setup', triple ? 'pos' : '') +
+        c('30%+ growth', grow, 'creator ka bar paar kiya') +
+        c('Result 7 din me', soon, soon ? 'inpe entry se pehle socho' : 'kisi ka result paas nahi', soon ? 'neg' : '');
+    }
+
+    /* ---- filter chips ---- */
+    const fil = document.getElementById('wlFilters');
+    const cards = document.getElementById('wlCards');
+    let mode = 'all';
+    function paint() {
+      const list = wl.filter(w => {
+        const f = FUND[w.symbol];
+        if (mode === 'triple') return f && f.match === 'triple';
+        if (mode === 'ready') return !!w.ready;
+        if (mode === 'growth') return f && f.legs.growth;
+        return true;
+      });
+      cards.innerHTML = list.length
+        ? list.map(wlDetailCard).join('')
+        : '<div class="card wl-empty">Is filter me koi naam nahi. Chip dobara dabao.</div>';
+      cards.querySelectorAll('[data-tv]').forEach(n => n.addEventListener('click', ev => {
+        if (ev.target.closest('summary') || ev.target.closest('details')) return;
+        window.open(tvUrl(n.dataset.tv), '_blank', 'noopener');
+      }));
+    }
+    if (fil) {
+      const n = m => wl.filter(w => {
+        const f = FUND[w.symbol];
+        if (m === 'triple') return f && f.match === 'triple';
+        if (m === 'ready') return !!w.ready;
+        if (m === 'growth') return f && f.legs.growth;
+        return true;
+      }).length;
+      const opts = [['all', 'Sab'], ['ready', 'Ready'], ['growth', '30%+ growth'], ['triple', 'Teeno match']];
+      fil.innerHTML = opts.map(o => '<span class="wl-fil' + (o[0] === 'all' ? ' active' : '') +
+        '" data-m="' + o[0] + '">' + o[1] + ' <b>' + n(o[0]) + '</b></span>').join('');
+      fil.querySelectorAll('.wl-fil').forEach(x => x.addEventListener('click', () => {
+        fil.querySelectorAll('.wl-fil').forEach(y => y.classList.remove('active'));
+        x.classList.add('active'); mode = x.dataset.m; paint();
+      }));
+    }
+    paint();
+
     el.innerHTML = '<table class="wl-table">' + wl.map(w =>
       '<tr data-tv="' + w.symbol + '" title="' + w.symbol + ' ka TradingView chart kholo">' +
         '<td class="wl-sym"><b>' + w.symbol + '</b> <span class="cap-badge cap-' + (w.cap || 'Small') + '">' + (w.cap || 'Small') + '</span>' +
-          '<span class="note">' + w.name + ' · ' + w.sector + (w.hot ? ' · 🔥 hot sector' : '') + '</span></td>' +
+          '<span class="note">' + w.name + ' · ' + w.sector + (w.hot ? ' · 🔥 hot sector' : '') + '</span>' +
+          (numbersMini(w.symbol) ? '<span class="wl-nm-chip">' + numbersMini(w.symbol) + '</span>' : '') + '</td>' +
         '<td><span class="wl-badge' + (w.ready ? ' ready' : '') + '">' + (w.ready ? 'Ready' : 'Base ban raha') + '</span>' +
           (w.leaderPct == null ? '' : '<span class="ldr" style="margin-left:6px"><span class="ldr-bar"><i style="width:' + w.leaderPct + '%"></i></span><small>' + w.leaderPct + '</small></span>') + '</td>' +
         '<td class="wl-lvl">₹' + w.pivot.toLocaleString('en-IN') + '<small>pivot · ' + w.prox + '% door</small></td>' +
@@ -1258,16 +1593,9 @@
         '<td>' + miniSpark(w.spark, w.pivot) +
           '<span class="wlb" title="pivot se ' + w.prox + '% door"><i style="width:' +
           Math.max(4, Math.min(100, 100 - w.prox * 18)) + '%"></i></span></td>' +
-      '</tr>').join('') + '</table>' +
-      // Score breakdown — har naam ke neeche, "ye upar kyun hai" ka jawab
-      '<div style="margin-top:10px">' + wl.map(w =>
-        (w.scoreParts && w.scoreParts.length
-          ? '<details class="sb"><summary><b>' + w.symbol + '</b> — score kaise bana (' +
-            (w.scoreTotal != null ? w.scoreTotal.toFixed(1) : '') + ')</summary>' +
-            w.scoreParts.map(p => '<div class="sb-row"><span>' + p.label + '<span class="why">' + (p.why || '') +
-              '</span></span><b class="' + (p.pts >= 0 ? 'sb-pos' : 'sb-neg') + '">' + (p.pts > 0 ? '+' : '') + p.pts +
-              '</b></div>').join('') + '</details>'
-          : '')).join('') + '</div>' +
+      '</tr>').join('') + '</table>';
+
+    document.getElementById('wlFoot').innerHTML =
       (function () {
         const w = d.watchStats;
         if (!w) return '';
@@ -1282,7 +1610,9 @@
           'Ye trade ka hisaab NAHI hai — sirf scanner ka apna report card.</span></div>';
       })() +
       '<div class="wl-note">Ye <b>TRADE NAHI</b> hain — journal inhe track nahi karta. Ye wo naam hain jo pivot ke sabse kareeb hain: ' +
-      '<b>pivot cross ho tabhi</b> baat banti hai, usse pehle jo bhi hai sirf indication hai. Kisi bhi row pe click karke chart kholo.</div>';
+      '<b>pivot cross ho tabhi</b> baat banti hai, usse pehle jo bhi hai sirf indication hai. Kisi bhi row ya card pe click karke chart kholo.<br>' +
+      '<span style="opacity:.8">Numbers Check yahan sirf CONFIDENCE ke liye hai. Ranking ab bhi poori tarah chart se banti hai — ' +
+      'growth kharab hone se koi naam list se bahar nahi hota, aur achhi growth se koi upar nahi aata.</span></div>';
   })();
   const wlCard = '';
 
@@ -1330,6 +1660,7 @@
         ${p.detail && p.detail.earnIn != null && p.detail.earnIn <= 3 ? `<div class="earn-warn"><b>⚠️ Result ${p.detail.earnOn} ko</b> — is breakout pe abhi entry mat lo. Numbers coin toss hai, setup nahi. Result nikalne do.</div>` : ''}
         <div class="size-row">Position (${rr && rr.mode === 'test' ? 'test mode' : d.market.gearLabel}, ${rampSizePct}%): <b>${qty} shares ≈ ${inr(qty * p.cmp)}</b> <span>· SL hit hua to loss ≈ ${inr(qty * (p.cmp - p.sl))}</span></div>
         ${scoreBox(p.scoreParts, p.scoreTotal)}
+        ${numbersCheck(p.symbol, { note: 'pick ka confidence' })}
         ${quoteBox('selection.max_picks')}
         <div class="pick-row"><span>Setup:</span> ${p.setup}</div>
         <div class="pick-row"><span>Entry:</span> ${p.entry}</div>
