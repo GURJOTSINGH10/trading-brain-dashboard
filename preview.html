@@ -312,6 +312,94 @@
   .pos-empty { padding: 34px; text-align: center; color: var(--muted); }
   @media (max-width: 560px) { .pos-cards { grid-template-columns: 1fr; } }
 
+  /* ===== Kal se kya badla ===== */
+  .chg { display: flex; flex-direction: column; gap: 2px; }
+  .chg-row { display: flex; gap: 9px; align-items: baseline; font-size: 12.5px; padding: 6px 0; border-top: 1px solid var(--border-soft); }
+  .chg-row:first-child { border-top: none; }
+  .chg-ic { font-size: 13px; width: 18px; flex: none; text-align: center; }
+  .chg-sl { color: #ff8f96; } .chg-book { color: #4fe0a8; }
+  .chg-gear { color: #ffc46b; } .chg-cross { color: var(--accent); }
+
+  /* ===== Thermometer — pichhli 4 trades ===== */
+  .thermo-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .thermo-badge { font-size: 13px; font-weight: 800; letter-spacing: .4px; padding: 5px 13px; border-radius: 22px; }
+  .th-EASY { background: rgba(49,212,146,.14); color: #4fe0a8; border: 1px solid rgba(49,212,146,.4); }
+  .th-TOUGH { background: rgba(255,107,118,.13); color: #ff8f96; border: 1px solid rgba(255,107,118,.4); }
+  .th-MIXED { background: rgba(255,183,77,.13); color: #ffc46b; border: 1px solid rgba(255,183,77,.38); }
+  .thermo-dots { display: flex; gap: 6px; flex-wrap: wrap; }
+  .th-dot { font-size: 11px; padding: 3px 9px; border-radius: 8px; font-variant-numeric: tabular-nums;
+    border: 1px solid var(--border); background: rgba(148,163,184,.08); }
+  .th-dot.w { background: rgba(49,212,146,.13); border-color: rgba(49,212,146,.35); color: #4fe0a8; }
+  .th-dot.l { background: rgba(255,107,118,.11); border-color: rgba(255,107,118,.32); color: #ff8f96; }
+  .th-dot.recent { outline: 1px solid var(--text); outline-offset: 1px; }
+
+  /* ===== Gear timeline ===== */
+  .gstrip { display: flex; gap: 2px; align-items: flex-end; height: 26px; margin-top: 8px; }
+  .gcell { flex: 1 1 0; min-width: 2px; border-radius: 2px 2px 0 0; opacity: .85; }
+  .g1 { background: #ff6b76; } .g2 { background: #ff9d6b; } .g3 { background: #ffc46b; }
+  .g4 { background: #7ddc9f; } .g5 { background: #31d492; }
+  .gstrip-lbl { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--muted); margin-top: 4px; }
+
+  /* ===== Sector rotation ===== */
+  .rot { display: flex; flex-direction: column; gap: 5px; }
+  .rot-row { display: grid; grid-template-columns: 150px 1fr; gap: 10px; align-items: center; font-size: 12px; }
+  .rot-cells { display: flex; gap: 2px; }
+  .rot-c { flex: 1 1 0; height: 14px; border-radius: 2px; background: rgba(148,163,184,.10); }
+  .rot-c.on { background: rgba(255,107,118,.55); }
+  .rot-name { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ===== Score breakdown ===== */
+  details.sb { margin-top: 8px; }
+  details.sb > summary { cursor: pointer; font-size: 11.5px; color: var(--muted); list-style: none; padding: 4px 0; }
+  details.sb > summary::-webkit-details-marker { display: none; }
+  details.sb > summary::before { content: '▸ '; }
+  details.sb[open] > summary::before { content: '▾ '; }
+  details.sb > summary:hover { color: var(--text); }
+  .sb-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; font-size: 11.5px; padding: 4px 0; border-top: 1px solid var(--border-soft); }
+  .sb-row b { font-variant-numeric: tabular-nums; }
+  .sb-row .why { display: block; color: var(--muted); font-size: 10.5px; margin-top: 1px; }
+  .sb-pos { color: #4fe0a8; } .sb-neg { color: #ff8f96; }
+  .sb-total { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; padding-top: 6px; border-top: 1px solid var(--border); margin-top: 4px; }
+
+  /* ===== Creator quote ===== */
+  .cq { margin-top: 9px; padding: 9px 12px; border-radius: 10px; font-size: 11.5px; line-height: 1.6;
+    background: rgba(84,169,255,.06); border-left: 2px solid rgba(84,169,255,.5); }
+  .cq .dev { color: var(--text); }
+  .cq .gl { color: var(--muted); display: block; margin-top: 4px; font-style: italic; }
+
+  /* ===== Universe health ===== */
+  .uh { display: grid; grid-template-columns: repeat(auto-fit, minmax(122px, 1fr)); gap: 10px; }
+  .uh-i { background: rgba(148,163,184,.06); border-radius: 11px; padding: 10px 12px; }
+  .uh-i small { display: block; color: var(--muted); font-size: 10.5px; margin-bottom: 3px; }
+  .uh-i b { font-size: 16px; font-variant-numeric: tabular-nums; }
+  .uh-i span { display: block; font-size: 10.5px; color: var(--muted); margin-top: 2px; }
+  .uh-flow { font-size: 11.5px; color: var(--muted); margin-top: 10px; line-height: 1.7; }
+
+  /* ===== chhoti spark + watchlist bar ===== */
+  .mspark { width: 62px; height: 22px; display: block; }
+  .wlb { width: 64px; height: 5px; border-radius: 4px; background: rgba(148,163,184,.18); position: relative; overflow: hidden; margin-top: 4px; }
+  .wlb i { position: absolute; right: 0; top: 0; height: 5px; border-radius: 4px; background: #54a9ff; }
+
+  /* ===== Positions: chart + earnings ===== */
+  .pos-chart { position: relative; }
+  .pos-legend { display: flex; gap: 12px; font-size: 10.5px; color: var(--muted); margin-top: 5px; flex-wrap: wrap; }
+  .pos-legend i { display: inline-block; width: 14px; height: 2px; vertical-align: middle; margin-right: 4px; }
+  .pos-earn { font-size: 11.5px; padding: 7px 11px; border-radius: 9px; margin-top: 2px;
+    background: rgba(255,183,77,.10); border: 1px solid rgba(255,183,77,.35); color: #ffc46b; }
+
+  /* ===== Mobile ===== */
+  @media (max-width: 560px) {
+    .rot-row { grid-template-columns: 96px 1fr; font-size: 11px; }
+    .sp-table td, .wl-table td { padding: 8px 8px; font-size: 11.5px; }
+    .sp-lvl small, .wl-lvl small { font-size: 9.5px; }
+    .mspark { display: none; }
+    .pos-grid { grid-template-columns: repeat(2, 1fr); }
+    .uh { grid-template-columns: repeat(2, 1fr); }
+    table { min-width: 0; }
+    .table-scroll table th:nth-child(3), .table-scroll table td:nth-child(3),
+    .table-scroll table th:nth-child(4), .table-scroll table td:nth-child(4) { display: none; }
+  }
+
   /* Picks */
   .picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 18px; }
   .pick { display: flex; flex-direction: column; gap: 12px; transition: transform 0.18s, border-color 0.18s; }
@@ -559,12 +647,16 @@
       </div>
     </div>
 
+    <div id="changesCard"></div>
+    <div id="thermoCard"></div>
+
     <h2>Market Health Check</h2>
     <div class="checks" id="checks"></div>
 
     <h2>Hot Sectors — aur unme kaunse stock</h2>
     <div class="sectors" id="sectors"></div>
     <div id="sectorPlays" style="margin-top:16px;"></div>
+    <div id="rotation" style="margin-top:16px;"></div>
 
     <h2>Result Calendar — kis pick ka result kab</h2>
     <div id="earnCal"></div>
@@ -577,6 +669,9 @@
 
     <h2>👀 Watchlist — Nazar Me Rakho</h2>
     <div id="watchlist"></div>
+
+    <h2>🔭 Scanner Ne Aaj Kya Dekha</h2>
+    <div id="uhealth"></div>
   </div>
 
   <!-- ============ POSITIONS VIEW ============ -->
@@ -853,6 +948,7 @@
           '<td><span class="sp-stage ' + cls + '">' + st.stage + '</span></td>' +
           '<td class="sp-lvl">₹' + st.pivot.toLocaleString('en-IN') + '<small>pivot · ' + st.prox + '% door</small></td>' +
           '<td class="sp-lvl">₹' + st.cmp.toLocaleString('en-IN') + '<small>abhi · base ' + st.baseDays + 'd / ' + st.range + '%</small></td>' +
+          '<td>' + miniSpark(st.spark, st.pivot) + '</td>' +
           '<td>' + (st.leaderPct == null ? '' :
             '<span class="ldr"><span class="ldr-bar"><i style="width:' + st.leaderPct + '%"></i></span>' +
             '<small>' + st.leaderPct + '</small></span>') + '</td>' +
@@ -961,6 +1057,126 @@
     window.open(tvUrl(el.dataset.tv), '_blank', 'noopener');
   });
 
+  /* ---- chhoti sparkline (table rows ke liye) ---- */
+  function miniSpark(vals, ref) {
+    if (!vals || vals.length < 3) return '';
+    const w = 62, h = 22, lo = Math.min(...vals, ref || Infinity), hi = Math.max(...vals, ref || -Infinity);
+    const px = i => i * w / (vals.length - 1);
+    const py = v => h - 2 - (v - lo) * (h - 4) / (hi - lo || 1);
+    const pts = vals.map((v, i) => px(i).toFixed(1) + ',' + py(v).toFixed(1)).join(' ');
+    const up = vals[vals.length - 1] >= vals[0];
+    const col = up ? '#31d492' : '#ff6b76';
+    const rl = ref ? '<line x1="0" y1="' + py(ref).toFixed(1) + '" x2="' + w + '" y2="' + py(ref).toFixed(1) +
+      '" stroke="#54a9ff" stroke-width="1" stroke-dasharray="3 3" opacity="0.7"/>' : '';
+    return '<svg class="mspark" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none">' + rl +
+      '<polyline points="' + pts + '" fill="none" stroke="' + col + '" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+  }
+
+  /* ---- score breakdown: "ye naam upar KYUN hai" ---- */
+  function scoreBox(parts, total) {
+    if (!parts || !parts.length) return '';
+    return '<details class="sb"><summary>Score kaise bana — ' + (total != null ? total.toFixed(1) : '') + ' points</summary>' +
+      parts.map(p => '<div class="sb-row"><span>' + p.label + '<span class="why">' + (p.why || '') +
+        '</span></span><b class="' + (p.pts >= 0 ? 'sb-pos' : 'sb-neg') + '">' + (p.pts > 0 ? '+' : '') + p.pts +
+        '</b></div>').join('') +
+      '<div class="sb-total"><span>Kul</span><span>' + (total != null ? total.toFixed(1) : '') + '</span></div></details>';
+  }
+
+  /* ---- creator ka apna quote (rules.json se) ---- */
+  const RQ = d.ruleQuotes || {};
+  function quoteBox(id) {
+    const r = RQ[id]; if (!r || (!r.quote && !r.gloss)) return '';
+    return '<div class="cq">' + (r.quote ? '<span class="dev">"' + r.quote + '"</span>' : '') +
+      (r.gloss ? '<span class="gl">' + r.gloss + '</span>' : '') + '</div>';
+  }
+
+  /* ---- KAL SE KYA BADLA ----
+     Roz naye naam dikhana kaafi nahi — "kal se kya farak hai" wahi cheez hai
+     jispe aadmi sabse pehle nazar daalta hai. */
+  (function changesCard() {
+    const el = document.getElementById('changesCard'); if (!el) return;
+    const ch = d.changes || [];
+    if (!ch.length) { el.innerHTML = ''; return; }
+    const ic = { gear: '⚙️', 'sector-in': '🔥', 'sector-out': '🧊', book: '💰', trail: '📉', sl: '⚠️', cross: '🚀' };
+    el.innerHTML = '<h2>Kal Se Kya Badla</h2><div class="card chg">' +
+      ch.map(c => '<div class="chg-row"><span class="chg-ic">' + (ic[c.kind] || '•') + '</span>' +
+        '<span class="chg-' + c.kind + '">' + c.text + '</span></div>').join('') + '</div>';
+  })();
+
+  /* ---- THERMOMETER — creator ka apna ----
+     "Aap INDEX TRADER ho kya? Aapki last 4 trades kaisi thi — EASY feel kara
+     rahi hain ki TOUGH?" Market ka thermometer index nahi, apni trades hain. */
+  (function thermoCard() {
+    const el = document.getElementById('thermoCard'); if (!el) return;
+    const t = d.lastTrades; if (!t) { el.innerHTML = ''; return; }
+    const dots = t.trades.map((x, i) => {
+      const recent = i >= t.trades.length - 4;
+      return '<span class="th-dot ' + (x.pnlPct > 0 ? 'w' : 'l') + (recent ? ' recent' : '') + '" title="' +
+        x.symbol + ' · ' + x.picked + '">' + x.symbol + ' ' + (x.pnlPct > 0 ? '+' : '') + x.pnlPct + '%</span>';
+    }).join('');
+    el.innerHTML = '<h2>Tumhara Apna Thermometer</h2><div class="card">' +
+      '<div class="thermo-head"><span class="thermo-badge th-' + t.feel + '">' + t.feel + '</span>' +
+      '<span class="note">Pichhli 4 trades: <b>' + t.wins + '/4 profit me</b> · net ' +
+      (t.net > 0 ? '+' : '') + t.net + '%</span></div>' +
+      '<div class="thermo-dots" style="margin-top:11px">' + dots + '</div>' +
+      '<div class="pick-name" style="margin-top:10px">' + t.note + '</div>' +
+      quoteBox('risk.last4_thermometer') + '</div>';
+  })();
+
+  /* ---- GEAR TIMELINE — "kitne din se gear 1 hai" ---- */
+  (function gearStrip() {
+    const hist = d.history || []; if (hist.length < 2) return;
+    const host = document.getElementById('verdict'); if (!host) return;
+    const cells = hist.map(h => '<div class="gcell g' + h.gear + '" style="height:' + (20 + h.gear * 12) + '%" title="' +
+      h.d + ' — gear ' + h.gear + '"></div>').join('');
+    const el = document.createElement('div');
+    el.innerHTML = '<div class="gstrip">' + cells + '</div><div class="gstrip-lbl"><span>' +
+      hist[0].d + '</span><span><b>' + d.gearStreak + ' session</b> se gear ' + d.market.gear + '</span></div>';
+    host.parentNode.insertBefore(el, host.nextSibling);
+  })();
+
+  /* ---- SECTOR ROTATION — Leadership Rotation core concept hai,
+     par dashboard sirf AAJ dikhata tha ---- */
+  (function rotationBlock() {
+    const el = document.getElementById('rotation'); if (!el) return;
+    const hist = (d.history || []).slice(-40);
+    if (hist.length < 5) { el.innerHTML = ''; return; }
+    const count = {};
+    hist.forEach(h => (h.sec || []).forEach(x => count[x] = (count[x] || 0) + 1));
+    const names = Object.keys(count).sort((a, b) => count[b] - count[a]).slice(0, 8);
+    if (!names.length) { el.innerHTML = ''; return; }
+    el.innerHTML = '<h2>Sector Rotation — pichhle ' + hist.length + ' session</h2><div class="card rot">' +
+      names.map(n => '<div class="rot-row"><span class="rot-name" title="' + n + '">' + n + '</span>' +
+        '<span class="rot-cells">' + hist.map(h => '<span class="rot-c' + ((h.sec || []).includes(n) ? ' on' : '') +
+          '" title="' + h.d + '"></span>').join('') + '</span></div>').join('') +
+      '<div class="wl-note" style="padding-top:8px">Laal = us din wo sector hot list me tha. ' +
+      '<b>Rotation yahan dikhti hai</b> — kaun aa raha hai, kaun thanda pad raha hai.</div></div>';
+  })();
+
+  /* ---- UNIVERSE HEALTH — "scanner ne aaj kya DEKHA" ----
+     Ye isliye hai ki system pehle CHUP-CHAAP andha tha: 272 stocks history ki
+     kami se skip ho rahe the aur kahin koi ginti nahi thi. */
+  (function uhealthBlock() {
+    const el = document.getElementById('uhealth'); if (!el) return;
+    const u = d.universeHealth; if (!u) { el.innerHTML = ''; return; }
+    const it = (lbl, val, sub) => '<div class="uh-i"><small>' + lbl + '</small><b>' + val + '</b><span>' + (sub || '') + '</span></div>';
+    el.innerHTML = '<div class="card"><div class="uh">' +
+      it('NSE pe listed', u.listed, 'poori EQ list') +
+      it('Turnover filter paas', u.prefiltered, '₹2Cr+ aaj') +
+      it('History mili', u.fetched, (u.prefiltered - u.fetched) + ' fail') +
+      it('Sach me scan hue', u.scanned, 'inhi me se picks') +
+      it('Short history se skip', u.skippedShortHistory, '100 bars se kam') +
+      it('Illiquid se skip', u.skippedIlliquid, '₹5Cr floor') +
+      it('Bina sector', u.noSector, 'inhe hot-sector bonus nahi mil sakta') +
+      it('Sector coverage', u.sectorCoveragePct + '%', 'poore universe ka') +
+      '</div><div class="uh-flow"><b>' + u.listed + '</b> listed → <b>' + u.prefiltered +
+      '</b> turnover filter → <b>' + u.fetched + '</b> history → <b>' + u.scanned + '</b> scan' +
+      (u.bseStitched ? ' · <b>' + u.bseStitched + '</b> ki purani history BSE se joddi' : '') +
+      (u.bseRejected ? ' · <b>' + u.bseRejected + '</b> reject (data bharosemand nahi)' : '') +
+      '<br>Ye panel isliye hai ki pehle scanner <b>chup-chaap andha</b> tha — stocks skip ho rahe the aur kahin koi ginti nahi thi.' +
+      '</div></div>';
+  })();
+
   const picksEl = document.getElementById('picks');
   const curGearPct = sizeByGear[d.market.gear - 1];
   // Watchlist ab HAMESHA banti hai (pehle sirf 0-picks wale din). Kyunki ab roz sirf
@@ -986,7 +1202,19 @@
         '<td class="wl-lvl">₹' + w.pivot.toLocaleString('en-IN') + '<small>pivot · ' + w.prox + '% door</small></td>' +
         '<td class="wl-lvl">₹' + (w.sl != null ? w.sl.toLocaleString('en-IN') : '—') + '<small>SL</small></td>' +
         '<td class="wl-lvl">₹' + w.cmp.toLocaleString('en-IN') + '<small>abhi · base ' + (w.baseDays || '?') + 'd / ' + w.range + '%</small></td>' +
+        '<td>' + miniSpark(w.spark, w.pivot) +
+          '<span class="wlb" title="pivot se ' + w.prox + '% door"><i style="width:' +
+          Math.max(4, Math.min(100, 100 - w.prox * 18)) + '%"></i></span></td>' +
       '</tr>').join('') + '</table>' +
+      // Score breakdown — har naam ke neeche, "ye upar kyun hai" ka jawab
+      '<div style="margin-top:10px">' + wl.map(w =>
+        (w.scoreParts && w.scoreParts.length
+          ? '<details class="sb"><summary><b>' + w.symbol + '</b> — score kaise bana (' +
+            (w.scoreTotal != null ? w.scoreTotal.toFixed(1) : '') + ')</summary>' +
+            w.scoreParts.map(p => '<div class="sb-row"><span>' + p.label + '<span class="why">' + (p.why || '') +
+              '</span></span><b class="' + (p.pts >= 0 ? 'sb-pos' : 'sb-neg') + '">' + (p.pts > 0 ? '+' : '') + p.pts +
+              '</b></div>').join('') + '</details>'
+          : '')).join('') + '</div>' +
       (function () {
         const w = d.watchStats;
         if (!w) return '';
@@ -1048,6 +1276,8 @@
         </div>
         ${p.detail && p.detail.earnIn != null && p.detail.earnIn <= 3 ? `<div class="earn-warn"><b>⚠️ Result ${p.detail.earnOn} ko</b> — is breakout pe abhi entry mat lo. Numbers coin toss hai, setup nahi. Result nikalne do.</div>` : ''}
         <div class="size-row">Position (${rr && rr.mode === 'test' ? 'test mode' : d.market.gearLabel}, ${rampSizePct}%): <b>${qty} shares ≈ ${inr(qty * p.cmp)}</b> <span>· SL hit hua to loss ≈ ${inr(qty * (p.cmp - p.sl))}</span></div>
+        ${scoreBox(p.scoreParts, p.scoreTotal)}
+        ${quoteBox('selection.max_picks')}
         <div class="pick-row"><span>Setup:</span> ${p.setup}</div>
         <div class="pick-row"><span>Entry:</span> ${p.entry}</div>
         <div class="pick-row"><span>Volume:</span> ${p.volumeNote}</div>
@@ -1115,6 +1345,29 @@
       if (p.booked) tags.push('<span class="flag">Aadha book ho chuka</span>');
       if (p.stale) tags.push('<span class="flag">⚠️ Bhaav purana</span>');
       if (p.daysHeld != null) tags.push('<span class="flag">' + p.daysHeld + ' session hold</span>');
+      // Chart pe teen lines: entry (grey), SL (laal), 40 DMA trail (peeli).
+      // Ek nazar me poori kahani — 6 flat number-box se bahut behtar.
+      const ps = (() => {
+        const v = p.spark; if (!v || v.length < 3) return '';
+        const W = 300, H = 62, lines = [[p.entry, '#94a3b8'], [p.sl, '#ff6b76']];
+        if (p.trail) lines.push([p.trail, '#ffc46b']);
+        const all = v.concat(lines.map(l => l[0]));
+        const lo = Math.min(...all), hi = Math.max(...all);
+        const x = k => k * W / (v.length - 1), y = q => H - 4 - (q - lo) * (H - 8) / (hi - lo || 1);
+        const pts = v.map((q, k) => x(k).toFixed(1) + ',' + y(q).toFixed(1)).join(' ');
+        const up = p.pnlPct >= 0, col = up ? '#31d492' : '#ff6b76';
+        return '<div class="pos-chart"><svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" height="62" preserveAspectRatio="none">' +
+          lines.map(l => '<line x1="0" y1="' + y(l[0]).toFixed(1) + '" x2="' + W + '" y2="' + y(l[0]).toFixed(1) +
+            '" stroke="' + l[1] + '" stroke-width="1" stroke-dasharray="4 3" opacity="0.8"/>').join('') +
+          '<polyline points="' + pts + '" fill="none" stroke="' + col + '" stroke-width="2" stroke-linejoin="round"/>' +
+          '<circle cx="' + x(v.length - 1).toFixed(1) + '" cy="' + y(v[v.length - 1]).toFixed(1) + '" r="3" fill="' + col + '"/>' +
+          '</svg><div class="pos-legend"><span><i style="background:#94a3b8"></i>entry</span>' +
+          '<span><i style="background:#ff6b76"></i>SL</span>' +
+          (p.trail ? '<span><i style="background:#ffc46b"></i>40 DMA</span>' : '') + '</div></div>';
+      })();
+      const earnWarn = (p.earnIn != null && p.earnIn >= 0 && p.earnIn <= 7)
+        ? '<div class="pos-earn">⚠️ Result <b>' + p.earnOn + '</b> ko (' + p.earnIn + ' din) — khuli position result ke aar-paar hold karna coin toss hai, setup nahi.</div>'
+        : '';
       return '<div class="card poscard" data-tv="' + p.symbol + '" title="' + p.symbol + ' ka chart kholo" style="animation-delay:' + (i * 0.05) + 's">' +
         '<div class="pos-head"><div class="pos-sym"><b>' + p.symbol + '</b><span class="note">' +
           p.sector + ' · ' + p.picked + ' ko pick' + (p.triggerDate ? ' · ' + p.triggerDate + ' ko trigger' : '') +
@@ -1139,7 +1392,8 @@
           : '<div class="pos-rail-lbl" style="margin:0"><span>40 DMA se cushion</span><span style="color:' +
             (cushionPct > 4 ? 'var(--green)' : cushionPct > 1.5 ? '#ffc46b' : 'var(--red)') + '"><b>' +
             cushionPct + '%</b> (₹' + Math.round(p.cmp - p.trail).toLocaleString('en-IN') + ')</span></div>') +
-        '<div class="pos-next' + (p.cmp <= p.sl ? ' warn' : '') + '">' + p.next + '</div>' +
+        ps +
+        '<div class="pos-next' + (p.cmp <= p.sl ? ' warn' : '') + '">' + p.next + '</div>' + earnWarn +
         '<div class="pos-tags">' + tags.join('') +
           '<a class="flag" style="text-decoration:none" href="https://in.tradingview.com/chart/?symbol=NSE%3A' +
           p.symbol + '" target="_blank" rel="noopener">Chart ↗</a></div>' +
@@ -1207,8 +1461,35 @@
     const baseY = y(startV).toFixed(1);   // period ki shuruaat ki line
     const lx = x(pts2.length - 1).toFixed(1), ly = y(endV).toFixed(1);
     const hex = chg >= 0 ? '#31d492' : '#ff6b76';
+    // ★ DRAWDOWN SHADING — peak se kitna neeche, wo laal me bharo.
+    // Equity line akeli sirf "kitna bana" batati hai. Asli sawaal ye bhi hai ki
+    // "beech me kitna sehna pada" — wahi cheez asli paise me chhudati hai.
+    let peak = -Infinity, worst = 0, worstX = null;
+    pts2.forEach((c, i) => {
+      if (c.v > peak) peak = c.v;
+      const dd = peak > 0 ? (c.v - peak) / peak * 100 : 0;
+      if (dd < worst) { worst = dd; worstX = i; }
+    });
+    const ddBand = (() => {
+      if (worst > -1) return '';
+      // har point pe running-peak aur actual ke beech ka hissa
+      let pk = -Infinity;
+      const top = [], bot = [];
+      pts2.forEach((c, i) => {
+        if (c.v > pk) pk = c.v;
+        top.push(x(i).toFixed(1) + ',' + y(Math.min(pk, max)).toFixed(1));
+        bot.push(x(i).toFixed(1) + ',' + y(c.v).toFixed(1));
+      });
+      return '<polygon points="' + top.join(' ') + ' ' + bot.reverse().join(' ') +
+        '" fill="#ff6b76" opacity="0.10"/>';
+    })();
+    const ddLabel = worst < -1 && worstX != null
+      ? '<text x="' + x(worstX).toFixed(1) + '" y="' + (H - 4) + '" fill="#ff8f96" font-size="10" text-anchor="middle">max DD ' + worst.toFixed(1) + '%</text>'
+      : '';
+
     document.getElementById('equityChart').innerHTML = `
     <svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="none" style="display:block;">
+      ${ddBand}${ddLabel}
       <defs><linearGradient id="geq" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="${hex}" stop-opacity="0.22"/>
         <stop offset="1" stop-color="${hex}" stop-opacity="0"/>
