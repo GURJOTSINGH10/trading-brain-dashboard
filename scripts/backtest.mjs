@@ -126,6 +126,27 @@ const HOT_BONUS = parseFloat(argVal('--hot-bonus', '4'));
 //   "no momentum as such — we are not going to buy them... ye hote hain BIG
 //   trends, abhi jo action hai wo SHORT trend hai."
 const SECTOR_PERSIST = args.includes('--sector-persist');
+// --sector-pack : sector ka "aag" naapo RETURN se nahi, BREAKOUT KI GINTI se.
+//
+// KYUN: creator kehta hai hot sector matlab "kai naam ek saath chal rahe hain",
+// aur code 5-din ka average RETURN naapta hai. Us gap ko do baar bharne ki koshish
+// ho chuki hai aur DONO fail:
+//   sector.heat.persistence (r20>4% aur r60>6% ka GATE)  -> chaaron window fail
+//   selection.leader_rank   (bonus ko leadership se weight) -> usse bhi bura
+// Dono ne MAGNITUDE naapi thi (kitna chala) aur dono ne capital ko un sectors me
+// bheja jinka move pehle hi ho chuka tha — yaani der se ghusaya.
+//
+// Ye alag cheez naapta hai: BREADTH. Sector ke kitne % naam pichhle N din me apna
+// 15-din high tod chuke hain. Ye market-level "breakouts working" (shipped rule,
+// creator ka #1 thermometer) ka SECTOR version hai.
+//
+// Aur ye GATE nahi hai — heat score me ek component hai. Sector bahar nahi hota,
+// sirf ranking badalti hai. Gate ban'ne wali galti dobara nahi karni.
+//
+// Look-ahead check: har naap si (aaj) tak ke bars se banti hai, aage ka kuch nahi.
+const SECTOR_PACK = args.includes('--sector-pack');
+const PACK_DAYS = parseInt(argVal('--pack-days', '10'), 10);
+const PACK_W = parseFloat(argVal('--pack-w', '6'));
 const PERSIST_R20 = parseFloat(argVal('--persist-r20', '4'));
 const PERSIST_R60 = parseFloat(argVal('--persist-r60', '6'));
 //
@@ -600,7 +621,7 @@ async function main() {
     const out = [];
     for (const [name, list] of Object.entries(bySector)) {
       if (name === 'Other' || name === 'Diversified' || list.length < 3) continue;
-      let ret5 = 0, up = 0, volR = 0, vn = 0, cnt = 0, r20 = 0, r60 = 0, c20 = 0, c60 = 0;
+      let ret5 = 0, up = 0, volR = 0, vn = 0, cnt = 0, r20 = 0, r60 = 0, c20 = 0, c60 = 0, pack = 0;
       for (const S of list) {
         const si = S.map[di];
         if (si < 25) continue;
@@ -612,6 +633,13 @@ async function main() {
         if (v20 > 0) { volR += v5 / v20; vn++; }
         if (si >= 21) { r20 += (S.c[si] - S.c[si - 20]) / S.c[si - 20] * 100; c20++; }
         if (si >= 61) { r60 += (S.c[si] - S.c[si - 60]) / S.c[si - 60] * 100; c60++; }
+        // pack: pichhle PACK_DAYS me kabhi apna 15-din high toda?
+        if (SECTOR_PACK && si >= 16 + PACK_DAYS) {
+          for (let i = si - PACK_DAYS + 1; i <= si; i++) {
+            let ph = 0; for (let k = i - 15; k < i; k++) if (S.h[k] > ph) ph = S.h[k];
+            if (ph > 0 && S.c[i] > ph) { pack++; break; }
+          }
+        }
       }
       if (cnt < 3) continue;
       ret5 /= cnt; volR = vn ? volR / vn : 1;
@@ -621,7 +649,9 @@ async function main() {
         if (!c20 || !c60) continue;
         if (!((r20 / c20) > PERSIST_R20 && (r60 / c60) > PERSIST_R60)) continue;
       }
-      out.push({ name, heat: ret5 + (up / cnt) * 3 + (volR - 1) * 4 });
+      // heat me pack ka hissa — GATE nahi, sirf ranking ka ek component
+      const packRatio = SECTOR_PACK ? pack / cnt : 0;
+      out.push({ name, heat: ret5 + (up / cnt) * 3 + (volR - 1) * 4 + packRatio * PACK_W, pack: packRatio });
     }
     out.sort((a, b) => b.heat - a.heat);
     const names = new Set(out.slice(0, 4).map(s => s.name));
@@ -923,7 +953,7 @@ const fmtLongDate = ts => new Date(ts * 1000).toLocaleDateString('en-IN', { time
 // kaat dete hain — ek hi timeline, koi overlap nahi.
 const istDateStr = ts => new Date(ts * 1000).toLocaleDateString('en-IN', { timeZone: IST, year: 'numeric', month: '2-digit', day: '2-digit' });
 
-export const VARIANT_LABEL = (SECTOR_PERSIST ? 'sector-persist ' : '') + (LEADER_BONUS ? 'leader-bonus ' : '') || 'baseline';
+export const VARIANT_LABEL = (SECTOR_PERSIST ? 'sector-persist ' : '') + (LEADER_BONUS ? 'leader-bonus ' : '') + (SECTOR_PACK ? 'sector-pack(w' + PACK_W + ',d' + PACK_DAYS + ') ' : '') || 'baseline';
 
 function writeJournal(closed, equity, T, positions, lastSessionTs) {
   const path = join(ROOT, 'journal.json');
