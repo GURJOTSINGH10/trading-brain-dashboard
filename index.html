@@ -288,6 +288,50 @@
     background: rgba(148,163,184,0.12); color: var(--muted); border: 1px solid var(--border); }
   .wl-badge.ready { background: rgba(49,212,146,0.13); color: #4fe0a8; border-color: rgba(49,212,146,0.35); }
   .wl-nm-chip { display: block; margin-top: 5px; }
+  /* ===== Breakout ke baad kya hua ===== */
+  .bo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
+  .bo {
+    background: var(--surface); border: 1px solid var(--border-soft); border-radius: 16px;
+    padding: 13px 14px; display: flex; flex-direction: column; gap: 9px;
+  }
+  .bo.traction { border-color: rgba(49,212,146,0.42); }
+  .bo.fail, .bo.squat { border-color: rgba(255,107,118,0.35); }
+  .bo-head { display: flex; align-items: flex-start; gap: 9px; }
+  .bo-id { flex: 1; min-width: 0; }
+  .bo-sym { font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+  .bo-meta { color: var(--muted); font-size: 10.5px; margin-top: 2px; }
+  .bo-out {
+    font-size: 10.5px; font-weight: 700; padding: 2px 9px; border-radius: 10px; white-space: nowrap;
+    background: var(--surface-3); color: var(--muted);
+  }
+  .bo-out.traction { background: rgba(49,212,146,0.16); color: var(--green); }
+  .bo-out.fail, .bo-out.squat { background: rgba(255,107,118,0.16); color: var(--red); }
+  .bo-out.flat { background: rgba(255,193,77,0.14); color: var(--amber); }
+  .bo-out.live { background: rgba(84,169,255,0.14); color: #7fc0ff; }
+  .bo-src { font-size: 9.5px; padding: 1px 7px; border-radius: 8px; background: var(--surface-2); color: var(--muted); }
+  .bo-nums { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+  .bo-nums div { background: var(--surface-2); border-radius: 9px; padding: 6px 7px; text-align: center; }
+  .bo-nums small { display: block; font-size: 8.5px; color: var(--muted); letter-spacing: .3px; text-transform: uppercase; }
+  .bo-nums b { font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  /* roz ka action — pivot pe zero line, upar hara neeche laal */
+  .bo-strip { background: var(--surface-2); border-radius: 10px; padding: 9px 10px; }
+  .bo-strip-top { font-size: 10px; color: var(--muted); letter-spacing: .3px; text-transform: uppercase; margin-bottom: 7px; }
+  .bo-bars { display: flex; align-items: stretch; gap: 2px; height: 52px; }
+  .bo-col { flex: 1 1 0; min-width: 2px; display: flex; flex-direction: column; }
+  .bo-up { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; }
+  .bo-dn { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; }
+  .bo-up em, .bo-dn em { display: block; border-radius: 2px; }
+  .bo-up em { background: var(--green); }
+  .bo-dn em { background: var(--red); }
+  .bo-mid { height: 1px; background: var(--border); }
+  .bo-col.big em { outline: 1px solid rgba(255,255,255,.35); }
+  .bo-legend { display: flex; justify-content: space-between; font-size: 9.5px; color: var(--muted); margin-top: 6px; }
+  .bo-tbl { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px; }
+  .bo-tbl td { padding: 3px 5px; border-top: 1px solid var(--border-soft); font-variant-numeric: tabular-nums; }
+  .bo-tbl td:first-child { color: var(--muted); }
+  .bo-tbl td:not(:first-child) { text-align: right; }
+  .bo-why { font-size: 10.5px; color: var(--muted); line-height: 1.55; }
+
   .cap-sub { font-size: 10.5px; color: var(--muted); text-align: right; margin: -4px 0 6px; line-height: 1.5; }
   .cap-sub b { color: var(--text); font-weight: 600; }
   [hidden] { display: none !important; }
@@ -810,6 +854,7 @@
   <div class="tabs">
     <button class="tab active" data-view="scan">📋 Aaj ka Scan</button>
     <button class="tab" data-view="watch">👀 Watchlist</button>
+    <button class="tab" data-view="bo">🚀 Breakouts</button>
     <button class="tab" data-view="positions">📊 Positions</button>
     <button class="tab" data-view="track">📈 Track Record</button>
   </div>
@@ -880,6 +925,19 @@
     <h2>Har Naam Ka Poora Hisaab</h2>
     <div class="wld-grid" id="wlCards"></div>
     <div id="wlFoot"></div>
+  </div>
+
+  <!-- ============ BREAKOUT VIEW ============
+       Watch tracker sirf "crossed: haan/na" likhta tha — jo naam pivot se 0.23%
+       upar jaake mar gaya aur jo bhaaga, dono ka record ek jaisa. Yahan har
+       breakout ki POORI kahani hai, roz ke bhaav ke saath. -->
+  <div class="view" id="view-bo">
+    <h2 style="margin-top:4px;">🚀 Breakout Ke Baad Kya Hua</h2>
+    <div class="stats-grid" id="boStrip"></div>
+    <div id="boLeg"></div>
+    <div class="wl-filters" id="boFilters"></div>
+    <div class="bo-grid" id="boCards"></div>
+    <div id="boFoot"></div>
   </div>
 
   <!-- ============ POSITIONS VIEW ============ -->
@@ -1213,6 +1271,154 @@
     '<div class="sp-note">👑 = sector ka <b>asli leader</b> — 60-din ke return me sabse aage (peeli bar = sector ke andar percentile). Ye setup-rank (#2, #3…) se <b>alag</b> cheez hai: setup batata hai <b>kab</b>, leadership batati hai <b>kaun</b>. Dono ek hi naam me milein — wahi best of the best.<br>' +
     'Ye <b>trade nahi</b> hai — journal sirf top-2 picks ko track karta hai.<br>' +
     '"Aag lagi hai" ka matlab: <b>hafton ka move + kai naam ek saath</b> — sirf 2-3 din ka uchhaal nahi. Ye label abhi sirf padhne ke liye hai, scoring ise use nahi karti.</div>';
+  })();
+
+  /* ================= BREAKOUT KE BAAD KYA HUA =================
+     Creator ka ONGC wala sabak: breakout wale din ₹1500 cr ki buying aayi thi,
+     phir bhi follow-through nahi aaya — "breakout day low toota to exit".
+     Isliye FAIL ki paribhasha wahi hai: breakout-day low ke neeche band.
+     Ye NAAPNE ke liye hai, filter ke liye nahi. */
+  (function breakoutTab() {
+    const bl = d.breakoutLog;
+    const cards = document.getElementById('boCards');
+    const strip = document.getElementById('boStrip');
+    const foot = document.getElementById('boFoot');
+    if (!cards || !strip) return;
+    if (!bl || !bl.list || !bl.list.length) {
+      strip.innerHTML = '';
+      cards.innerHTML = '<div class="card wl-empty">Abhi koi breakout record nahi hua. ' +
+        'Jaise hi koi tracked naam apna pivot cross karega, uski poori kahani yahan bharni shuru ho jayegi.</div>';
+      return;
+    }
+    const list = bl.list, sm = bl.summary || {};
+    const f1 = v => v == null ? '—' : (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
+
+    /* ---- strip ---- */
+    const c = (l, v, sub, cls) => '<div class="card stat"><small>' + l + '</small><b class="' + (cls || '') +
+      '">' + v + '</b><span class="sub">' + sub + '</span></div>';
+    strip.innerHTML =
+      c('Breakout dekhe', sm.total, sm.live + ' abhi chal rahe') +
+      c('Traction mila', (sm.tractionRate != null ? sm.tractionRate + '%' : '—'),
+        sm.settled + ' settle hue, ' + sm.traction + ' chale', sm.tractionRate >= 40 ? 'pos' : sm.tractionRate < 25 ? 'neg' : '') +
+      c('Beech ka best move', f1(sm.medianMaxGain), 'settle hue breakouts ka median') +
+      c('Traction me lage', (sm.avgSessionsToTraction != null ? sm.avgSessionsToTraction + ' session' : '—'),
+        '+' + (bl.bars ? bl.bars.TRACTION_PCT : 10) + '% tak pahunchne me');
+
+    /* ---- Numbers Check ka ASLI imtihaan ---- */
+    const lg = document.getElementById('boLeg');
+    if (lg) {
+      lg.innerHTML = !sm.byLeg ? '' :
+        '<div class="card" style="margin-bottom:14px"><b>🔢 Numbers Check ka asli imtihaan</b>' +
+        '<div class="wl-note" style="padding:6px 0 0">Pehle sawaal binary tha — pivot cross hua ya nahi. ' +
+        'Ab graded hai: <b>traction mila ya nahi</b>. Yahi wo naap hai jispe faisla hoga.</div>' +
+        '<div class="bym">' +
+        [['30%+ growth', sm.byLeg.growth], ['reaction accha', sm.byLeg.reaction]].map(([label, o]) =>
+          ['yes', 'no'].map(k => o[k].done
+            ? '<div class="bym-i"><b>' + o[k].rate + '%</b>' + label + (k === 'yes' ? ' ✓' : ' ✗') +
+              '<br><small>' + o[k].traction + '/' + o[k].done + ' ko traction</small></div>' : '').join('')
+        ).join('') + '</div>' +
+        '<div class="wl-note" style="padding:8px 0 0; opacity:.8">Har bucket me <b>20-25</b> breakout settle hone tak ' +
+        'ispe koi faisla mat lena.</div></div>';
+    }
+
+    /* ---- ek breakout ka card ---- */
+    function dayStrip(b) {
+      const days = b.days || []; if (!days.length) return '';
+      const mx = Math.max(1, ...days.map(x => Math.abs(x.pct == null ? 0 : x.pct)));
+      const big = Math.max(0, ...days.map(x => x.volX == null ? 0 : x.volX));
+      return '<div class="bo-strip"><div class="bo-strip-top">Roz ka action — beech ki line pivot hai</div>' +
+        '<div class="bo-bars">' + days.map(x => {
+          const v = x.pct == null ? 0 : x.pct;
+          const h = Math.round(Math.abs(v) / mx * 24);
+          const hot = x.volX != null && big > 0 && x.volX === big && x.volX >= 2;
+          return '<div class="bo-col' + (hot ? ' big' : '') + '" title="' + x.d + ' · ₹' + x.c + ' · ' + f1(x.pct) +
+            (x.volX != null ? ' · ' + x.volX.toFixed(1) + 'x volume' : '') + '">' +
+            '<div class="bo-up">' + (v > 0 ? '<em style="height:' + Math.max(2, h) + 'px"></em>' : '') + '</div>' +
+            '<div class="bo-mid"></div>' +
+            '<div class="bo-dn">' + (v < 0 ? '<em style="height:' + Math.max(2, h) + 'px"></em>' : '') + '</div>' +
+            '</div>';
+        }).join('') + '</div>' +
+        '<div class="bo-legend"><span>' + days[0].d + '</span><span>' + days.length + ' session</span>' +
+        '<span>' + days[days.length - 1].d + '</span></div></div>';
+    }
+
+    function boCard(b) {
+      const cls = b.live ? 'live' : b.outcome;
+      const label = b.live ? 'chal raha hai'
+        : b.outcome === 'traction' ? 'traction mila'
+        : b.outcome === 'squat' ? 'squat — turant dump'
+        : b.outcome === 'fail' ? 'dheere-dheere fade'
+        : 'flat — chala hi nahi';
+      const why = b.live
+        ? 'Abhi chal raha hai. Fail tab maana jayega jab breakout wale din ke low (₹' + b.boLow + ') ke neeche band ho.'
+        : b.outcome === 'traction'
+        ? 'Pivot se +' + (bl.bars ? bl.bars.TRACTION_PCT : 10) + '% tak gaya' +
+          (b.tractionInSessions != null ? ' — ' + b.tractionInSessions + ' session me' : '') + '.'
+        : b.outcome === 'squat'
+        ? 'Breakout ke ' + (b.sessions - 1) + ' hi session me BO-day low (₹' + b.boLow + ') toot gaya. ' +
+          'Yahi SQUAT hai — institution ko jitna maal chahiye tha nahi mila, to breakout wale din hi poora maal daal diya.'
+        : b.outcome === 'fail'
+        ? 'Breakout wale din ka low (₹' + b.boLow + ') ' + (b.sessions - 1) + ' session baad toota. Creator ka rule: wahin nikal jao.'
+        : 'Na chala, na mara — ' + b.sessions + ' session baad bhi kuch nahi hua. "Attraction nahi mila."';
+      return '<div class="bo ' + cls + '" data-tv="' + b.symbol + '" title="' + b.symbol + ' ka chart kholo">' +
+        '<div class="bo-head"><div class="bo-id">' +
+          '<div class="bo-sym">' + b.symbol +
+            '<span class="bo-src">' + (b.source === 'trade' ? 'trade li thi' : 'sirf watchlist') + '</span></div>' +
+          '<div class="bo-meta">' + (b.sector || '') + ' · breakout ' + b.boDate + ' · pivot ₹' + b.pivot + '</div>' +
+        '</div><span class="bo-out ' + cls + '">' + label + '</span></div>' +
+        '<div class="bo-nums">' +
+          '<div><small>Best move</small><b class="' + (b.maxGainPct > 0 ? 'nc-good' : 'nc-bad') + '">' + f1(b.maxGainPct) + '</b></div>' +
+          '<div><small>Abhi</small><b class="' + (b.nowPct >= 0 ? 'nc-good' : 'nc-bad') + '">' + f1(b.nowPct) + '</b></div>' +
+          '<div><small>Sabse neeche</small><b class="nc-bad">' + f1(b.maxDrawPct) + '</b></div>' +
+          '<div><small>Day-1 volume</small><b>' + (b.day1VolX != null ? b.day1VolX.toFixed(1) + 'x' : '—') + '</b></div>' +
+        '</div>' +
+        dayStrip(b) +
+        '<div class="bo-why">' + why + '</div>' +
+        (b.days && b.days.length
+          ? '<details class="sb"><summary>Din-ba-din poora hisaab (' + b.days.length + ' session)</summary>' +
+            '<table class="bo-tbl">' + b.days.map(x =>
+              '<tr><td>' + x.d + '</td><td>₹' + x.c + '</td><td class="' + (x.pct >= 0 ? 'nc-good' : 'nc-bad') + '">' +
+              f1(x.pct) + '</td><td>' + (x.volX != null ? x.volX.toFixed(1) + 'x' : '—') + '</td>' +
+              '<td>' + (x.dlv != null ? x.dlv.toFixed(0) + '% dlv' : '') + '</td></tr>').join('') +
+            '</table></details>'
+          : '') +
+        '</div>';
+    }
+
+    /* ---- filter ---- */
+    const fil = document.getElementById('boFilters');
+    let mode = 'all';
+    const passes = (b, m) => m === 'all' ? true
+      : m === 'live' ? b.live
+      : !b.live && b.outcome === m;
+    function paint() {
+      const sub = list.filter(b => passes(b, mode));
+      cards.innerHTML = sub.length ? sub.map(boCard).join('')
+        : '<div class="card wl-empty">Is filter me koi breakout nahi. Doosri chip dabao.</div>';
+    }
+    if (fil) {
+      const opts = [['all', 'Sab'], ['live', 'Chal rahe'], ['traction', 'Traction'], ['squat', 'Squat'], ['fail', 'Dheere fade'], ['flat', 'Flat']];
+      fil.innerHTML = opts.map(o => '<span class="wl-fil' + (o[0] === 'all' ? ' active' : '') + '" data-m="' + o[0] +
+        '">' + o[1] + ' <b>' + list.filter(b => passes(b, o[0])).length + '</b></span>').join('');
+      fil.querySelectorAll('.wl-fil').forEach(x => x.addEventListener('click', () => {
+        fil.querySelectorAll('.wl-fil').forEach(y => y.classList.remove('active'));
+        x.classList.add('active'); mode = x.dataset.m; paint();
+      }));
+    }
+    paint();
+
+    if (foot) foot.innerHTML =
+      '<div class="wl-note" style="margin-top:14px">Ye ledger har us naam ka hai jise humne flag kiya aur usne ' +
+      '<b>pivot cross kiya</b> — chahe humne trade li ho ya nahi.<br>' +
+      '<b>Fail</b> ki paribhasha creator ki apni hai (ONGC case study): <i>breakout wale din ka low toota to nikal jao.</i> ' +
+      '<b>Traction</b> = pivot se +' + (bl.bars ? bl.bars.TRACTION_PCT : 10) + '%, yaani wahi bar jahan asli trade me aadha book hota hai. ' +
+      '<b>Squat</b> = ' + 3 + ' ya usse kam session me low toot gaya (turant dump), <b>dheere fade</b> = baad me toota, ' +
+      '<b>flat</b> = na chala na mara.<br>' +
+      'Har breakout ko ' + (bl.bars ? bl.bars.MAX_SESSIONS : 40) + ' session tak follow karte hain, phir chhod dete hain.<br>' +
+      '<span style="opacity:.8">Ye sirf NAAPNE ke liye hai. Isse koi filter nahi banta — jis din ye kuch kehna shuru kare, ' +
+      'wo baat bhi pehle test gate paar karegi, seedha scoring me nahi jayegi.<br>' +
+      'Delivery % sirf un dinon pe hai jo live record hue. Purane breakout price history se dobara bane hain, ' +
+      'unme delivery nahi hai.</span></div>';
   })();
 
   /* ---- Result Calendar — kis pick ka result kab (NSE board meetings) ---- */

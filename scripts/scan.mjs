@@ -12,6 +12,7 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { stitchHistory, needsBseBackfill } from './history.mjs';
 import { fetchFundamentals } from './fundamentals.mjs';
+import { findBreakout, buildAll, summarize, BO } from './breakouts.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -1412,6 +1413,62 @@ async function main() {
   })();
   console.log(`Positions block: ${positionsOut.length} open, ₹${Math.round(deployedNow).toLocaleString('en-IN')} lagi hui`);
 
+  /* ★ BREAKOUT KE BAAD KYA HUA — naya ledger.
+     Watch tracker sirf "crossed: haan/na" likhta tha. Jo naam pivot se 0.23% upar
+     jaake mar gaya aur jo 6% bhaaga — dono ka record ek jaisa. Watchlist ka report
+     card AUR Numbers Check ka poora imtihaan usi kamzor naap pe khada tha.
+     Ab har breakout ki poori kahani banti hai: roz ka bhaav, volume, aur nateeja.
+
+     Timeline JOURNAL ME NAHI JAATI — har scan pe chart se dobara banti hai
+     (breakouts.mjs dekho, wahan wajah likhi hai). Journal me sirf ENTRY jaati hai. */
+  let breakoutLog = null;
+  try {
+    const boCand = [];
+    const seen = new Set();
+    const add = (symbol, sector, pivot, fromTs, source, fundStampObj) => {
+      const k = symbol + '|' + source;
+      if (!symbol || !(pivot > 0) || seen.has(k)) return;
+      seen.add(k);
+      boCand.push({ symbol, sector, pivot, fromTs, source, fund: fundStampObj || null });
+    };
+    // (a) watchlist ke wo naam jinhone pivot cross kiya
+    for (const [sym, t] of Object.entries(track.names || {}))
+      if (t.crossed && t.crossedTs) add(sym, t.sector, t.pivot, t.firstSeen, 'watchlist', t.fund);
+    for (const dd of track.done || [])
+      if (dd.crossed) add(dd.symbol, dd.sector, dd.pivot, null, 'watchlist', dd.fund);
+    // (b) asli trades — khuli aur band dono. Inka entry hi pivot hota hai (stop-buy).
+    for (const p of state.positions || []) add(p.symbol, p.sector, p.pivot ?? p.entry, p.pickedTs, 'trade', p.fund);
+    for (const c of state.closed || []) add(c.symbol, c.sector, c.entry, c.ts, 'trade', null);
+
+    // chart chahiye. Jo universe me nahi mila usko alag se laao, par ginti bandhi hui.
+    const boCharts = new Map();
+    let fetched = 0;
+    for (const e of boCand) {
+      if (charts[e.symbol]) { boCharts.set(e.symbol, charts[e.symbol]); continue; }
+      if (fetched >= 40) continue;
+      const ch = await fetchChart(e.symbol + '.NS');
+      if (ch) { boCharts.set(e.symbol, ch); fetched++; }
+    }
+
+    const entries = [];
+    for (const e of boCand) {
+      const ch = boCharts.get(e.symbol); if (!ch) continue;
+      const bo = findBreakout(ch, e.pivot, e.fromTs);
+      if (!bo) continue;
+      entries.push({ symbol: e.symbol, sector: e.sector, pivot: e.pivot, boTs: bo.ts, source: e.source, fund: e.fund });
+    }
+    const list = buildAll(entries, boCharts);
+    breakoutLog = { list, summary: summarize(list), bars: BO };
+    if (!alreadyProcessed) {
+      // record ke liye — panel iske bina bhi chalta hai (sab kuch derive hota hai)
+      state.breakouts = { updated: new Date().toISOString(), entries: entries.map(({ days, ...e }) => e) };
+    }
+    const sm = breakoutLog.summary;
+    console.log('Breakout ledger: ' + list.length + ' breakout (' + (sm ? sm.live : 0) + ' chal rahe, ' +
+      (sm ? sm.settled : 0) + ' settle) | traction ' + (sm && sm.tractionRate != null ? sm.tractionRate + '%' : '-') +
+      (fetched ? ' | ' + fetched + ' extra chart' : ''));
+  } catch (e) { console.log('Breakout ledger skip (' + e.message + ') — baaki dashboard poora hai.'); }
+
   // ★ RULE QUOTES — creator ke apne shabd card pe.
   // Source of truth trading-brain/brain/rules.json hai, PAR cloud runner ke paas
   // sirf dashboard repo hota hai. Isliye: local run pe source se padho aur
@@ -1484,6 +1541,8 @@ async function main() {
     watchlist,
     // Numbers Check — sirf confidence panel, ranking ko chhuta nahi
     fund,
+    // Breakout ke baad kya hua — naapne ke liye, filter ke liye NAHI
+    breakoutLog,
     // Gear 1-2 pe picks 0 hote hain. Tab bhi user ko pata hona chahiye ki andar
     // kitna maal hai — warna lagta hai scanner ne kuch dhoonda hi nahi.
     readyCount: readyCands.length,
