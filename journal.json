@@ -77,7 +77,19 @@
       "daysSinceTrigger": 11,
       "triggerDate": "18 Aug",
       "curPnlPct": 0.64,
-      "booked": true
+      "booked": true,
+      "fund": {
+        "matchCount": 0,
+        "outOf": 2,
+        "growth": false,
+        "reaction": false,
+        "growthPct": -75,
+        "growthTag": "QoQ",
+        "growthState": "ok",
+        "reactionPct": -3.68,
+        "quarter": "30 Jun 2026",
+        "backfilled": true
+      }
     },
     {
       "picked": "24 Aug",
@@ -96,7 +108,19 @@
       "invested": 143667,
       "daysSinceTrigger": 5,
       "triggerDate": "26 Aug",
-      "curPnlPct": 1.08
+      "curPnlPct": 1.08,
+      "fund": {
+        "matchCount": 2,
+        "outOf": 2,
+        "growth": true,
+        "reaction": true,
+        "growthPct": 69,
+        "growthTag": "YoY",
+        "growthState": "ok",
+        "reactionPct": 13.67,
+        "quarter": "30 Jun 2026",
+        "backfilled": true
+      }
     }
   ],
   "closed": [
@@ -1865,7 +1889,19 @@
         "maxHighPct": 0.23,
         "lastSeen": 1787891400,
         "crossedTs": 1788147900,
-        "crossedInSessions": 1
+        "crossedInSessions": 1,
+        "fund": {
+          "matchCount": 1,
+          "outOf": 2,
+          "growth": true,
+          "reaction": false,
+          "growthPct": 61,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": -0.45,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "SYRMA": {
         "firstSeen": 1787891400,
@@ -1875,7 +1911,19 @@
         "sessions": 3,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1787891400
+        "lastSeen": 1787891400,
+        "fund": {
+          "matchCount": 1,
+          "outOf": 2,
+          "growth": false,
+          "reaction": true,
+          "growthPct": 16,
+          "growthTag": "QoQ",
+          "growthState": "ok",
+          "reactionPct": 2.56,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "HOMEFIRST": {
         "firstSeen": 1787891400,
@@ -1885,7 +1933,19 @@
         "sessions": 3,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1788320700
+        "lastSeen": 1788320700,
+        "fund": {
+          "matchCount": 1,
+          "outOf": 2,
+          "growth": true,
+          "reaction": false,
+          "growthPct": 34,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": -0.13,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "ARMANFIN": {
         "firstSeen": 1787891400,
@@ -1895,7 +1955,19 @@
         "sessions": 3,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1787891400
+        "lastSeen": 1787891400,
+        "fund": {
+          "matchCount": 0,
+          "outOf": 2,
+          "growth": false,
+          "reaction": false,
+          "growthPct": 17,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": 0.12,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "SHREEJISPG": {
         "firstSeen": 1787891400,
@@ -1905,7 +1977,19 @@
         "sessions": 3,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1787891400
+        "lastSeen": 1787891400,
+        "fund": {
+          "matchCount": 0,
+          "outOf": 2,
+          "growth": false,
+          "reaction": false,
+          "growthPct": 2,
+          "growthTag": "QoQ",
+          "growthState": "ok",
+          "reactionPct": -7.9,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "SEAMECLTD": {
         "firstSeen": 1787891400,
@@ -1917,7 +2001,19 @@
         "maxHighPct": 1.69,
         "lastSeen": 1787891400,
         "crossedTs": 1788320700,
-        "crossedInSessions": 3
+        "crossedInSessions": 3,
+        "fund": {
+          "matchCount": 1,
+          "outOf": 2,
+          "growth": false,
+          "reaction": true,
+          "growthPct": 2,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": 0.63,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "KRN": {
         "firstSeen": 1787891400,
@@ -1929,7 +2025,19 @@
         "maxHighPct": 3.47,
         "lastSeen": 1787891400,
         "crossedTs": 1788147900,
-        "crossedInSessions": 1
+        "crossedInSessions": 1,
+        "fund": {
+          "matchCount": 1,
+          "outOf": 2,
+          "growth": false,
+          "reaction": true,
+          "growthPct": 19,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": 4.99,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "CNL": {
         "firstSeen": 1787891400,
@@ -1941,7 +2049,19 @@
         "maxHighPct": 4.16,
         "lastSeen": 1787891400,
         "crossedTs": 1788147900,
-        "crossedInSessions": 1
+        "crossedInSessions": 1,
+        "fund": {
+          "matchCount": 2,
+          "outOf": 2,
+          "growth": true,
+          "reaction": true,
+          "growthPct": 70,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": 7.18,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "ANANDRATHI": {
         "firstSeen": 1787891400,
@@ -1951,7 +2071,19 @@
         "sessions": 3,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1788147900
+        "lastSeen": 1788147900,
+        "fund": {
+          "matchCount": 2,
+          "outOf": 2,
+          "growth": true,
+          "reaction": true,
+          "growthPct": 77,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": 2.44,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "MARKSANS": {
         "firstSeen": 1787891400,
@@ -1963,7 +2095,19 @@
         "maxHighPct": 0.37,
         "lastSeen": 1787891400,
         "crossedTs": 1788320700,
-        "crossedInSessions": 3
+        "crossedInSessions": 3,
+        "fund": {
+          "matchCount": 2,
+          "outOf": 2,
+          "growth": true,
+          "reaction": true,
+          "growthPct": 44,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": 12.06,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "AGARWALEYE": {
         "firstSeen": 1788147900,
@@ -1975,7 +2119,19 @@
         "maxHighPct": 1.08,
         "lastSeen": 1788320700,
         "crossedTs": 1788320700,
-        "crossedInSessions": 3
+        "crossedInSessions": 3,
+        "fund": {
+          "matchCount": 2,
+          "outOf": 2,
+          "growth": true,
+          "reaction": true,
+          "growthPct": 65,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": 5.58,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "HONASA": {
         "firstSeen": 1788147900,
@@ -1985,7 +2141,19 @@
         "sessions": 3,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1788234300
+        "lastSeen": 1788234300,
+        "fund": {
+          "matchCount": 1,
+          "outOf": 2,
+          "growth": true,
+          "reaction": false,
+          "growthPct": 31,
+          "growthTag": "QoQ",
+          "growthState": "ok",
+          "reactionPct": 4.87,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "ETHOSLTD": {
         "firstSeen": 1788147900,
@@ -1995,7 +2163,19 @@
         "sessions": 3,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1788234300
+        "lastSeen": 1788234300,
+        "fund": {
+          "matchCount": 1,
+          "outOf": 2,
+          "growth": true,
+          "reaction": false,
+          "growthPct": 35,
+          "growthTag": "QoQ",
+          "growthState": "ok",
+          "reactionPct": -3.7,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "VARROC": {
         "firstSeen": 1788147900,
@@ -2007,7 +2187,19 @@
         "maxHighPct": 2.42,
         "lastSeen": 1788147900,
         "crossedTs": 1788234300,
-        "crossedInSessions": 2
+        "crossedInSessions": 2,
+        "fund": {
+          "matchCount": 1,
+          "outOf": 2,
+          "growth": false,
+          "reaction": true,
+          "growthPct": -3,
+          "growthTag": "QoQ",
+          "growthState": "ok",
+          "reactionPct": 9.94,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "POLYPLEX": {
         "firstSeen": 1788147900,
@@ -2017,7 +2209,19 @@
         "sessions": 3,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1788320700
+        "lastSeen": 1788320700,
+        "fund": {
+          "matchCount": 0,
+          "outOf": 2,
+          "growth": false,
+          "reaction": false,
+          "growthPct": -44,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": -3.59,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "OBEROIRLTY": {
         "firstSeen": 1788147900,
@@ -2027,7 +2231,19 @@
         "sessions": 3,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1788320700
+        "lastSeen": 1788320700,
+        "fund": {
+          "matchCount": 0,
+          "outOf": 2,
+          "growth": false,
+          "reaction": false,
+          "growthPct": -11,
+          "growthTag": "QoQ",
+          "growthState": "ok",
+          "reactionPct": -0.64,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "APCOTEXIND": {
         "firstSeen": 1788147900,
@@ -2039,7 +2255,19 @@
         "maxHighPct": 0.61,
         "lastSeen": 1788147900,
         "crossedTs": 1788234300,
-        "crossedInSessions": 2
+        "crossedInSessions": 2,
+        "fund": {
+          "matchCount": 2,
+          "outOf": 2,
+          "growth": true,
+          "reaction": true,
+          "growthPct": 312,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": 15.31,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "TBOTEK": {
         "firstSeen": 1788147900,
@@ -2049,7 +2277,19 @@
         "sessions": 3,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1788147900
+        "lastSeen": 1788147900,
+        "fund": {
+          "matchCount": 0,
+          "outOf": 2,
+          "growth": false,
+          "reaction": false,
+          "growthPct": 25,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": -1.58,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "KPIL": {
         "firstSeen": 1788147900,
@@ -2061,7 +2301,19 @@
         "maxHighPct": 0.11,
         "lastSeen": 1788147900,
         "crossedTs": 1788234300,
-        "crossedInSessions": 2
+        "crossedInSessions": 2,
+        "fund": {
+          "matchCount": 2,
+          "outOf": 2,
+          "growth": true,
+          "reaction": true,
+          "growthPct": 32,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": 3.64,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "JKPAPER": {
         "firstSeen": 1788234300,
@@ -2073,7 +2325,19 @@
         "maxHighPct": 1.75,
         "lastSeen": 1788234300,
         "crossedTs": 1788320700,
-        "crossedInSessions": 2
+        "crossedInSessions": 2,
+        "fund": {
+          "matchCount": 1,
+          "outOf": 2,
+          "growth": true,
+          "reaction": false,
+          "growthPct": 56,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": -4.79,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "WSTCSTPAPR": {
         "firstSeen": 1788234300,
@@ -2083,7 +2347,19 @@
         "sessions": 2,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1788234300
+        "lastSeen": 1788234300,
+        "fund": {
+          "matchCount": 1,
+          "outOf": 2,
+          "growth": true,
+          "reaction": false,
+          "growthPct": 165,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": -2.95,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "VIJAYA": {
         "firstSeen": 1788234300,
@@ -2095,7 +2371,19 @@
         "maxHighPct": 0.33,
         "lastSeen": 1788320700,
         "crossedTs": 1788320700,
-        "crossedInSessions": 2
+        "crossedInSessions": 2,
+        "fund": {
+          "matchCount": 0,
+          "outOf": 2,
+          "growth": false,
+          "reaction": false,
+          "growthPct": 1,
+          "growthTag": "QoQ",
+          "growthState": "ok",
+          "reactionPct": -1.37,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "SUPRAJIT": {
         "firstSeen": 1788234300,
@@ -2105,7 +2393,19 @@
         "sessions": 2,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1788234300
+        "lastSeen": 1788234300,
+        "fund": {
+          "matchCount": 0,
+          "outOf": 2,
+          "growth": false,
+          "reaction": false,
+          "growthPct": -4,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": -1.09,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "DYNAMATECH": {
         "firstSeen": 1788234300,
@@ -2115,7 +2415,19 @@
         "sessions": 2,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1788234300
+        "lastSeen": 1788234300,
+        "fund": {
+          "matchCount": 0,
+          "outOf": 2,
+          "growth": false,
+          "reaction": false,
+          "growthPct": -36,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": -2.22,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "TASTYBITE": {
         "firstSeen": 1788234300,
@@ -2125,7 +2437,19 @@
         "sessions": 2,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1788234300
+        "lastSeen": 1788234300,
+        "fund": {
+          "matchCount": 0,
+          "outOf": 2,
+          "growth": false,
+          "reaction": false,
+          "growthPct": 8,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": -4.37,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "CUB": {
         "firstSeen": 1788234300,
@@ -2135,7 +2459,19 @@
         "sessions": 2,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1788234300
+        "lastSeen": 1788234300,
+        "fund": {
+          "matchCount": 0,
+          "outOf": 2,
+          "growth": false,
+          "reaction": false,
+          "growthPct": 25,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": -3.9,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "MRPL": {
         "firstSeen": 1788320700,
@@ -2145,7 +2481,19 @@
         "sessions": 1,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1788320700
+        "lastSeen": 1788320700,
+        "fund": {
+          "matchCount": 1,
+          "outOf": 2,
+          "growth": false,
+          "reaction": true,
+          "growthPct": null,
+          "growthTag": "YoY",
+          "growthState": "na",
+          "reactionPct": 10.07,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "DEEPINDS": {
         "firstSeen": 1788320700,
@@ -2155,7 +2503,19 @@
         "sessions": 1,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1788320700
+        "lastSeen": 1788320700,
+        "fund": {
+          "matchCount": 1,
+          "outOf": 2,
+          "growth": false,
+          "reaction": true,
+          "growthPct": null,
+          "growthTag": "QoQ",
+          "growthState": "turnaround",
+          "reactionPct": 7.1,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "JINDRILL": {
         "firstSeen": 1788320700,
@@ -2165,7 +2525,19 @@
         "sessions": 1,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1788320700
+        "lastSeen": 1788320700,
+        "fund": {
+          "matchCount": 0,
+          "outOf": 2,
+          "growth": false,
+          "reaction": false,
+          "growthPct": -7,
+          "growthTag": "YoY",
+          "growthState": "ok",
+          "reactionPct": -5.43,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "CHENNPETRO": {
         "firstSeen": 1788320700,
@@ -2175,7 +2547,19 @@
         "sessions": 1,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1788320700
+        "lastSeen": 1788320700,
+        "fund": {
+          "matchCount": 0,
+          "outOf": 2,
+          "growth": false,
+          "reaction": false,
+          "growthPct": null,
+          "growthTag": "YoY",
+          "growthState": "turnaround",
+          "reactionPct": -4.32,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       },
       "OIL": {
         "firstSeen": 1788320700,
@@ -2185,7 +2569,19 @@
         "sessions": 1,
         "crossed": false,
         "maxHighPct": 0,
-        "lastSeen": 1788320700
+        "lastSeen": 1788320700,
+        "fund": {
+          "matchCount": 2,
+          "outOf": 2,
+          "growth": true,
+          "reaction": true,
+          "growthPct": 60,
+          "growthTag": "QoQ",
+          "growthState": "ok",
+          "reactionPct": 2.3,
+          "quarter": "30 Jun 2026",
+          "backfilled": true
+        }
       }
     },
     "done": [],

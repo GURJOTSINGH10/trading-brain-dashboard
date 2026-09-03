@@ -839,7 +839,7 @@ async function main() {
     const f = fund && fund.bySymbol[sym];
     if (!f) return null;
     return {
-      matchCount: f.matchCount,
+      matchCount: f.matchCount, outOf: 3,
       growth: f.legs.growth, reaction: f.legs.reaction,
       growthPct: f.growth && f.growth.profit != null ? Math.round(f.growth.profit) : null,
       growthTag: f.growth ? f.growth.tag : null,
@@ -1210,20 +1210,43 @@ async function main() {
          wo pivot zyada baar cross karte hain kya? Jab tak 20-25 naam har bucket me
          settle na ho jaayein, is par koi faisla mat lena. */
       byMatch: (() => {
+        // ⚠️ backfill wale stamp 2 legs pe hain (setup leg peeche se pata nahi
+        //    chal sakti), naye 3 pe. Isliye bucket ki chaabi "2/3" jaisi hai —
+        //    2/2 aur 2/3 ek cheez nahi hain, unhe milana jhooth hoga.
         const buckets = {};
         for (const dd of done) {
-          const m = dd.fund && dd.fund.matchCount != null ? dd.fund.matchCount : null;
-          if (m == null) continue;
-          const k = String(m);
-          if (!buckets[k]) buckets[k] = { settled: 0, crossed: 0 };
+          const f = dd.fund;
+          if (!f || f.matchCount == null) continue;
+          const k = f.matchCount + '/' + (f.outOf || 3);
+          if (!buckets[k]) buckets[k] = { settled: 0, crossed: 0, matchCount: f.matchCount, outOf: f.outOf || 3 };
           buckets[k].settled++;
           if (dd.crossed) buckets[k].crossed++;
         }
         const out = Object.entries(buckets).map(([k, v]) => ({
-          matchCount: +k, settled: v.settled, crossed: v.crossed,
+          key: k, matchCount: v.matchCount, outOf: v.outOf,
+          settled: v.settled, crossed: v.crossed,
           crossRate: Math.round(v.crossed / v.settled * 100)
-        })).sort((a, b) => b.matchCount - a.matchCount);
+        })).sort((a, b) => (b.matchCount / b.outOf) - (a.matchCount / a.outOf));
         return out.length ? out : null;
+      })(),
+      /* ★ Ek-ek leg ka apna hisaab — YAHI jaldi jawab dega.
+         matchCount ke 4-6 bucket bante hain to har bucket patla pad jaata hai.
+         Leg-wise sirf DO bucket hain (haan/na), to sample dugna hota hai —
+         aur sawaal bhi seedha hai: "growth wale naam zyada cross karte hain kya?" */
+      byLeg: (() => {
+        const mk = () => ({ yes: { settled: 0, crossed: 0 }, no: { settled: 0, crossed: 0 } });
+        const g = mk(), r = mk();
+        for (const dd of done) {
+          const f = dd.fund; if (!f) continue;
+          if (f.growth != null) { const b = f.growth ? g.yes : g.no; b.settled++; if (dd.crossed) b.crossed++; }
+          if (f.reaction != null) { const b = f.reaction ? r.yes : r.no; b.settled++; if (dd.crossed) b.crossed++; }
+        }
+        const rate = b => b.settled ? Math.round(b.crossed / b.settled * 100) : null;
+        const any = g.yes.settled + g.no.settled + r.yes.settled + r.no.settled;
+        return any ? {
+          growth: { yes: { ...g.yes, crossRate: rate(g.yes) }, no: { ...g.no, crossRate: rate(g.no) } },
+          reaction: { yes: { ...r.yes, crossRate: rate(r.yes) }, no: { ...r.no, crossRate: rate(r.no) } }
+        } : null;
       })(),
       // kitne naam abhi is naap ke saath chal rahe hain (samples aa rahe hain)
       matchTracked: Object.values(track.names || {}).filter(t => t.fund).length

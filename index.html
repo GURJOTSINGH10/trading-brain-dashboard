@@ -1688,18 +1688,36 @@
           'Ye trade ka hisaab NAHI hai — sirf scanner ka apna report card.</span>' +
           /* ★ Numbers Check ka apna imtihaan. Jab tak har bucket me 20-25 naam settle
              na ho jaayein, in aankdon pe koi faisla mat lena — shor hi shor hoga. */
-          (w.byMatch && w.byMatch.length
-            ? '<div style="margin-top:10px"><b>Numbers Check ka imtihaan</b> — kitne naam ne pivot cross kiya, ' +
-              'match count ke hisaab se:' +
+          (function () {
+            const started = (w.matchTracked || 0) > 0;
+            const leg = w.byLeg;
+            // ★ Leg-wise pehle — do hi bucket hain, isliye sample dugna aur jawab jaldi
+            const legBlock = !leg ? '' :
+              '<div style="margin-top:10px"><b>Har leg ka apna hisaab</b> — kitne naam ne pivot cross kiya:' +
+              '<div class="bym">' +
+              [['30%+ growth', leg.growth], ['reaction accha', leg.reaction]].map(([label, o]) =>
+                ['yes', 'no'].map(k => o[k].settled
+                  ? '<div class="bym-i"><b>' + o[k].crossRate + '%</b>' + label + (k === 'yes' ? ' ✓' : ' ✗') +
+                    '<br><small>' + o[k].crossed + '/' + o[k].settled + ' naam</small></div>' : '').join('')
+              ).join('') + '</div></div>';
+            // matchCount wale bucket — 2/2 aur 2/3 alag rakhe gaye hain
+            const mBlock = !(w.byMatch && w.byMatch.length) ? '' :
+              '<div style="margin-top:10px"><b>Match count ke hisaab se</b>:' +
               '<div class="bym">' + w.byMatch.map(b =>
-                '<div class="bym-i"><b>' + b.crossRate + '%</b>' + b.matchCount + '/3 match' +
+                '<div class="bym-i"><b>' + b.crossRate + '%</b>' + b.matchCount + '/' + b.outOf + ' match' +
                 '<br><small>' + b.crossed + '/' + b.settled + ' naam</small></div>').join('') + '</div>' +
-              '<span style="opacity:.8">Har bucket me 20-25 naam settle hone tak ispe koi faisla mat lena. ' +
-              'Yahi wo naap hai jo aage chal ke batayega ki Numbers Check ko rule banaya jaaye ya nahi.</span></div>'
-            : '<div style="margin-top:10px; opacity:.8">📊 <b>Numbers Check ka imtihaan shuru ho gaya hai.</b> ' +
-              'Aaj se har naye watchlist naam ke saath uske numbers bhi save ho rahe hain (' +
-              (w.matchTracked || 0) + ' naam abhi). ' + w.windowDays + ' session baad pehla nateeja aayega: ' +
-              'kya numbers wale naam sach me zyada pivot cross karte hain.</div>') +
+              '<span style="opacity:.8">2/2 aur 2/3 alag bucket hain. Purane naamon pe setup wali leg ' +
+              'peeche se pata nahi chal sakti thi, isliye unka stamp 2 legs pe hai — dono ko milana jhooth hota.</span></div>';
+            const head = '<div style="margin-top:10px">📊 <b>Numbers Check ka imtihaan</b>' +
+              (started ? ' — abhi <b>' + w.matchTracked + '</b> naam is naap ke saath chal rahe hain.' : '') + '</div>';
+            const foot = '<div style="margin-top:8px; opacity:.8">Har bucket me <b>20-25 naam settle</b> hone tak ' +
+              'ispe koi faisla mat lena — usse pehle jo bhi dikhega wo shor hai. Yahi wo naap hai jo aage chal ke ' +
+              'batayega ki Numbers Check ko rule banaya jaaye, ya rules.json me <b>rejected</b> likh diya jaaye.</div>';
+            if (!leg && !(w.byMatch && w.byMatch.length))
+              return head + '<div style="opacity:.8">Abhi koi naam settle nahi hua. Pehla nateeja <b>' +
+                w.windowDays + ' session</b> baad — tab pata chalega ki numbers wale naam sach me zyada pivot cross karte hain ya nahi.</div>';
+            return head + legBlock + mBlock + foot;
+          })() +
           '</div>';
       })() +
       '<div class="wl-note">Ye <b>TRADE NAHI</b> hain — journal inhe track nahi karta. Ye wo naam hain jo pivot ke sabse kareeb hain: ' +
