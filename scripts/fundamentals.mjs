@@ -43,7 +43,8 @@ function parseDate(s) {
   if (!m) return null;
   const mon = MONTHS[m[2].toLowerCase()];
   if (mon == null) return null;
-  return { ms: Date.UTC(+m[3], mon, +m[1], +(m[4] || 0), +(m[5] || 0)), hh: m[4] == null ? null : +m[4] };
+  return { ms: Date.UTC(+m[3], mon, +m[1], +(m[4] || 0), +(m[5] || 0)),
+           hh: m[4] == null ? null : +m[4], mm: m[5] == null ? null : +m[5] };
 }
 
 /* ---------- NSE session (wahi cookie pattern jo scan.mjs use karta hai) ---------- */
@@ -89,14 +90,23 @@ function quarters(json) {
     byDate.set(d.ms, {
       ms: d.ms, to: row.to_date, basis: row.consolidated || null, audited: row.audited || null,
       inc: num(row.income), pat: num(row.proLossAftTax), eps: num(row.reDilEPS),
-      bc: row.re_broadcast_timestamp || null, bcMs: bc ? bc.ms : null, bcHH: bc ? bc.hh : null
+      bc: row.re_broadcast_timestamp || null, bcMs: bc ? bc.ms : null,
+      bcHH: bc ? bc.hh : null, bcMM: bc ? bc.mm : null
     });
   }
   const list = [...byDate.values()].sort((a, b) => b.ms - a.ms);
   if (!list.length) return [];
+  // ★ Ek hi basis pe tulna, warna hisaab jhootha. Pehle yahan fallback tha jo
+  //   Consolidated aur Non-Consolidated MILA deta tha — wo galat tha. Ab agar
+  //   sabse nayi row ka basis akela pada hai to hum growth hi nahi dikhate,
+  //   galat growth dikhane se behtar hai kuch na dikhana.
   const basis = list[0].basis;
   const same = list.filter(q => q.basis === basis);
-  return same.length >= 2 ? same : list;   // basis mismatch ho to jo hai wahi
+  if (same.length >= 2) return same;
+  const other = {};
+  for (const q of list) other[q.basis || '?'] = (other[q.basis || '?'] || 0) + 1;
+  const best = Object.entries(other).sort((a, b) => b[1] - a[1])[0];
+  return best && best[1] >= 2 ? list.filter(q => (q.basis || '?') === best[0]) : same;
 }
 
 /* ---------- growth: YoY pehli pasand, na mile to QoQ ---------- */
@@ -108,12 +118,32 @@ function growth(qs) {
   if (!base || (base.pat == null && base.eps == null && base.inc == null)) { base = qoq; tag = 'QoQ'; }
   if (!base) return null;
 
-  const sales = pct(cur.inc, base.inc);
-  let profit = pct(cur.pat, base.pat), src = 'PAT';
-  if (profit == null) { profit = pct(cur.eps, base.eps); src = 'EPS'; }
+  const sales = (cur.inc > 0 && base.inc > 0) ? pct(cur.inc, base.inc) : null;
+
+  // profit ke liye PAT pehli pasand, na mile to EPS
+  let cp = cur.pat, bp = base.pat, src = 'PAT';
+  if (cp == null || bp == null) { cp = cur.eps; bp = base.eps; src = 'EPS'; }
+
+  /* ★ % growth SIRF tab banta hai jab dono taraf munafa ho.
+     Ghaate se tulna karne pe number bemaani ho jaata hai: -5662 se +91482 ko
+     "1896% growth" kehna galat hai, wo TURNAROUND hai. Aur turnaround creator ke
+     "30% growth = 3 saal me double" wale hisaab ko poora nahi karta, isliye wo leg
+     hara NAHI hota — par khabar achhi hai, isliye alag se dikhate hain. */
+  let profit = null, state = 'na', turnaround = false;
+  if (cp != null && bp != null) {
+    if (cp <= 0) state = 'loss';                          // is quarter ghaata
+    else if (bp <= 0) { state = 'turnaround'; turnaround = true; }
+    else { profit = pct(cp, bp); state = 'ok'; }
+  }
 
   let verdict = 'numbers adhure hain', cls = 'na', ok = false;
-  if (profit != null) {
+  if (state === 'loss') {
+    verdict = 'is quarter ' + src + ' ghaate me hai'; cls = 'bad';
+  } else if (state === 'turnaround') {
+    verdict = 'ghaate se munafe me aaya — turnaround (30% wala bar ispe lagta hi nahi)';
+    cls = 'good';   // khabar achhi hai
+    ok = false;     // par 30%+ growth wali shart poori NAHI hui
+  } else if (profit != null) {
     if (profit >= GROWTH_BAR && sales != null && sales >= GROWTH_BAR) {
       verdict = '30%+ dono me — creator ka bar paar'; cls = 'good'; ok = true;
     } else if (profit >= GROWTH_BAR) {
@@ -124,7 +154,11 @@ function growth(qs) {
       verdict = 'de-growth'; cls = 'bad';
     }
   }
-  return { tag, sales, profit, src, verdict, cls, ok, quarter: cur.to, basis: cur.basis, on: cur.bc };
+  return {
+    tag, sales, profit, src, verdict, cls, ok, turnaround, state,
+    curProfit: cp, baseProfit: bp,
+    quarter: cur.to, basis: cur.basis, on: cur.bc
+  };
 }
 
 /* ---------- reaction: un numbers pe market ne kya kaha ----------
@@ -132,7 +166,9 @@ function growth(qs) {
 function reaction(chart, cur) {
   if (!chart || !cur || !cur.bcMs || !chart.t || !chart.t.length) return null;
   const bcDay = new Date(cur.bcMs).toISOString().slice(0, 10);
-  const late = cur.bcHH != null && cur.bcHH >= 15;
+  // bell 15:30 pe bajti hai — 15:10 ka result USI din ke bar me dikhta hai,
+  // 15:45 ka agle din. Pehle poora 3 baje ka ghanta "after-hours" gina jaata tha.
+  const late = cur.bcHH != null && (cur.bcHH > 15 || (cur.bcHH === 15 && (cur.bcMM ?? 0) >= 30));
   let i = chart.t.findIndex(ts => istDay(ts) >= bcDay);
   if (i < 0) return null;
   if (late && istDay(chart.t[i]) === bcDay) i++;
@@ -140,6 +176,8 @@ function reaction(chart, cur) {
 
   const pre = chart.c[i - 1], day = chart.c[i], now = chart.c[chart.c.length - 1];
   const moveDay = pct(day, pre), since = pct(now, pre);
+  // held = result-day ke pop ka kitna hissa abhi bhi bacha hai.
+  // 1 se zyada ho sakta hai (stock aur upar chala gaya) — UI wahan alag likhta hai.
   const held = (moveDay != null && moveDay > 0 && since != null) ? since / moveDay : null;
 
   let volX = null;

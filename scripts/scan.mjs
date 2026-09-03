@@ -911,16 +911,20 @@ async function main() {
           rows.push({
             symbol: st.symbol,
             pct: f.growth.profit != null ? Math.round(f.growth.profit) : null,
-            tag: f.growth.tag, ok: !!f.growth.ok
+            tag: f.growth.tag, ok: !!f.growth.ok,
+            // turnaround pe % bemaani hai (ghaate se tulna) — alag se nishaan
+            state: f.growth.state || null
           });
         }
         if (!rows.length) continue;
         const withPct = rows.filter(r => r.pct != null);
         const good = rows.filter(r => r.ok).length;
-        const positive = withPct.filter(r => r.pct > 0).length;
+        // turnaround ko bhi positive gino — % nahi bana par khabar achhi hai
+        const positive = withPct.filter(r => r.pct > 0).length + rows.filter(r => r.state === 'turnaround').length;
         // median — ek company ka 1900% wala outlier poore sector ka picture na bigade
+        // ek hi aankde ka "median" bemaani hai — do se kam ho to dikhao mat
         let median = null;
-        if (withPct.length) {
+        if (withPct.length >= 2) {
           const v = withPct.map(r => r.pct).sort((a, b) => a - b);
           median = v.length % 2 ? v[(v.length - 1) / 2] : Math.round((v[v.length / 2 - 1] + v[v.length / 2]) / 2);
         }
