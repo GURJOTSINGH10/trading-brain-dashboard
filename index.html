@@ -1374,7 +1374,10 @@
         '</div>' +
         dayStrip(b) +
         '<div class="bo-why">' + why + '</div>' +
-        (b.days && b.days.length
+        (b.daysDropped
+          ? '<div class="bo-why" style="opacity:.7">Din-ba-din hisaab (' + b.daysDropped + ' session) purana ho gaya — ' +
+            'file halki rakhne ke liye sirf nateeja bacha ke rows hata diye. Upar ke aankde poore hain.</div>'
+          : b.days && b.days.length
           ? '<details class="sb"><summary>Din-ba-din poora hisaab (' + b.days.length + ' session)</summary>' +
             '<table class="bo-tbl">' + b.days.map(x =>
               '<tr><td>' + x.d + '</td><td>₹' + x.c + '</td><td class="' + (x.pct >= 0 ? 'nc-good' : 'nc-bad') + '">' +

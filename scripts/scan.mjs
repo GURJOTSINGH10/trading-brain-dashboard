@@ -1457,8 +1457,18 @@ async function main() {
       if (!bo) continue;
       entries.push({ symbol: e.symbol, sector: e.sector, pivot: e.pivot, boTs: bo.ts, source: e.source, fund: e.fund });
     }
-    const list = buildAll(entries, boCharts);
-    breakoutLog = { list, summary: summarize(list), bars: BO };
+    const full = buildAll(entries, boCharts);
+    const summary = summarize(full);   // summary POORI list pe — kaat-chhaant se pehle
+    /* ★ data.js ka size bandho. Daily rows hi is panel ki jaan hain, par unhi se
+       file phoolti hai (99 breakout = 1395 row = 156 KB). Isliye:
+         · chal rahe SAARE breakout ke rows rehte hain
+         · settle hue me sirf pichhle 120 din wale ke rows rehte hain
+         · usse purane sirf SUMMARY banke rehte hain (nateeja, best move, sessions)
+         · list khud 160 pe cap — usse purane bilkul chhod dete hain
+       Summary upar poori list se bana hai, to report card ke aankde poore rehte hain. */
+    const CUT = Date.now() / 1000 - 120 * 86400;
+    const list = full.slice(0, 160).map(b => (b.live || b.boTs >= CUT) ? b : (({ days, ...rest }) => ({ ...rest, daysDropped: days.length }))(b));
+    breakoutLog = { list, summary, bars: BO, shown: list.length, total: full.length };
     if (!alreadyProcessed) {
       // record ke liye — panel iske bina bhi chalta hai (sab kuch derive hota hai)
       state.breakouts = { updated: new Date().toISOString(), entries: entries.map(({ days, ...e }) => e) };
