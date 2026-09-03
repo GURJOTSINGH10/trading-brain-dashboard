@@ -313,19 +313,15 @@
   .bo-nums div { background: var(--surface-2); border-radius: 9px; padding: 6px 7px; text-align: center; }
   .bo-nums small { display: block; font-size: 8.5px; color: var(--muted); letter-spacing: .3px; text-transform: uppercase; }
   .bo-nums b { font-size: 12.5px; font-variant-numeric: tabular-nums; }
-  /* roz ka action — pivot pe zero line, upar hara neeche laal */
-  .bo-strip { background: var(--surface-2); border-radius: 10px; padding: 9px 10px; }
-  .bo-strip-top { font-size: 10px; color: var(--muted); letter-spacing: .3px; text-transform: uppercase; margin-bottom: 7px; }
-  .bo-bars { display: flex; align-items: stretch; gap: 2px; height: 52px; }
-  .bo-col { flex: 1 1 0; min-width: 2px; display: flex; flex-direction: column; }
-  .bo-up { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; }
-  .bo-dn { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; }
-  .bo-up em, .bo-dn em { display: block; border-radius: 2px; }
-  .bo-up em { background: var(--green); }
-  .bo-dn em { background: var(--red); }
-  .bo-mid { height: 1px; background: var(--border); }
-  .bo-col.big em { outline: 1px solid rgba(255,255,255,.35); }
-  .bo-legend { display: flex; justify-content: space-between; font-size: 9.5px; color: var(--muted); margin-top: 6px; }
+  /* roz ka action — line chart, pivot aur SL ki dashed lines ke saath.
+     Pehle yahan mote bars the. Wo padhne me bekaar the: har din ek chaudi patti,
+     aur kahani (bhaav kis raaste se gaya) dikhti hi nahi thi. Positions tab me
+     pehle se line + dashed levels wala chart hai — wahi bhasha yahan bhi. */
+  .bo-strip { background: var(--surface-2); border-radius: 10px; padding: 9px 11px; }
+  .bo-strip-top { font-size: 10px; color: var(--muted); letter-spacing: .3px; text-transform: uppercase; margin-bottom: 6px; }
+  .bo-legend { display: flex; gap: 11px; flex-wrap: wrap; font-size: 9.5px; color: var(--muted); margin-top: 5px; }
+  .bo-legend i { display: inline-block; width: 13px; height: 2px; vertical-align: middle; margin-right: 4px; }
+  .bo-dates { display: flex; justify-content: space-between; font-size: 9.5px; color: var(--muted); margin-top: 3px; }
   .bo-tbl { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px; }
   .bo-tbl td { padding: 3px 5px; border-top: 1px solid var(--border-soft); font-variant-numeric: tabular-nums; }
   .bo-tbl td:first-child { color: var(--muted); }
@@ -1322,23 +1318,46 @@
     }
 
     /* ---- ek breakout ka card ---- */
+    /* Line chart + dashed levels. Teen lines:
+         pivot   — jahan entry hoti, kahani ka zero
+         SL      — scanner ka apna stop (har breakout pe nahi hota, purane trade me nahi tha)
+         BO-low  — breakout wale din ka low. YAHI wo line hai jispe ye panel "fail" bolta hai
+                   (creator ka ONGC wala rule). Isliye ye hamesha dikhti hai.
+       Jis din volume sabse zyada tha uspe ek nishaan, kyunki asli kahani wahin hoti hai. */
     function dayStrip(b) {
       const days = b.days || []; if (!days.length) return '';
-      const mx = Math.max(1, ...days.map(x => Math.abs(x.pct == null ? 0 : x.pct)));
-      const big = Math.max(0, ...days.map(x => x.volX == null ? 0 : x.volX));
-      return '<div class="bo-strip"><div class="bo-strip-top">Roz ka action — beech ki line pivot hai</div>' +
-        '<div class="bo-bars">' + days.map(x => {
-          const v = x.pct == null ? 0 : x.pct;
-          const h = Math.round(Math.abs(v) / mx * 24);
-          const hot = x.volX != null && big > 0 && x.volX === big && x.volX >= 2;
-          return '<div class="bo-col' + (hot ? ' big' : '') + '" title="' + x.d + ' · ₹' + x.c + ' · ' + f1(x.pct) +
-            (x.volX != null ? ' · ' + x.volX.toFixed(1) + 'x volume' : '') + '">' +
-            '<div class="bo-up">' + (v > 0 ? '<em style="height:' + Math.max(2, h) + 'px"></em>' : '') + '</div>' +
-            '<div class="bo-mid"></div>' +
-            '<div class="bo-dn">' + (v < 0 ? '<em style="height:' + Math.max(2, h) + 'px"></em>' : '') + '</div>' +
-            '</div>';
-        }).join('') + '</div>' +
-        '<div class="bo-legend"><span>' + days[0].d + '</span><span>' + days.length + ' session</span>' +
+      const W = 320, H = 76, PAD = 5;
+      const closes = days.map(x => x.c);
+      const levels = [[b.pivot, '#94a3b8', 'pivot']];
+      if (b.sl != null) levels.push([b.sl, '#ff6b76', b.slIsDerived ? 'SL (anumaanit)' : 'SL']);
+      if (b.boLow != null) levels.push([b.boLow, '#ffc46b', 'BO-day low']);
+      const all = closes.concat(levels.map(l => l[0]));
+      const lo = Math.min(...all), hi = Math.max(...all), span = (hi - lo) || 1;
+      const x = k => PAD + (days.length === 1 ? (W - 2 * PAD) / 2 : k * (W - 2 * PAD) / (days.length - 1));
+      const y = v => PAD + (hi - v) * (H - 2 * PAD) / span;
+      const col = b.live ? '#54a9ff' : b.outcome === 'traction' ? '#31d492' : '#ff6b76';
+      const pts = days.map((d, k) => x(k).toFixed(1) + ',' + y(d.c).toFixed(1)).join(' ');
+      const bigV = Math.max(0, ...days.map(d => d.volX == null ? 0 : d.volX));
+      const hotK = bigV >= 2 ? days.findIndex(d => d.volX === bigV) : -1;
+
+      return '<div class="bo-strip"><div class="bo-strip-top">Roz ka action</div>' +
+        '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" height="' + H + '" preserveAspectRatio="none">' +
+        levels.map(l => '<line x1="0" y1="' + y(l[0]).toFixed(1) + '" x2="' + W + '" y2="' + y(l[0]).toFixed(1) +
+          '" stroke="' + l[1] + '" stroke-width="1" stroke-dasharray="4 3" opacity="0.85"/>').join('') +
+        (days.length > 1
+          ? '<polyline points="' + pts + '" fill="none" stroke="' + col + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'
+          : '') +
+        days.map((d, k) => '<circle cx="' + x(k).toFixed(1) + '" cy="' + y(d.c).toFixed(1) + '" r="' +
+          (k === hotK ? 3.2 : 1.6) + '" fill="' + (k === hotK ? '#ffffff' : col) + '">' +
+          '<title>' + d.d + ' · ₹' + d.c + ' · ' + f1(d.pct) +
+          (d.volX != null ? ' · ' + d.volX.toFixed(1) + 'x volume' : '') +
+          (d.dlv != null ? ' · ' + d.dlv.toFixed(0) + '% delivery' : '') + '</title></circle>').join('') +
+        '</svg>' +
+        '<div class="bo-legend">' + levels.map(l => '<span><i style="background:' + l[1] + '"></i>' + l[2] +
+          ' ₹' + l[0] + '</span>').join('') +
+          (hotK >= 0 ? '<span><i style="background:#fff"></i>sabse bada volume (' + bigV.toFixed(1) + 'x)</span>' : '') +
+        '</div>' +
+        '<div class="bo-dates"><span>' + days[0].d + '</span><span>' + days.length + ' session</span>' +
         '<span>' + days[days.length - 1].d + '</span></div></div>';
     }
 

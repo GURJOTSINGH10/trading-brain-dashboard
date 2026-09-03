@@ -67,6 +67,24 @@ export function findBreakout(chart, pivot, fromTs, maxWaitSessions) {
   return null;
 }
 
+/* ---------- SL — scan.mjs ka wahi rule, chart se dobara ----------
+   scan.mjs (line ~684): swingLow = pichhle 8 din ka sabse neecha low,
+   sl = max(swingLow, pivot*0.955), aur agar pivot se 2% se kam door ho to pivot*0.965.
+   Yahan dobara isliye nikaalte hain ki purane record me SL field thi hi nahi —
+   112 me se sirf 5 pe asli SL tha. Derive karke sab pe line dikh jaati hai.
+   ⚠️ Ye ANUMAAN hai: scanner ne SL us din ke pichhle 8 bars pe nikala tha jab wo
+   candidate bana, aur hum breakout wale din ke pichhle 8 bars le rahe hain. Aksar
+   wahi aata hai, par hamesha nahi — isliye UI me ise alag label milta hai. */
+export function deriveSL(chart, i0, pivot) {
+  if (!chart || !chart.l || i0 == null || !(pivot > 0)) return null;
+  const from = Math.max(0, i0 - 8);
+  const lows = chart.l.slice(from, i0).filter(v => v > 0);
+  if (!lows.length) return null;
+  let sl = Math.max(Math.min(...lows), pivot * 0.955);
+  if ((pivot - sl) / pivot < 0.02) sl = pivot * 0.965;
+  return round2(sl);
+}
+
 /* ---------- breakout ke baad ki poori kahani ---------- */
 export function buildTimeline(chart, pivot, boTs, opts = {}) {
   /* opts.deliv = { 'YYYY-MM-DD': pct } — us stock ka roz ka delivery %.
@@ -140,6 +158,7 @@ export function buildTimeline(chart, pivot, boTs, opts = {}) {
   const last = days[days.length - 1];
   return {
     boDate: istDay(boTs), boTs, pivot: round2(pivot), boLow: round2(boLow),
+    slDerived: deriveSL(chart, i0, pivot),
     sessions: days.length,
     maxGainPct, maxDrawPct, gotTraction, tractionInSessions,
     endedBy, live, outcome, failedFast,
@@ -160,7 +179,8 @@ export function buildAll(entries, charts, opts = {}) {
     if (!ch) continue;
     const t = buildTimeline(ch, e.pivot, e.boTs, { ...opts, deliv: (opts.deliv || {})[e.symbol] });
     if (!t) continue;
-    out.push({ symbol: e.symbol, sector: e.sector || null, source: e.source || null, fund: e.fund || null, ...t });
+    const sl = (e.sl > 0) ? { sl: e.sl, slIsDerived: false } : { sl: t.slDerived, slIsDerived: true };
+    out.push({ symbol: e.symbol, sector: e.sector || null, source: e.source || null, ...sl, fund: e.fund || null, ...t, slDerived: undefined });
   }
   // naye breakout sabse upar
   out.sort((a, b) => b.boTs - a.boTs);

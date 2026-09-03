@@ -1133,7 +1133,7 @@ async function main() {
     for (const w of watchlist) {
       track.names[w.symbol] = {
         firstSeen: sessionTs, firstSeenLabel: fmtShort(sessionTs),
-        pivot: w.pivot, sector: w.sector, sessions: 0, crossed: false, maxHighPct: 0,
+        pivot: w.pivot, sl: w.sl ?? null, sector: w.sector, sessions: 0, crossed: false, maxHighPct: 0,
         fund: fundStamp(w.symbol),
         lastSeen: sessionTs
       };
@@ -1150,11 +1150,13 @@ async function main() {
       if (!track.names[w.symbol]) {
         track.names[w.symbol] = {
           firstSeen: sessionTs, firstSeenLabel: fmtShort(sessionTs),
-          pivot: w.pivot, sector: w.sector, sessions: 0, crossed: false, maxHighPct: 0,
+          pivot: w.pivot, sl: w.sl ?? null, sector: w.sector, sessions: 0, crossed: false, maxHighPct: 0,
           fund: fundStamp(w.symbol)
         };
       }
       track.names[w.symbol].lastSeen = sessionTs;
+      // purane record me SL nahi tha (ye field baad me judi) — mil jaye to bhar do
+      if (track.names[w.symbol].sl == null && w.sl != null) track.names[w.symbol].sl = w.sl;
     }
     // 2) har tracked naam pe aaj ka bhaav dekho
     for (const [sym, t] of Object.entries(track.names)) {
@@ -1175,6 +1177,7 @@ async function main() {
           symbol: sym, sector: t.sector, from: t.firstSeenLabel,
           crossed: !!t.crossed, inSessions: t.crossedInSessions ?? null,
           maxHighPct: t.maxHighPct ?? 0,
+          pivot: t.pivot, sl: t.sl ?? null,
           fund: t.fund || null
         });
         delete track.names[sym];
@@ -1430,20 +1433,20 @@ async function main() {
        par ledger me 1 hi aaya, aise 22 stock the. Har pick apna alag breakout hai.
        (Aadha-book wale do closed row ka ts ek hi hota hai, wo sahi tarah se ek hi
         entry bante hain — wahi to hum chahte hain.) */
-    const add = (symbol, sector, pivot, fromTs, source, fundStampObj) => {
+    const add = (symbol, sector, pivot, fromTs, source, fundStampObj, sl) => {
       const k = symbol + '|' + source + '|' + (fromTs || 0);
       if (!symbol || !(pivot > 0) || seen.has(k)) return;
       seen.add(k);
-      boCand.push({ symbol, sector, pivot, fromTs, source, fund: fundStampObj || null });
+      boCand.push({ symbol, sector, pivot, sl: (sl > 0 ? sl : null), fromTs, source, fund: fundStampObj || null });
     };
     // (a) watchlist ke wo naam jinhone pivot cross kiya
     for (const [sym, t] of Object.entries(track.names || {}))
-      if (t.crossed && t.crossedTs) add(sym, t.sector, t.pivot, t.firstSeen, 'watchlist', t.fund);
+      if (t.crossed && t.crossedTs) add(sym, t.sector, t.pivot, t.firstSeen, 'watchlist', t.fund, t.sl);
     for (const dd of track.done || [])
-      if (dd.crossed) add(dd.symbol, dd.sector, dd.pivot, null, 'watchlist', dd.fund);
+      if (dd.crossed) add(dd.symbol, dd.sector, dd.pivot, null, 'watchlist', dd.fund, dd.sl);
     // (b) asli trades — khuli aur band dono. Inka entry hi pivot hota hai (stop-buy).
-    for (const p of state.positions || []) add(p.symbol, p.sector, p.pivot ?? p.entry, p.pickedTs, 'trade', p.fund);
-    for (const c of state.closed || []) add(c.symbol, c.sector, c.entry, c.ts, 'trade', null);
+    for (const p of state.positions || []) add(p.symbol, p.sector, p.pivot ?? p.entry, p.pickedTs, 'trade', p.fund, p.sl);
+    for (const c of state.closed || []) add(c.symbol, c.sector, c.entry, c.ts, 'trade', null, c.sl);
 
     // chart chahiye. Jo universe me nahi mila usko alag se laao, par ginti bandhi hui.
     const boCharts = new Map();
@@ -1465,7 +1468,7 @@ async function main() {
       const k = e.symbol + '|' + bo.ts + '|' + e.pivot;
       if (boSeen.has(k)) continue;
       boSeen.add(k);
-      entries.push({ symbol: e.symbol, sector: e.sector, pivot: e.pivot, boTs: bo.ts, source: e.source, fund: e.fund });
+      entries.push({ symbol: e.symbol, sector: e.sector, pivot: e.pivot, sl: e.sl, boTs: bo.ts, source: e.source, fund: e.fund });
     }
     /* ★ DELIVERY LOG — journal me chhota sa record.
        Timeline har scan pe chart se dobara banti hai, aur chart me sirf AAJ ka
