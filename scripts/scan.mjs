@@ -176,6 +176,40 @@ async function fetchBhavData() {
   return null;
 }
 
+/* ---------- result wale DIN ka delivery % ----------
+   volX batata hai ki volume kitna aaya. Delivery % batata hai ki us volume me se
+   kitna maal sach me utha. Creator ke liye ye farak bada hai — bina delivery ke
+   volume sirf intraday shor hai. Purani bhavcopy NSE archives me padi rehti hai.
+   Ek DATE pe ek hi download, chahe 5 stock usi din reported hon. */
+async function attachResultDayDelivery(fundMap, maxDates = 14) {
+  try {
+    const need = new Map();   // 'DDMMYYYY' -> [symbol,...]
+    for (const [sym, f] of fundMap) {
+      const day = f.reaction && f.reaction.day;   // 'YYYY-MM-DD' IST
+      if (!day) continue;
+      const [y, m, d] = day.split('-');
+      const key = d + m + y;
+      if (!need.has(key)) need.set(key, []);
+      need.get(key).push(sym);
+    }
+    const dates = [...need.keys()].slice(0, maxDates);
+    let hits = 0;
+    for (const key of dates) {
+      const csv = await fetchNSE('https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_' + key + '.csv');
+      if (!csv) continue;
+      const want = new Set(need.get(key));
+      for (const line of csv.split(/\r?\n/)) {
+        const f = line.split(',').map(x => x.trim());
+        if (f[1] !== 'EQ' || !want.has(f[0])) continue;
+        const dv = parseFloat(f[14]);
+        const rec = fundMap.get(f[0]);
+        if (rec && rec.reaction && isFinite(dv)) { rec.reaction.delivPct = dv; hits++; }
+      }
+    }
+    if (hits) console.log('Result-day delivery %: ' + hits + ' naam (' + dates.length + ' bhavcopy)');
+  } catch { /* na mile to reaction row bina delivery ke chalega */ }
+}
+
 // ---------- NSE board meetings = earnings dates ----------
 // Creator ka sabak: fresh breakout ko RESULT ke aar-paar hold mat karo — wo coin toss hai.
 // Cookie-gated API hai; cloud IP block ho jaye to chup-chaap skip (baaki scan chalta rahe).
@@ -754,6 +788,66 @@ async function main() {
   }));
   console.log(`Candidates: ${candidates.length} (ready: ${readyCands.length}), picks: ${picks.length}, watchlist: ${watchlist.length}, gear: ${gear}`);
 
+  /* ★ NUMBERS CHECK — picks aur watchlist ke peeche ke NUMBERS.
+     Ye SELECTION nahi karta. Ranking, filter, score — kisi pe iska asar NAHI hai.
+     Creator fundamentals se stock chunta nahi ("वी आर प्लेइंग ब्रेकआउट्स"), par uska
+     core belief fundamental hai ("स्टॉक प्राइसेस आर स्लेव ऑफ अर्निंग्स") aur uska
+     asli test numbers nahi, numbers pe MARKET KA REACTION hai:
+       "नंबर्स अपने आप में कोई मैटर नहीं करते... प्राइस एक्शन क्या मैच कर रहा है?"
+     rules.json: selection.fundamental_confidence (status: discretionary).
+
+     ⚠️ Ye journal se PEHLE chalta hai — jaan-boojhkar. Pick banti hai isi ke neeche,
+     aur pick ke WAQT ke legs journal me likhne se hi 3-4 mahine baad naapa ja sakega
+     ki "teeno match" wale picks sach me behtar chale ya nahi. Baad me nahi likh paoge:
+     numbers har quarter badal jaate hain.
+
+     NSE block kare ya kuch bhi toote to fund = null aur scan bina ruke chalta hai. */
+  let fund = null;
+  try {
+    const syms = [...new Set([...picks.map(p => p.symbol), ...watchlist.map(w => w.symbol)])];
+    if (syms.length) {
+      const chMap = new Map();
+      for (const sym of syms) if (charts[sym]) chMap.set(sym, charts[sym]);
+      const got = await fetchFundamentals(syms, chMap);
+      await attachResultDayDelivery(got);
+      const readySet = new Set([...picks.map(p => p.symbol), ...watchlist.filter(w => w.ready).map(w => w.symbol)]);
+      const bySymbol = {};
+      for (const [sym, f] of got) {
+        const legs = { ...f.legs, setup: readySet.has(sym) };
+        const n = (legs.growth ? 1 : 0) + (legs.reaction ? 1 : 0) + (legs.setup ? 1 : 0);
+        // agla result — wahi earningsMap jo earnings-guard use karta hai, dobara call nahi
+        const e = earningsMap.get(sym);
+        bySymbol[sym] = {
+          ...f, legs,
+          matchCount: n,
+          match: n === 3 ? 'triple' : n === 2 ? 'two' : n === 1 ? 'one' : 'none',
+          nextResult: e ? {
+            on: e.toLocaleDateString('en-IN', { timeZone: IST, day: 'numeric', month: 'short' }),
+            inDays: Math.max(0, Math.round((e - new Date(sessionTs * 1000)) / 86400000))
+          } : null
+        };
+      }
+      fund = { bySymbol, count: Object.keys(bySymbol).length };
+      console.log('Numbers Check: ' + fund.count + '/' + syms.length + ' naam pe numbers laga diye');
+    }
+  } catch (e) { console.log('Numbers Check skip (' + e.message + ') — baaki dashboard poora hai.'); }
+
+  /* pick/watchlist ke saath journal me jaane wala CHHOTA snapshot.
+     Poora fund object journal me daalna fizool hai — 5 quarter ki series har naam pe
+     rakhne se journal mahino me bhaari ho jayega. Sirf wahi rakho jo baad me naapna hai. */
+  const fundStamp = sym => {
+    const f = fund && fund.bySymbol[sym];
+    if (!f) return null;
+    return {
+      matchCount: f.matchCount,
+      growth: f.legs.growth, reaction: f.legs.reaction,
+      growthPct: f.growth && f.growth.profit != null ? Math.round(f.growth.profit) : null,
+      growthTag: f.growth ? f.growth.tag : null,
+      reactionPct: f.reaction && f.reaction.moveDay != null ? round2(f.reaction.moveDay) : null,
+      quarter: f.quarter || null
+    };
+  };
+
   // ★ SECTOR PLAYS — "ye sector garam hai, isme ye 5 stock strategy pe fit baith rahe".
   // candidates pehle se _score pe sorted hain, to filter karne se rank bacha rehta hai:
   // rank 1 = us sector ka sabse strong naam = LEADER candidate.
@@ -782,6 +876,67 @@ async function main() {
     }))
   })).filter(s => s.stocks.length);
   console.log('Sector plays: ' + (sectorPlays.map(s => `${s.name}[${s.fire}]=${s.stocks.length}`).join(', ') || 'koi nahi'));
+
+  /* ★ SECTOR KE APNE NUMBERS — creator ka asli tareeka:
+       "नंबर्स अपने आप में कोई मैटर नहीं करते... सेक्टर कैसा परफॉर्म कर रहा है
+        फंडामेंटली? एंड द सेम टाइम प्राइस एक्शन क्या मैच कर रहा है?"
+     Wo sector ke TOP 4 naam ke numbers dekhta hai (Railway pe IRFC/RVNL, Defence pe
+     Cochin Shipyard/Mazagon Dock) — ye jaanne ke liye ki sector abhi bhi garam hai.
+     Stock ka apna number ek baat hai; poore sector me kamai aa rahi hai ya nahi,
+     wo doosri. Yahan doosri wali naapte hain.
+
+     Ye bhi DISPLAY hai. Sector score isse nahi badalta. */
+  if (fund) {
+    try {
+      const wanted = [];
+      for (const sp of sectorPlays)
+        for (const st of sp.stocks.slice(0, 4))
+          if (!wanted.includes(st.symbol)) wanted.push(st.symbol);
+      const missing = wanted.filter(sym => !fund.bySymbol[sym]);
+      const extra = new Map();
+      if (missing.length) {
+        const chMap = new Map();
+        for (const sym of missing) if (charts[sym]) chMap.set(sym, charts[sym]);
+        const got = await fetchFundamentals(missing, chMap);
+        for (const [sym, f] of got) extra.set(sym, f);
+      }
+      const look = sym => fund.bySymbol[sym] || extra.get(sym) || null;
+
+      const bySector = {};
+      for (const sp of sectorPlays) {
+        const rows = [];
+        for (const st of sp.stocks.slice(0, 4)) {
+          const f = look(st.symbol);
+          if (!f || !f.growth) continue;
+          rows.push({
+            symbol: st.symbol,
+            pct: f.growth.profit != null ? Math.round(f.growth.profit) : null,
+            tag: f.growth.tag, ok: !!f.growth.ok
+          });
+        }
+        if (!rows.length) continue;
+        const withPct = rows.filter(r => r.pct != null);
+        const good = rows.filter(r => r.ok).length;
+        const positive = withPct.filter(r => r.pct > 0).length;
+        // median — ek company ka 1900% wala outlier poore sector ka picture na bigade
+        let median = null;
+        if (withPct.length) {
+          const v = withPct.map(r => r.pct).sort((a, b) => a - b);
+          median = v.length % 2 ? v[(v.length - 1) / 2] : Math.round((v[v.length / 2 - 1] + v[v.length / 2]) / 2);
+        }
+        let verdict, cls;
+        if (good >= 2) { verdict = 'sector fundamentally bhi chal raha hai'; cls = 'good'; }
+        else if (positive > rows.length / 2) { verdict = 'growth hai par halki — leaders ka bar paar nahi'; cls = 'mid'; }
+        else { verdict = 'price chal raha hai, numbers saath nahi de rahe'; cls = 'bad'; }
+        bySector[sp.name] = { checked: rows.length, strong: good, positive, median, rows, verdict, cls };
+      }
+      if (Object.keys(bySector).length) {
+        fund.bySector = bySector;
+        console.log('Sector numbers: ' + Object.entries(bySector)
+          .map(([k, v]) => k.split(' ')[0] + ' ' + v.strong + '/' + v.checked).join(', '));
+      }
+    } catch (e) { console.log('Sector numbers skip (' + e.message + ')'); }
+  }
 
   // --- risk ramp ka faisla ---
   // KAL ke close pe (curPnlPct pichhle run ka hai), aaj ke bhaav pe nahi — jab tumhara
@@ -935,6 +1090,11 @@ async function main() {
       // hai, to client ko sort karne ke liye asli timestamp chahiye.
       picked: fmtShort(sessionTs), pickedTs: sessionTs, symbol: p.symbol, sector: p.sector,
       gear, fullSize: sizePctFor(gear), sizePct: sizePctFor(gear), pivot: p.pivot, sl: p.sl,
+      // ★ pick ke WAQT ka Numbers Check. Baad me ye dobara nahi ban sakta (numbers
+      //   agle quarter me badal jaate hain). Isse hi 3-4 mahine baad naapenge ki
+      //   "teeno match" ka koi asli farak hai ya nahi — tabhi ye rule discretionary
+      //   se shipped ya rejected ban paayega.
+      fund: fundStamp(p.symbol),
       entryStatus: 'pending', daysWaiting: 0
     });
   }
@@ -969,6 +1129,7 @@ async function main() {
       track.names[w.symbol] = {
         firstSeen: sessionTs, firstSeenLabel: fmtShort(sessionTs),
         pivot: w.pivot, sector: w.sector, sessions: 0, crossed: false, maxHighPct: 0,
+        fund: fundStamp(w.symbol),
         lastSeen: sessionTs
       };
     }
@@ -984,7 +1145,8 @@ async function main() {
       if (!track.names[w.symbol]) {
         track.names[w.symbol] = {
           firstSeen: sessionTs, firstSeenLabel: fmtShort(sessionTs),
-          pivot: w.pivot, sector: w.sector, sessions: 0, crossed: false, maxHighPct: 0
+          pivot: w.pivot, sector: w.sector, sessions: 0, crossed: false, maxHighPct: 0,
+          fund: fundStamp(w.symbol)
         };
       }
       track.names[w.symbol].lastSeen = sessionTs;
@@ -1007,7 +1169,8 @@ async function main() {
         track.done.push({
           symbol: sym, sector: t.sector, from: t.firstSeenLabel,
           crossed: !!t.crossed, inSessions: t.crossedInSessions ?? null,
-          maxHighPct: t.maxHighPct ?? 0
+          maxHighPct: t.maxHighPct ?? 0,
+          fund: t.fund || null
         });
         delete track.names[sym];
       }
@@ -1037,7 +1200,29 @@ async function main() {
       crossRate: done.length ? Math.round(crossedDone.length / done.length * 100) : null,
       avgSessionsToCross: avgDays,
       tracking: live.slice(0, 12),
-      trackingCount: live.length
+      trackingCount: live.length,
+      /* ★ Numbers Check ka apna report card.
+         Sawaal jiska jawab data se aayega: jin naamon pe numbers saath de rahe the,
+         wo pivot zyada baar cross karte hain kya? Jab tak 20-25 naam har bucket me
+         settle na ho jaayein, is par koi faisla mat lena. */
+      byMatch: (() => {
+        const buckets = {};
+        for (const dd of done) {
+          const m = dd.fund && dd.fund.matchCount != null ? dd.fund.matchCount : null;
+          if (m == null) continue;
+          const k = String(m);
+          if (!buckets[k]) buckets[k] = { settled: 0, crossed: 0 };
+          buckets[k].settled++;
+          if (dd.crossed) buckets[k].crossed++;
+        }
+        const out = Object.entries(buckets).map(([k, v]) => ({
+          matchCount: +k, settled: v.settled, crossed: v.crossed,
+          crossRate: Math.round(v.crossed / v.settled * 100)
+        })).sort((a, b) => b.matchCount - a.matchCount);
+        return out.length ? out : null;
+      })(),
+      // kitne naam abhi is naap ke saath chal rahe hain (samples aa rahe hain)
+      matchTracked: Object.values(track.names || {}).filter(t => t.fund).length
     };
   })();
   if (watchStats) console.log(`Watchlist tracker: ${watchStats.trackingCount} chal rahe, ${watchStats.settled} settle hue` +
@@ -1217,44 +1402,6 @@ async function main() {
   } catch {
     try { ruleQuotes = JSON.parse(readFileSync(join(ROOT, 'rules-ui.json'), 'utf8')); } catch { ruleQuotes = {}; }
   }
-
-  /* ★ NUMBERS CHECK — picks aur watchlist ke peeche ke NUMBERS.
-     Ye SELECTION nahi karta. Ranking, filter, score — kisi pe iska asar NAHI hai.
-     Creator fundamentals se stock chunta nahi ("वी आर प्लेइंग ब्रेकआउट्स"), par uska
-     core belief fundamental hai ("स्टॉक प्राइसेस आर स्लेव ऑफ अर्निंग्स") aur uska
-     asli test numbers nahi, numbers pe MARKET KA REACTION hai:
-       "नंबर्स अपने आप में कोई मैटर नहीं करते... प्राइस एक्शन क्या मैच कर रहा है?"
-     Isliye teen legs alag dikhti hain aur faisla aankh pe chhoda gaya hai.
-     rules.json: selection.fundamental_confidence (status: discretionary).
-     NSE block kare ya kuch bhi toote to fund = null aur scan bina ruke chalta hai. */
-  let fund = null;
-  try {
-    const syms = [...new Set([...picks.map(p => p.symbol), ...watchlist.map(w => w.symbol)])];
-    if (syms.length) {
-      const chMap = new Map();
-      for (const sym of syms) if (charts[sym]) chMap.set(sym, charts[sym]);
-      const got = await fetchFundamentals(syms, chMap);
-      const readySet = new Set([...picks.map(p => p.symbol), ...watchlist.filter(w => w.ready).map(w => w.symbol)]);
-      const bySymbol = {};
-      for (const [sym, f] of got) {
-        const legs = { ...f.legs, setup: readySet.has(sym) };
-        const n = (legs.growth ? 1 : 0) + (legs.reaction ? 1 : 0) + (legs.setup ? 1 : 0);
-        // agla result — wahi earningsMap jo earnings-guard use karta hai, dobara call nahi
-        const e = earningsMap.get(sym);
-        bySymbol[sym] = {
-          ...f, legs,
-          matchCount: n,
-          match: n === 3 ? 'triple' : n === 2 ? 'two' : n === 1 ? 'one' : 'none',
-          nextResult: e ? {
-            on: e.toLocaleDateString('en-IN', { timeZone: IST, day: 'numeric', month: 'short' }),
-            inDays: Math.max(0, Math.round((e - new Date(sessionTs * 1000)) / 86400000))
-          } : null
-        };
-      }
-      fund = { bySymbol, count: Object.keys(bySymbol).length };
-      console.log('Numbers Check: ' + fund.count + '/' + syms.length + ' naam pe numbers laga diye');
-    }
-  } catch (e) { console.log('Numbers Check skip (' + e.message + ') — baaki dashboard poora hai.'); }
 
   // --- 5-saal ka strategy test (alag file, backtest.mjs --summary se banti hai) ---
   let strategyTest = null;

@@ -288,6 +288,24 @@
     background: rgba(148,163,184,0.12); color: var(--muted); border: 1px solid var(--border); }
   .wl-badge.ready { background: rgba(49,212,146,0.13); color: #4fe0a8; border-color: rgba(49,212,146,0.35); }
   .wl-nm-chip { display: block; margin-top: 5px; }
+  /* sector ke apne numbers — creator ka "top 4 ke numbers dekho" */
+  .secnum { font-size: 11.5px; margin-top: 7px; padding: 8px 11px; border-radius: 10px;
+    background: rgba(148,163,184,.07); border-left: 2px solid var(--border); line-height: 1.6; }
+  .secnum.good { border-left-color: var(--green); }
+  .secnum.mid  { border-left-color: var(--amber); }
+  .secnum.bad  { border-left-color: var(--red); }
+  .secnum b.v { font-weight: 700; }
+  .secnum-names { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 5px; }
+  .secnum-n { font-size: 10.5px; padding: 2px 8px; border-radius: 9px; background: var(--surface-2);
+    color: var(--muted); font-variant-numeric: tabular-nums; }
+  .secnum-n.on { background: rgba(49,212,146,.13); color: var(--green); }
+  .secnum-n.off { background: rgba(255,107,118,.10); color: #ff8f96; }
+  /* Numbers Check ka apna report card */
+  .bym { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 7px; }
+  .bym-i { background: var(--surface-2); border-radius: 10px; padding: 7px 11px; font-size: 11.5px;
+    font-variant-numeric: tabular-nums; }
+  .bym-i b { display: block; font-size: 14px; }
+  .bym-i small { color: var(--muted); font-size: 10px; }
   /* Tablet chaudai (641-1100px) pe 6-column table page ko chauda kar deti thi.
      Ye bug live index.html me bhi hai. Mobile pe table grid ban jaati hai to
      wahan ye rule bekaar hai, beech ki chaudai me table khud scroll karegi. */
@@ -1109,6 +1127,24 @@
      sawaal hai "to isme LOON kya?". Ye block wahi jawab deta hai, stocks ko RANK
      ke saath. Vault (Best of the Best): dono base achhe ho sakte hain — farak ye
      hai ki jab LEADER chalta hai to KITNA chalta hai. */
+  /* ---- sector ke apne numbers ----
+     Creator: "नंबर्स कैसे आए? सेक्टर कैसा परफॉर्म कर रहा है फंडामेंटली?"
+     Wo sector ke top 4 naam ke numbers dekhta hai — stock ka apna number ek baat hai,
+     poore sector me kamai aa rahi hai ya nahi wo doosri. Ye scoring ko nahi chhuta. */
+  function sectorNumbers(name) {
+    const sn = (d.fund && d.fund.bySector && d.fund.bySector[name]) || null;
+    if (!sn) return '';
+    return '<div class="secnum ' + sn.cls + '">' +
+      '🔢 <b>Sector ke top ' + sn.checked + ' naam ke numbers</b>: ' +
+      '<b class="v nc-' + sn.cls + '">' + sn.strong + '/' + sn.checked + '</b> ne 30%+ growth di' +
+      (sn.median != null ? ' · beech ka aankda <b>' + (sn.median >= 0 ? '+' : '') + sn.median + '%</b>' : '') +
+      ' — <span class="nc-' + sn.cls + '">' + sn.verdict + '</span>' +
+      '<div class="secnum-names">' + sn.rows.map(r =>
+        '<span class="secnum-n ' + (r.ok ? 'on' : (r.pct != null && r.pct < 0 ? 'off' : '')) + '">' +
+        r.symbol + ' ' + (r.pct == null ? '—' : (r.pct >= 0 ? '+' : '') + r.pct + '%') + '</span>').join('') +
+      '</div></div>';
+  }
+
   (function sectorPlays() {
     const el = document.getElementById('sectorPlays');
     if (!el) return;
@@ -1139,7 +1175,8 @@
       return '<div class="sector-block">' +
         '<div class="sector-head"><b>' + sec.name + '</b>' +
         '<span class="fire-badge fire-' + sec.fire + '">' + (fireLabel[sec.fire] || sec.fire) + '</span>' +
-        '<div class="sector-metrics">' + (sec.depthNote || sec.note) + '</div></div>' +
+        '<div class="sector-metrics">' + (sec.depthNote || sec.note) + '</div>' +
+        sectorNumbers(sec.name) + '</div>' +
         '<table class="sp-table">' + rows + '</table></div>';
     }).join('') +
     '<div class="sp-note">👑 = sector ka <b>asli leader</b> — 60-din ke return me sabse aage (peeli bar = sector ke andar percentile). Ye setup-rank (#2, #3…) se <b>alag</b> cheez hai: setup batata hai <b>kab</b>, leadership batati hai <b>kaun</b>. Dono ek hi naam me milein — wahi best of the best.<br>' +
@@ -1303,7 +1340,8 @@
       '<div class="nc-row"><span class="nc-k">Result pe market ne kya kaha<i>' + (f.resultOn || '') +
       ' · ' + r.sessionsAgo + ' session pehle</i></span>' +
       '<span class="nc-v"><b class="nc-' + r.cls + '">' + f1(r.moveDay) + '</b>' +
-      '<small>' + (r.volX != null ? r.volX.toFixed(1) + 'x volume · ' : '') + 'tab se ' + f1(r.since) +
+      '<small>' + (r.volX != null ? r.volX.toFixed(1) + 'x volume · ' : '') +
+      (r.delivPct != null ? r.delivPct.toFixed(0) + '% delivery · ' : '') + 'tab se ' + f1(r.since) +
       (r.held != null ? ' · pop ka ' + Math.round(r.held * 100) + '% bacha' : '') + '</small></span></div>' +
       '<div class="nc-say nc-' + r.cls + '">' + r.verdict + '</div>');
 
@@ -1318,7 +1356,10 @@
       '<div class="nc-foot"><span class="dev">"नंबर्स अपने आप में कोई मैटर नहीं करते... ' +
       'सेक्टर कैसा परफॉर्म कर रहा है फंडामेंटली। एंड द सेम टाइम प्राइस एक्शन क्या मैच कर रहा है?"</span><br>' +
       'Isliye ye ranking nahi badalta. Hum fundamentals trade nahi karte — ye sirf batata hai ki ' +
-      'chart ke peeche numbers bhi saath de rahe hain ya nahi.</div>' +
+      'chart ke peeche numbers bhi saath de rahe hain ya nahi.' +
+      (r && r.delivPct != null ? '<br><b>Delivery %</b> = us din ke volume me se kitna maal sach me utha. ' +
+        'Kam delivery ka matlab volume to aaya par wo intraday shor tha, asli kharidari nahi.' : '') +
+      '</div>' +
       '</div></div>';
   }
 
@@ -1607,7 +1648,22 @@
           '📋 <b>Watchlist ka report card</b> (' + w.windowDays + '-session window): ' + rate +
           ' · abhi <b>' + w.trackingCount + '</b> naam track ho rahe hain.<br>' +
           '<span style="opacity:.8">Ye naapta hai ki scanner ki "pivot ke kareeb" wali ranking sach me predictive hai ya nahi. ' +
-          'Ye trade ka hisaab NAHI hai — sirf scanner ka apna report card.</span></div>';
+          'Ye trade ka hisaab NAHI hai — sirf scanner ka apna report card.</span>' +
+          /* ★ Numbers Check ka apna imtihaan. Jab tak har bucket me 20-25 naam settle
+             na ho jaayein, in aankdon pe koi faisla mat lena — shor hi shor hoga. */
+          (w.byMatch && w.byMatch.length
+            ? '<div style="margin-top:10px"><b>Numbers Check ka imtihaan</b> — kitne naam ne pivot cross kiya, ' +
+              'match count ke hisaab se:' +
+              '<div class="bym">' + w.byMatch.map(b =>
+                '<div class="bym-i"><b>' + b.crossRate + '%</b>' + b.matchCount + '/3 match' +
+                '<br><small>' + b.crossed + '/' + b.settled + ' naam</small></div>').join('') + '</div>' +
+              '<span style="opacity:.8">Har bucket me 20-25 naam settle hone tak ispe koi faisla mat lena. ' +
+              'Yahi wo naap hai jo aage chal ke batayega ki Numbers Check ko rule banaya jaaye ya nahi.</span></div>'
+            : '<div style="margin-top:10px; opacity:.8">📊 <b>Numbers Check ka imtihaan shuru ho gaya hai.</b> ' +
+              'Aaj se har naye watchlist naam ke saath uske numbers bhi save ho rahe hain (' +
+              (w.matchTracked || 0) + ' naam abhi). ' + w.windowDays + ' session baad pehla nateeja aayega: ' +
+              'kya numbers wale naam sach me zyada pivot cross karte hain.</div>') +
+          '</div>';
       })() +
       '<div class="wl-note">Ye <b>TRADE NAHI</b> hain — journal inhe track nahi karta. Ye wo naam hain jo pivot ke sabse kareeb hain: ' +
       '<b>pivot cross ho tabhi</b> baat banti hai, usse pehle jo bhi hai sirf indication hai. Kisi bhi row ya card pe click karke chart kholo.<br>' +
