@@ -288,6 +288,8 @@
     background: rgba(148,163,184,0.12); color: var(--muted); border: 1px solid var(--border); }
   .wl-badge.ready { background: rgba(49,212,146,0.13); color: #4fe0a8; border-color: rgba(49,212,146,0.35); }
   .wl-nm-chip { display: block; margin-top: 5px; }
+  [hidden] { display: none !important; }
+  .wl-none { padding: 18px; text-align: center; color: var(--muted); font-size: 12.5px; }
   /* sector ke apne numbers — creator ka "top 4 ke numbers dekho" */
   .secnum { font-size: 11.5px; margin-top: 7px; padding: 8px 11px; border-radius: 10px;
     background: rgba(148,163,184,.07); border-left: 2px solid var(--border); line-height: 1.6; }
@@ -1270,7 +1272,10 @@
   // Pehle sirf chhota avatar clickable tha — kisi ko pata hi nahi chalta tha.
   // Andar ka asli <a> (Chart ↗ wagairah) apna kaam khud kare, isliye guard.
   document.addEventListener('click', e => {
-    if (e.target.closest('a')) return;
+    // Andar ka asli <a> apna kaam khud kare. Aur <details>/<summary> ek TOGGLE hai —
+    // "Score kaise bana" kholne pe chart nahi khulna chahiye. (Ye guard pehle nahi
+    // tha, isliye pick cards pe bhi breakdown kholte hi TradingView khul jaata tha.)
+    if (e.target.closest('a, summary, details')) return;
     const el = e.target.closest('[data-tv]');
     if (!el) return;
     window.open(tvUrl(el.dataset.tv), '_blank', 'noopener');
@@ -1587,30 +1592,42 @@
     const fil = document.getElementById('wlFilters');
     const cards = document.getElementById('wlCards');
     let mode = 'all';
+    // ek hi jagah shart likhi hai — chip ki ginti aur filter dono isi se chalte hain
+    const passes = (w, m) => {
+      const f = FUND[w.symbol];
+      if (m === 'triple') return !!(f && f.match === 'triple');
+      if (m === 'ready') return !!w.ready;
+      if (m === 'growth') return !!(f && f.legs.growth);
+      return true;
+    };
     function paint() {
-      const list = wl.filter(w => {
-        const f = FUND[w.symbol];
-        if (mode === 'triple') return f && f.match === 'triple';
-        if (mode === 'ready') return !!w.ready;
-        if (mode === 'growth') return f && f.legs.growth;
-        return true;
-      });
-      cards.innerHTML = list.length
-        ? list.map(wlDetailCard).join('')
-        : '<div class="card wl-empty">Is filter me koi naam nahi. Chip dobara dabao.</div>';
-      cards.querySelectorAll('[data-tv]').forEach(n => n.addEventListener('click', ev => {
-        if (ev.target.closest('summary') || ev.target.closest('details')) return;
-        window.open(tvUrl(n.dataset.tv), '_blank', 'noopener');
-      }));
+      const list = wl.filter(w => passes(w, mode));
+      const keep = new Set(list.map(w => w.symbol));
+
+      // (a) neeche ke detail cards
+      if (cards) {
+        cards.innerHTML = list.length
+          ? list.map(wlDetailCard).join('')
+          : '<div class="card wl-empty">Is filter me koi naam nahi. Doosri chip dabao.</div>';
+      }
+      // (b) upar wali table — YAHI wo hissa tha jo pehle nahi badalta tha,
+      //     aur chip ke theek neeche hone ki wajah se lagta tha button dead hai
+      const rows = el.querySelectorAll('tr[data-sym]');
+      rows.forEach(r => { r.hidden = !keep.has(r.dataset.sym); });
+      let none = el.querySelector('.wl-none');
+      if (!rows.length) { /* table abhi bani nahi */ }
+      else if (!list.length) {
+        if (!none) {
+          none = document.createElement('div');
+          none.className = 'wl-none';
+          none.textContent = 'Is filter me koi naam nahi. Doosri chip dabao.';
+          el.appendChild(none);
+        }
+        none.hidden = false;
+      } else if (none) none.hidden = true;
     }
     if (fil) {
-      const n = m => wl.filter(w => {
-        const f = FUND[w.symbol];
-        if (m === 'triple') return f && f.match === 'triple';
-        if (m === 'ready') return !!w.ready;
-        if (m === 'growth') return f && f.legs.growth;
-        return true;
-      }).length;
+      const n = m => wl.filter(w => passes(w, m)).length;
       const opts = [['all', 'Sab'], ['ready', 'Ready'], ['growth', '30%+ growth'], ['triple', 'Teeno match']];
       fil.innerHTML = opts.map(o => '<span class="wl-fil' + (o[0] === 'all' ? ' active' : '') +
         '" data-m="' + o[0] + '">' + o[1] + ' <b>' + n(o[0]) + '</b></span>').join('');
@@ -1619,10 +1636,9 @@
         x.classList.add('active'); mode = x.dataset.m; paint();
       }));
     }
-    paint();
 
     el.innerHTML = '<table class="wl-table">' + wl.map(w =>
-      '<tr data-tv="' + w.symbol + '" title="' + w.symbol + ' ka TradingView chart kholo">' +
+      '<tr data-tv="' + w.symbol + '" data-sym="' + w.symbol + '" title="' + w.symbol + ' ka TradingView chart kholo">' +
         '<td class="wl-sym"><b>' + w.symbol + '</b> <span class="cap-badge cap-' + (w.cap || 'Small') + '">' + (w.cap || 'Small') + '</span>' +
           '<span class="note">' + w.name + ' · ' + w.sector + (w.hot ? ' · 🔥 hot sector' : '') + '</span>' +
           (numbersMini(w.symbol) ? '<span class="wl-nm-chip">' + numbersMini(w.symbol) + '</span>' : '') + '</td>' +
@@ -1669,6 +1685,10 @@
       '<b>pivot cross ho tabhi</b> baat banti hai, usse pehle jo bhi hai sirf indication hai. Kisi bhi row ya card pe click karke chart kholo.<br>' +
       '<span style="opacity:.8">Numbers Check yahan sirf CONFIDENCE ke liye hai. Ranking ab bhi poori tarah chart se banti hai — ' +
       'growth kharab hone se koi naam list se bahar nahi hota, aur achhi growth se koi upar nahi aata.</span></div>';
+
+    // table + foot ban chuke — ab filter lagao (paint table ke rows chhupata hai,
+    // isliye ise table banne ke BAAD hi chalna chahiye)
+    paint();
   })();
   const wlCard = '';
 
