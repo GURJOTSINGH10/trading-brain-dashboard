@@ -1301,7 +1301,7 @@
       c('Traction mila', (sm.tractionRate != null ? sm.tractionRate + '%' : '—'),
         sm.settled + ' settle hue, ' + sm.traction + ' chale', sm.tractionRate >= 40 ? 'pos' : sm.tractionRate < 25 ? 'neg' : '') +
       c('Beech ka best move', f1(sm.medianMaxGain), 'settle hue breakouts ka median') +
-      c('Traction me lage', (sm.avgSessionsToTraction != null ? sm.avgSessionsToTraction + ' session' : '—'),
+      c('Traction me lage', (sm.avgSessionsToTraction != null ? sm.avgSessionsToTraction.toFixed(1) + ' session' : '—'),
         '+' + (bl.bars ? bl.bars.TRACTION_PCT : 10) + '% tak pahunchne me');
 
     /* ---- Numbers Check ka ASLI imtihaan ---- */
@@ -1420,8 +1420,8 @@
       'Har breakout ko ' + (bl.bars ? bl.bars.MAX_SESSIONS : 40) + ' session tak follow karte hain, phir chhod dete hain.<br>' +
       '<span style="opacity:.8">Ye sirf NAAPNE ke liye hai. Isse koi filter nahi banta — jis din ye kuch kehna shuru kare, ' +
       'wo baat bhi pehle test gate paar karegi, seedha scoring me nahi jayegi.<br>' +
-      'Delivery % sirf un dinon pe hai jo live record hue. Purane breakout price history se dobara bane hain, ' +
-      'unme delivery nahi hai.</span></div>';
+      'Delivery % aaj se aage ke dinon pe hi bharta jayega — wo roz record hota hai. Purane breakout price ' +
+      'history se dobara bane hain aur delivery history me nahi milti, isliye unke purane dinon pe khali rahega.</span></div>';
   })();
 
   /* ---- Result Calendar — kis pick ka result kab (NSE board meetings) ---- */

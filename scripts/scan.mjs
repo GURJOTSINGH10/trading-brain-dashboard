@@ -1425,8 +1425,13 @@ async function main() {
   try {
     const boCand = [];
     const seen = new Set();
+    /* ★ Chaabi me WAQT bhi hona zaroori hai. Pehle sirf symbol|source thi, aur usse
+       ek hi stock pe dobara li gayi trade gir jaati thi — STYLAMIND 3 baar pick hua
+       par ledger me 1 hi aaya, aise 22 stock the. Har pick apna alag breakout hai.
+       (Aadha-book wale do closed row ka ts ek hi hota hai, wo sahi tarah se ek hi
+        entry bante hain — wahi to hum chahte hain.) */
     const add = (symbol, sector, pivot, fromTs, source, fundStampObj) => {
-      const k = symbol + '|' + source;
+      const k = symbol + '|' + source + '|' + (fromTs || 0);
       if (!symbol || !(pivot > 0) || seen.has(k)) return;
       seen.add(k);
       boCand.push({ symbol, sector, pivot, fromTs, source, fund: fundStampObj || null });
@@ -1451,13 +1456,41 @@ async function main() {
     }
 
     const entries = [];
+    const boSeen = new Set();
     for (const e of boCand) {
       const ch = boCharts.get(e.symbol); if (!ch) continue;
-      const bo = findBreakout(ch, e.pivot, e.fromTs);
+      const bo = findBreakout(ch, e.pivot, e.fromTs, e.fromTs ? WATCH_DAYS : null);
       if (!bo) continue;
+      // do alag pick agar EK HI din, EK HI pivot pe pahunche to wo ek hi breakout hai
+      const k = e.symbol + '|' + bo.ts + '|' + e.pivot;
+      if (boSeen.has(k)) continue;
+      boSeen.add(k);
       entries.push({ symbol: e.symbol, sector: e.sector, pivot: e.pivot, boTs: bo.ts, source: e.source, fund: e.fund });
     }
-    const full = buildAll(entries, boCharts);
+    /* ★ DELIVERY LOG — journal me chhota sa record.
+       Timeline har scan pe chart se dobara banti hai, aur chart me sirf AAJ ka
+       delivery hota hai. Isliye bina store kiye delivery kabhi jamaa hi nahi hoti
+       (audit ne pakda: 1022 din me se 32). Ab roz ka delivery yahan likhte hain.
+       Chhota rakhne ke liye: sirf un stocks ka jinka breakout ABHI chal raha hai,
+       aur sirf pichhle 60 din ka. */
+    const dl = state.delivLog || {};
+    const preview = buildAll(entries, boCharts);
+    const liveSyms = new Set(preview.filter(b => b.live).map(b => b.symbol));
+    if (!alreadyProcessed) {
+      const today = new Date(sessionTs * 1000).toLocaleDateString('en-CA', { timeZone: IST });
+      const cutoff = new Date((sessionTs - 60 * 86400) * 1000).toLocaleDateString('en-CA', { timeZone: IST });
+      for (const sym of liveSyms) {
+        const ch = boCharts.get(sym);
+        if (!ch || ch.deliv == null) continue;
+        (dl[sym] = dl[sym] || {})[today] = ch.deliv;
+      }
+      for (const sym of Object.keys(dl)) {
+        if (!liveSyms.has(sym)) { delete dl[sym]; continue; }   // breakout khatam = log bhi khatam
+        for (const dt of Object.keys(dl[sym])) if (dt < cutoff) delete dl[sym][dt];
+      }
+      state.delivLog = dl;
+    }
+    const full = buildAll(entries, boCharts, { deliv: dl });
     const summary = summarize(full);   // summary POORI list pe — kaat-chhaant se pehle
     /* ★ data.js ka size bandho. Daily rows hi is panel ki jaan hain, par unhi se
        file phoolti hai (99 breakout = 1395 row = 156 KB). Isliye:

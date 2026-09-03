@@ -50,10 +50,18 @@ const istDay = ts => new Date(ts * 1000).toLocaleDateString('en-CA', { timeZone:
    Pehla session jahan HIGH pivot ke upar gaya (fromTs ke baad).
    High isliye, close nahi: order pivot pe stop-buy hota hai, wo intraday hi bhar
    jaata hai. Yahi scan.mjs ke tracker ka bhi tareeka hai (hi > t.pivot). */
-export function findBreakout(chart, pivot, fromTs) {
+export function findBreakout(chart, pivot, fromTs, maxWaitSessions) {
   if (!chart || !chart.t || !chart.t.length || !(pivot > 0)) return null;
+  /* ★ maxWaitSessions — pick ke baad itne hi session tak breakout maano.
+     Wajah data se aayi: 99 trade-entries me se 90 pick ke 15 din ke andar hi
+     break hue. Jo 9 der se aaye, unme sirf 1 ko traction mila (90 me se 26 ke
+     muqable). Aur scanner ka apna watch window bhi 15 session ka hai — uske baad
+     wo naam chhod deta hai. To 38 din baad hue breakout ko "humara" kehna galat
+     hai; hum us waqt use dekh hi nahi rahe the. */
+  let waited = 0;
   for (let i = 0; i < chart.t.length; i++) {
     if (fromTs && chart.t[i] < fromTs) continue;
+    if (maxWaitSessions != null && waited++ >= maxWaitSessions) return null;
     if (chart.h[i] > pivot) return { i, ts: chart.t[i] };
   }
   return null;
@@ -61,6 +69,12 @@ export function findBreakout(chart, pivot, fromTs) {
 
 /* ---------- breakout ke baad ki poori kahani ---------- */
 export function buildTimeline(chart, pivot, boTs, opts = {}) {
+  /* opts.deliv = { 'YYYY-MM-DD': pct } — us stock ka roz ka delivery %.
+     ⚠️ Ye BAHAR se aata hai, chart se nahi. Wajah: timeline har scan pe dobara
+     banti hai aur chart me sirf AAJ ka delivery hota hai. Pehle yahi galti thi —
+     1022 din me se sirf 32 pe delivery aa rahi thi aur wo kabhi badhne wali bhi
+     nahi thi, kyunki purane din har baar naye sire se bante the. Ab scan.mjs
+     journal me chhota sa delivLog rakhta hai aur wahi yahan aata hai. */
   if (!chart || !chart.t || !chart.t.length || !(pivot > 0) || !boTs) return null;
   const i0 = chart.t.indexOf(boTs);
   if (i0 < 0) return null;
@@ -92,7 +106,9 @@ export function buildTimeline(chart, pivot, boTs, opts = {}) {
       c: round2(c),
       pct,
       volX: volBase ? round2(chart.v[i] / volBase) : null,
-      dlv: chart.deliv != null && i === chart.t.length - 1 ? chart.deliv : null,
+      dlv: (opts.deliv && opts.deliv[istDay(chart.t[i])] != null)
+        ? opts.deliv[istDay(chart.t[i])]
+        : (chart.deliv != null && i === chart.t.length - 1 ? chart.deliv : null),
       lowBreak: i > i0 && c < boLow
     });
 
@@ -142,7 +158,7 @@ export function buildAll(entries, charts, opts = {}) {
   for (const e of entries || []) {
     const ch = get(e.symbol);
     if (!ch) continue;
-    const t = buildTimeline(ch, e.pivot, e.boTs, opts);
+    const t = buildTimeline(ch, e.pivot, e.boTs, { ...opts, deliv: (opts.deliv || {})[e.symbol] });
     if (!t) continue;
     out.push({ symbol: e.symbol, sector: e.sector || null, source: e.source || null, fund: e.fund || null, ...t });
   }
