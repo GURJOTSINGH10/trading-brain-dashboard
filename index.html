@@ -288,6 +288,8 @@
     background: rgba(148,163,184,0.12); color: var(--muted); border: 1px solid var(--border); }
   .wl-badge.ready { background: rgba(49,212,146,0.13); color: #4fe0a8; border-color: rgba(49,212,146,0.35); }
   .wl-nm-chip { display: block; margin-top: 5px; }
+  .cap-sub { font-size: 10.5px; color: var(--muted); text-align: right; margin: -4px 0 6px; line-height: 1.5; }
+  .cap-sub b { color: var(--text); font-weight: 600; }
   [hidden] { display: none !important; }
   .wl-none { padding: 18px; text-align: center; color: var(--muted); font-size: 12.5px; }
   /* sector ke apne numbers — creator ka "top 4 ke numbers dekho" */
@@ -834,6 +836,7 @@
         <div class="capital-stat"><span>Abhi</span><b id="capNow"></b></div>
         <div class="capital-stat"><span id="capPnlLabel">FY return</span><b id="capPnl"></b></div>
         <div class="capital-stat"><span id="capWinLabel">Win rate (FY)</span><b id="capWinrate"></b></div>
+        <div class="cap-sub" id="capWinNote"></div>
         <div class="capital-stat"><span>Lagi hui / free cash</span><b id="capDeployed"></b></div>
         <div class="ramp-note" id="rampNote" style="display:none;"></div>
         <div class="sizing-note" id="sizingNote"></div>
@@ -1006,6 +1009,11 @@
   });
 
   const closed = wins + losses;
+  // poore journal me (FY window ke bahar wale bhi) kitne simulate kiye hue hain
+  const simAll = rows.filter(r => ['win', 'sl', 'fail'].includes(r.t.status) && r.t.bt).length;
+  const simNote = simAll
+    ? simAll + ' backtest se bhare hue, ' + (closed - simAll) + ' live'
+    : 'saare live';
   const netPnl = equity - d.portfolio.startCapital;
   const netPct = netPnl / d.portfolio.startCapital * 100;
   const winRate = closed ? Math.round(wins / closed * 100) : 0;
@@ -1026,6 +1034,14 @@
   const fyPct = fyOpen ? fyPnl / fyOpen * 100 : 0;
   const fyTrades = rows.filter(r => ['win', 'sl', 'fail'].includes(r.t.status) && rowTime(r.t) > fyStartMs);
   const fyW = fyTrades.filter(r => r.t.pnlPct > 0).length, fyL = fyTrades.length - fyW;
+  /* ★ Journal me DO tarah ke trade hain aur ab tak ye farak kahin dikhta nahi tha.
+     bt: true  = backtest se seed kiye — FY 1 Apr se shuru hui, par live scanner
+                 baad me chala, to beech ka daur simulate karke bhara gaya.
+     bt nahi   = asli live trade, scanner ne us din khud liya.
+     Dono FY 26-27 ke hi hain (isliye ginti sahi hai), par jaanna zaroori hai ki
+     win rate me kitna hissa simulate kiya hua hai. */
+  const fySim = fyTrades.filter(r => r.t.bt).length;
+  const fyLive = fyTrades.length - fySim;
 
   /* ---- Scan view ---- */
   document.getElementById('genTime').textContent = 'Updated: ' + d.generatedAt;
@@ -1063,6 +1079,15 @@
   document.getElementById('capWinrate').textContent = fyTrades.length
     ? Math.round(fyW / fyTrades.length * 100) + '% (' + fyW + 'W / ' + fyL + 'L)'
     : '— (abhi koi closed trade nahi)';
+  (function () {
+    const el = document.getElementById('capWinNote');
+    if (!el) return;
+    if (!fyTrades.length) { el.textContent = ''; return; }
+    el.innerHTML = fySim
+      ? '<b>' + fyLive + '</b> live · <b>' + fySim + '</b> backtest se bhare hue ' +
+        '<span title="FY 1 Apr se shuru hui par live scanner baad me chala — beech ka daur simulate karke bhara gaya">(?)</span>'
+      : 'saare <b>' + fyLive + '</b> live trade hain';
+  })();
   // Kitna paisa laga hua hai — ye chhupa hua tha, isi wajah se 11 positions / 266%
   // deployment kisi ko dikha hi nahi. Ab card pe saamne hai.
   const freeCash = Math.max(0, equity - deployed);
@@ -1793,7 +1818,7 @@
   document.getElementById('statsGrid').innerHTML = `
     <div class="card stat"><small>Current capital</small><b>${inr(equity)}</b><span class="sub">start: ${inr(d.portfolio.startCapital)}</span></div>
     <div class="card stat"><small>Net P&amp;L</small><b class="${netPnl >= 0 ? 'pos' : 'neg'}">${netPnl >= 0 ? '+' : ''}${netPct.toFixed(1)}%</b><span class="sub">${inr(Math.abs(netPnl))} ${netPnl >= 0 ? 'profit' : 'loss'}</span></div>
-    <div class="card stat"><small>Win rate</small><b>${winRate}%</b><span class="sub">${wins}W / ${losses}L (${closed} closed)</span></div>
+    <div class="card stat"><small>Win rate</small><b>${winRate}%</b><span class="sub">${wins}W / ${losses}L (${closed} closed)<br>${simNote}</span></div>
     <div class="card stat"><small>Avg win / loss</small><b>+${avgWin}% / ${avgLoss}%</b><span class="sub">expectancy ka game hai</span></div>
     <div class="card stat"><small>Best / worst</small><b><span class="pos">+${(best ?? 0).toFixed(1)}%</span> / <span class="neg">${(worst ?? 0).toFixed(1)}%</span></b><span class="sub">outliers dono taraf</span></div>
     ${(() => {
