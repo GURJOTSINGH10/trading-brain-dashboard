@@ -1,6 +1,6 @@
 {
- "note": "POORI NSE EQ list (2351 stocks) — cap tags + sector jahan mile. Scan me bhavcopy turnover se prefilter hota hai. Rebuild: node scripts/build-universe.mjs",
- "builtAt": "2026-10-12T18:01:14.854Z",
+ "note": "POORI NSE EQ list (2355 stocks) — cap tags + sector jahan mile. Scan me bhavcopy turnover se prefilter hota hai. Rebuild: node scripts/build-universe.mjs",
+ "builtAt": "2026-10-22T18:09:54.027Z",
  "stocks": [
   {
    "s": "20MICRONS",
@@ -324,6 +324,12 @@
    "s": "ADOR",
    "n": "Ador Welding",
    "sec": "Capital Goods",
+   "cap": "Micro"
+  },
+  {
+   "s": "ADROITIND",
+   "n": "Adroit Industries (India)",
+   "sec": "Automobile and Auto Components",
    "cap": "Micro"
   },
   {
@@ -698,12 +704,6 @@
    "cap": "Micro"
   },
   {
-   "s": "ALUFLUOR",
-   "n": "Alufluoride",
-   "sec": "Chemicals",
-   "cap": "Micro"
-  },
-  {
    "s": "AMAGI",
    "n": "Amagi Media Labs",
    "sec": "Information Technology",
@@ -713,6 +713,12 @@
    "s": "AMAL",
    "n": "Amal",
    "sec": "Chemicals",
+   "cap": "Micro"
+  },
+  {
+   "s": "AMANTA",
+   "n": "Amanta Healthcare",
+   "sec": "Healthcare",
    "cap": "Micro"
   },
   {
@@ -993,12 +999,6 @@
    "n": "Amara Raja Energy & Mobility",
    "sec": "Automobile and Auto Components",
    "cap": "Small"
-  },
-  {
-   "s": "ARENTERP",
-   "n": "Rajdarshan Industries",
-   "sec": "Metals & Mining",
-   "cap": "Micro"
   },
   {
    "s": "ARFIN",
@@ -2878,12 +2878,6 @@
    "cap": "Micro"
   },
   {
-   "s": "CPCAP",
-   "n": "CP Capital",
-   "sec": "NBFC / Finance",
-   "cap": "Micro"
-  },
-  {
    "s": "CPEDU",
    "n": "Career Point Edutech",
    "sec": "Consumer Services",
@@ -3971,12 +3965,6 @@
    "cap": "Micro"
   },
   {
-   "s": "EUROTEXIND",
-   "n": "Eurotex Industries and Exports",
-   "sec": "Realty",
-   "cap": "Micro"
-  },
-  {
    "s": "EVEREADY",
    "n": "Eveready Industries India",
    "sec": "Capital Goods",
@@ -4250,6 +4238,12 @@
    "s": "FUSION",
    "n": "Fusion Finance",
    "sec": "NBFC / Finance",
+   "cap": "Micro"
+  },
+  {
+   "s": "FUSIONCX",
+   "n": "Fusion CX",
+   "sec": "Services",
    "cap": "Micro"
   },
   {
@@ -4925,15 +4919,15 @@
    "cap": "Micro"
   },
   {
-   "s": "GSS",
-   "n": "GSS Infotech",
-   "sec": "Information Technology",
+   "s": "GSPLTRANS",
+   "n": "GSPL Transmission",
+   "sec": "Other",
    "cap": "Micro"
   },
   {
-   "s": "GTECJAINX",
-   "n": "G-TEC JAINX EDUCATION",
-   "sec": "Consumer Services",
+   "s": "GSS",
+   "n": "GSS Infotech",
+   "sec": "Information Technology",
    "cap": "Micro"
   },
   {
@@ -4976,12 +4970,6 @@
    "s": "GUJENERGY",
    "n": "GUJARAT ENERGY",
    "sec": "Oil Gas & Consumable Fuels",
-   "cap": "Micro"
-  },
-  {
-   "s": "GUJRAFFIA",
-   "n": "Gujarat Raffia Industries",
-   "sec": "Other",
    "cap": "Micro"
   },
   {
@@ -5202,6 +5190,12 @@
    "cap": "Large"
   },
   {
+   "s": "HDFIRE",
+   "n": "HD Fire Protect",
+   "sec": "Capital Goods",
+   "cap": "Micro"
+  },
+  {
    "s": "HEADSUP",
    "n": "Heads UP Ventures",
    "sec": "Consumer Services",
@@ -5266,6 +5260,12 @@
    "s": "HESTERBIO",
    "n": "Hester Biosciences",
    "sec": "Healthcare",
+   "cap": "Micro"
+  },
+  {
+   "s": "HEXAGON",
+   "n": "Hexagon Nutrition",
+   "sec": "Fast Moving Consumer Goods",
    "cap": "Micro"
   },
   {
@@ -5678,6 +5678,12 @@
   {
    "s": "IIFLCAPS",
    "n": "IIFL Capital Services",
+   "sec": "Financial Services",
+   "cap": "Micro"
+  },
+  {
+   "s": "IIRM",
+   "n": "IIRM Holdings India",
    "sec": "Financial Services",
    "cap": "Micro"
   },
@@ -6966,6 +6972,12 @@
    "cap": "Micro"
   },
   {
+   "s": "KMSUGAR",
+   "n": "K.M.Sugar Mills",
+   "sec": "Fast Moving Consumer Goods",
+   "cap": "Micro"
+  },
+  {
    "s": "KNACK",
    "n": "Knack Packaging",
    "sec": "Capital Goods",
@@ -7934,12 +7946,6 @@
    "cap": "Micro"
   },
   {
-   "s": "MAWANASUG",
-   "n": "Mawana Sugars",
-   "sec": "Fast Moving Consumer Goods",
-   "cap": "Micro"
-  },
-  {
    "s": "MAXESTATES",
    "n": "Max Estates",
    "sec": "Realty",
@@ -8321,12 +8327,6 @@
    "cap": "Micro"
   },
   {
-   "s": "MOREPENLAB",
-   "n": "Morepen Laboratories",
-   "sec": "Healthcare",
-   "cap": "Micro"
-  },
-  {
    "s": "MOSCHIP",
    "n": "Moschip Technologies",
    "sec": "Electronics / EMS",
@@ -8409,6 +8409,12 @@
    "s": "MSUMI",
    "n": "Motherson Sumi Wiring India",
    "sec": "Automobile and Auto Components",
+   "cap": "Small"
+  },
+  {
+   "s": "MTARTECH",
+   "n": "Mtar Technologies",
+   "sec": "Capital Goods",
    "cap": "Small"
   },
   {
@@ -9891,6 +9897,12 @@
    "cap": "Micro"
   },
   {
+   "s": "PPAP",
+   "n": "PPAP Automotive",
+   "sec": "Automobile and Auto Components",
+   "cap": "Micro"
+  },
+  {
    "s": "PPL",
    "n": "Prakash Pipes",
    "sec": "Construction Materials",
@@ -10200,12 +10212,6 @@
   {
    "s": "QUICKHEAL",
    "n": "Quick Heal Technologies",
-   "sec": "Information Technology",
-   "cap": "Micro"
-  },
-  {
-   "s": "QUINTEGRA",
-   "n": "Quintegra Solutions",
    "sec": "Information Technology",
    "cap": "Micro"
   },
@@ -11404,6 +11410,12 @@
    "cap": "Micro"
   },
   {
+   "s": "SHAHINVEST",
+   "n": "Shah Investor's Home",
+   "sec": "Capital Markets",
+   "cap": "Micro"
+  },
+  {
    "s": "SHAILY",
    "n": "Shaily Engineering Plastics",
    "sec": "Consumer Durables",
@@ -11865,6 +11877,12 @@
    "cap": "Micro"
   },
   {
+   "s": "SMARTLINK",
+   "n": "Smartlink Holdings",
+   "sec": "Telecommunication",
+   "cap": "Micro"
+  },
+  {
    "s": "SMARTWORKS",
    "n": "Smartworks Coworking Spaces",
    "sec": "Realty",
@@ -12084,6 +12102,12 @@
    "s": "SRHHYPOLTD",
    "n": "Sree Rayalaseema Hi-Strength Hypo",
    "sec": "Chemicals",
+   "cap": "Micro"
+  },
+  {
+   "s": "SRIT",
+   "n": "SRIT India",
+   "sec": "Information Technology",
    "cap": "Micro"
   },
   {
@@ -12560,6 +12584,12 @@
    "cap": "Micro"
   },
   {
+   "s": "SWASTIKAIN",
+   "n": "Swastika Infra",
+   "sec": "Construction",
+   "cap": "Micro"
+  },
+  {
    "s": "SWELECTES",
    "n": "Swelect Energy Systems",
    "sec": "Power",
@@ -12660,12 +12690,6 @@
   {
    "s": "TARACHAND",
    "n": "Tara Chand InfraLogistic Solutions",
-   "sec": "Capital Goods",
-   "cap": "Micro"
-  },
-  {
-   "s": "TARAPUR",
-   "n": "Tarapur Transformers",
    "sec": "Capital Goods",
    "cap": "Micro"
   },
@@ -13198,6 +13222,12 @@
    "curated": true
   },
   {
+   "s": "TRANSWORLD",
+   "n": "TRANSWORLD SHIPPING LINES",
+   "sec": "Logistics / Shipping",
+   "cap": "Micro"
+  },
+  {
    "s": "TRAVELFOOD",
    "n": "Travel Food Services",
    "sec": "Consumer Services",
@@ -13369,12 +13399,6 @@
    "cap": "Small"
   },
   {
-   "s": "UDAYJEW",
-   "n": "Uday Jewellery Industries",
-   "sec": "Consumer Durables",
-   "cap": "Micro"
-  },
-  {
    "s": "UDS",
    "n": "Updater Services",
    "sec": "Services",
@@ -13421,6 +13445,12 @@
    "s": "ULTRAMAR",
    "n": "Ultramarine & Pigments",
    "sec": "Chemicals",
+   "cap": "Micro"
+  },
+  {
+   "s": "UMAEXPORTS",
+   "n": "Uma Exports",
+   "sec": "Agri",
    "cap": "Micro"
   },
   {
@@ -14066,12 +14096,6 @@
    "n": "Vardhman Textiles",
    "sec": "Textiles",
    "cap": "Small"
-  },
-  {
-   "s": "VTMLTD",
-   "n": "VTM",
-   "sec": "Textiles",
-   "cap": "Micro"
   },
   {
    "s": "WAAREEENER",
