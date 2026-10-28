@@ -1,5 +1,5 @@
 {
-  "lastSession": "27/10/2026",
+  "lastSession": "28/10/2026",
   "equity": 687917.57,
   "positions": [],
   "closed": [
@@ -1910,7 +1910,7 @@
     }
   ],
   "backtestedAt": "2026-08-10T18:55:11.967Z",
-  "lastBhav": "27/10/2026",
+  "lastBhav": "28/10/2026",
   "backtestWindow": 600000,
   "startCapital": 600000,
   "sizeByGear": [
@@ -1922,120 +1922,13 @@
   ],
   "watchTrack": {
     "names": {
-      "ASAHIINDIA": {
-        "firstSeen": 1791344700,
-        "firstSeenLabel": "7 Oct",
-        "pivot": 995,
-        "sl": 950.2,
-        "sector": "Automobile and Auto Components",
-        "sessions": 14,
-        "crossed": false,
-        "maxHighPct": 0,
-        "fund": {
-          "matchCount": 2,
-          "outOf": 3,
-          "growth": true,
-          "reaction": false,
-          "growthPct": 184,
-          "growthTag": "YoY",
-          "reactionPct": -1.38,
-          "quarter": "30 Jun 2026"
-        },
-        "lastSeen": 1791344700
-      },
-      "BALRAMCHIN": {
-        "firstSeen": 1791344700,
-        "firstSeenLabel": "7 Oct",
-        "pivot": 714.5,
-        "sl": 682.3,
-        "sector": "Agri",
-        "sessions": 14,
-        "crossed": true,
-        "maxHighPct": 3.01,
-        "fund": {
-          "matchCount": 1,
-          "outOf": 3,
-          "growth": false,
-          "reaction": false,
-          "growthPct": -75,
-          "growthTag": "QoQ",
-          "reactionPct": -3.68,
-          "quarter": "30 Jun 2026"
-        },
-        "lastSeen": 1792122300,
-        "crossedTs": 1791431100,
-        "crossedInSessions": 2
-      },
-      "KDDL": {
-        "firstSeen": 1791344700,
-        "firstSeenLabel": "7 Oct",
-        "pivot": 4117,
-        "sl": 3931,
-        "sector": "Consumer Durables",
-        "sessions": 14,
-        "crossed": false,
-        "maxHighPct": 0,
-        "fund": {
-          "matchCount": 2,
-          "outOf": 3,
-          "growth": false,
-          "reaction": true,
-          "growthPct": -1,
-          "growthTag": "QoQ",
-          "reactionPct": 1.41,
-          "quarter": "30 Jun 2026"
-        },
-        "lastSeen": 1791344700
-      },
-      "ACE": {
-        "firstSeen": 1791344700,
-        "firstSeenLabel": "7 Oct",
-        "pivot": 1268,
-        "sl": 1211,
-        "sector": "Capital Goods",
-        "sessions": 14,
-        "crossed": false,
-        "maxHighPct": 0,
-        "fund": {
-          "matchCount": 2,
-          "outOf": 3,
-          "growth": false,
-          "reaction": true,
-          "growthPct": 22,
-          "growthTag": "YoY",
-          "reactionPct": 4.43,
-          "quarter": "30 Jun 2026"
-        },
-        "lastSeen": 1791344700
-      },
-      "CONFIPET": {
-        "firstSeen": 1791344700,
-        "firstSeenLabel": "7 Oct",
-        "pivot": 93.2,
-        "sl": 89,
-        "sector": "Oil Gas & Consumable Fuels",
-        "sessions": 14,
-        "crossed": false,
-        "maxHighPct": 0,
-        "fund": {
-          "matchCount": 2,
-          "outOf": 3,
-          "growth": true,
-          "reaction": false,
-          "growthPct": 129,
-          "growthTag": "QoQ",
-          "reactionPct": -5.87,
-          "quarter": "30 Jun 2026"
-        },
-        "lastSeen": 1791344700
-      },
       "SHYAMMETL": {
         "firstSeen": 1791431100,
         "firstSeenLabel": "8 Oct",
         "pivot": 1101,
         "sl": 1051,
         "sector": "Capital Goods",
-        "sessions": 13,
+        "sessions": 14,
         "crossed": true,
         "maxHighPct": 12.67,
         "fund": {
@@ -2058,7 +1951,7 @@
         "pivot": 2480,
         "sl": 2368,
         "sector": "Chemicals",
-        "sessions": 13,
+        "sessions": 14,
         "crossed": true,
         "maxHighPct": 12.3,
         "fund": {
@@ -2081,7 +1974,7 @@
         "pivot": 834.4,
         "sl": 796.9,
         "sector": "Consumer Services",
-        "sessions": 13,
+        "sessions": 14,
         "crossed": true,
         "maxHighPct": 1.59,
         "fund": {
@@ -2104,7 +1997,7 @@
         "pivot": 3375,
         "sl": 3223,
         "sector": "Capital Markets",
-        "sessions": 13,
+        "sessions": 14,
         "crossed": true,
         "maxHighPct": 1.19,
         "fund": null,
@@ -2118,7 +2011,7 @@
         "pivot": 2020,
         "sl": 1929,
         "sector": "Healthcare",
-        "sessions": 13,
+        "sessions": 14,
         "crossed": false,
         "maxHighPct": 0,
         "fund": {
@@ -2139,7 +2032,7 @@
         "pivot": 18.5,
         "sl": 17.6,
         "sector": "Consumer Durables",
-        "sessions": 12,
+        "sessions": 13,
         "crossed": false,
         "maxHighPct": 0,
         "fund": {
@@ -2160,7 +2053,7 @@
         "pivot": 1894,
         "sl": 1808,
         "sector": "Information Technology",
-        "sessions": 12,
+        "sessions": 13,
         "crossed": true,
         "maxHighPct": 6.06,
         "fund": {
@@ -2183,7 +2076,7 @@
         "pivot": 2039,
         "sl": 1947,
         "sector": "Healthcare",
-        "sessions": 12,
+        "sessions": 13,
         "crossed": false,
         "maxHighPct": 0,
         "fund": {
@@ -2204,7 +2097,7 @@
         "pivot": 702.5,
         "sl": 673.5,
         "sector": "Chemicals",
-        "sessions": 12,
+        "sessions": 13,
         "crossed": false,
         "maxHighPct": 0,
         "fund": {
@@ -2225,7 +2118,7 @@
         "pivot": 340.7,
         "sl": 325.4,
         "sector": "Financial Services",
-        "sessions": 12,
+        "sessions": 13,
         "crossed": true,
         "maxHighPct": 0.69,
         "fund": {
@@ -2248,7 +2141,7 @@
         "pivot": 49.7,
         "sl": 47.4,
         "sector": "Financial Services",
-        "sessions": 12,
+        "sessions": 13,
         "crossed": true,
         "maxHighPct": 13.18,
         "fund": {
@@ -2271,7 +2164,7 @@
         "pivot": 409.9,
         "sl": 391.5,
         "sector": "Media & Entertainment",
-        "sessions": 11,
+        "sessions": 12,
         "crossed": true,
         "maxHighPct": 2.44,
         "fund": {
@@ -2294,7 +2187,7 @@
         "pivot": 646.8,
         "sl": 617.7,
         "sector": "Media & Entertainment",
-        "sessions": 11,
+        "sessions": 12,
         "crossed": true,
         "maxHighPct": 4.2,
         "fund": {
@@ -2317,7 +2210,7 @@
         "pivot": 1740,
         "sl": 1662,
         "sector": "Healthcare",
-        "sessions": 11,
+        "sessions": 12,
         "crossed": false,
         "maxHighPct": 0,
         "fund": {
@@ -2338,7 +2231,7 @@
         "pivot": 245.4,
         "sl": 234.4,
         "sector": "Textiles",
-        "sessions": 11,
+        "sessions": 12,
         "crossed": true,
         "maxHighPct": 2.28,
         "fund": {
@@ -2361,7 +2254,7 @@
         "pivot": 11018,
         "sl": 10522,
         "sector": "Automobile and Auto Components",
-        "sessions": 11,
+        "sessions": 12,
         "crossed": true,
         "maxHighPct": 3.04,
         "fund": {
@@ -2384,7 +2277,7 @@
         "pivot": 729,
         "sl": 696.2,
         "sector": "Fast Moving Consumer Goods",
-        "sessions": 11,
+        "sessions": 12,
         "crossed": true,
         "maxHighPct": 5.2,
         "fund": {
@@ -2407,7 +2300,7 @@
         "pivot": 1182,
         "sl": 1129,
         "sector": "Information Technology",
-        "sessions": 10,
+        "sessions": 11,
         "crossed": true,
         "maxHighPct": 8.04,
         "fund": {
@@ -2430,7 +2323,7 @@
         "pivot": 740.4,
         "sl": 707.1,
         "sector": "Information Technology",
-        "sessions": 9,
+        "sessions": 10,
         "crossed": false,
         "maxHighPct": 0,
         "fund": {
@@ -2451,7 +2344,7 @@
         "pivot": 299.6,
         "sl": 288,
         "sector": "Oil Gas & Consumable Fuels",
-        "sessions": 8,
+        "sessions": 9,
         "crossed": false,
         "maxHighPct": 0,
         "fund": {
@@ -2472,7 +2365,7 @@
         "pivot": 1790,
         "sl": 1709,
         "sector": "Consumer Durables",
-        "sessions": 8,
+        "sessions": 9,
         "crossed": false,
         "maxHighPct": 0,
         "fund": {
@@ -2493,7 +2386,7 @@
         "pivot": 234,
         "sl": 223.5,
         "sector": "Agri",
-        "sessions": 8,
+        "sessions": 9,
         "crossed": true,
         "maxHighPct": 3.33,
         "fund": {
@@ -2516,9 +2409,9 @@
         "pivot": 1426,
         "sl": 1362,
         "sector": "Media & Entertainment",
-        "sessions": 7,
+        "sessions": 8,
         "crossed": true,
-        "maxHighPct": 3.49,
+        "maxHighPct": 6.45,
         "fund": {
           "matchCount": 2,
           "outOf": 3,
@@ -2539,7 +2432,7 @@
         "pivot": 563.2,
         "sl": 537.8,
         "sector": "Fast Moving Consumer Goods",
-        "sessions": 7,
+        "sessions": 8,
         "crossed": false,
         "maxHighPct": 0,
         "fund": {
@@ -2560,7 +2453,7 @@
         "pivot": 346.5,
         "sl": 331.5,
         "sector": "New Age / Internet",
-        "sessions": 7,
+        "sessions": 8,
         "crossed": true,
         "maxHighPct": 0.55,
         "fund": {
@@ -2573,7 +2466,7 @@
           "reactionPct": -2.09,
           "quarter": "30 Jun 2026"
         },
-        "lastSeen": 1793072700,
+        "lastSeen": 1793159100,
         "crossedTs": 1792381500,
         "crossedInSessions": 2
       },
@@ -2583,7 +2476,7 @@
         "pivot": 652.1,
         "sl": 622.8,
         "sector": "Fast Moving Consumer Goods",
-        "sessions": 7,
+        "sessions": 8,
         "crossed": false,
         "maxHighPct": 0,
         "fund": {
@@ -2604,7 +2497,7 @@
         "pivot": 1345,
         "sl": 1285,
         "sector": "Automobile and Auto Components",
-        "sessions": 6,
+        "sessions": 7,
         "crossed": false,
         "maxHighPct": 0,
         "fund": {
@@ -2625,7 +2518,7 @@
         "pivot": 358.8,
         "sl": 342.7,
         "sector": "Metals & Mining",
-        "sessions": 6,
+        "sessions": 7,
         "crossed": false,
         "maxHighPct": 0,
         "fund": {
@@ -2646,7 +2539,7 @@
         "pivot": 426.1,
         "sl": 406.9,
         "sector": "Automobile and Auto Components",
-        "sessions": 6,
+        "sessions": 7,
         "crossed": true,
         "maxHighPct": 31.12,
         "fund": {
@@ -2669,7 +2562,7 @@
         "pivot": 66.3,
         "sl": 63.4,
         "sector": "Diversified",
-        "sessions": 6,
+        "sessions": 7,
         "crossed": true,
         "maxHighPct": 1.21,
         "fund": {
@@ -2682,7 +2575,7 @@
           "reactionPct": -1.37,
           "quarter": "30 Sep 2026"
         },
-        "lastSeen": 1793072700,
+        "lastSeen": 1793159100,
         "crossedTs": 1793072700,
         "crossedInSessions": 6
       },
@@ -2692,9 +2585,9 @@
         "pivot": 71.7,
         "sl": 68.5,
         "sector": "Healthcare",
-        "sessions": 5,
+        "sessions": 6,
         "crossed": true,
-        "maxHighPct": 3.54,
+        "maxHighPct": 6.69,
         "fund": null,
         "lastSeen": 1792554300,
         "crossedTs": 1793072700,
@@ -2706,7 +2599,7 @@
         "pivot": 356.4,
         "sl": 342,
         "sector": "Financial Services",
-        "sessions": 5,
+        "sessions": 6,
         "crossed": false,
         "maxHighPct": 0,
         "fund": {
@@ -2727,7 +2620,7 @@
         "pivot": 239.2,
         "sl": 228.4,
         "sector": "Financial Services",
-        "sessions": 5,
+        "sessions": 6,
         "crossed": false,
         "maxHighPct": 0,
         "fund": {
@@ -2748,7 +2641,7 @@
         "pivot": 614.5,
         "sl": 586.8,
         "sector": "Healthcare",
-        "sessions": 4,
+        "sessions": 5,
         "crossed": false,
         "maxHighPct": 0,
         "fund": {
@@ -2769,9 +2662,9 @@
         "pivot": 2268,
         "sl": 2166,
         "sector": "Financial Services",
-        "sessions": 4,
-        "crossed": false,
-        "maxHighPct": 0,
+        "sessions": 5,
+        "crossed": true,
+        "maxHighPct": 0.97,
         "fund": {
           "matchCount": 2,
           "outOf": 3,
@@ -2782,7 +2675,9 @@
           "reactionPct": 2.37,
           "quarter": "30 Sep 2026"
         },
-        "lastSeen": 1792727100
+        "lastSeen": 1792727100,
+        "crossedTs": 1793159100,
+        "crossedInSessions": 5
       },
       "PGIL": {
         "firstSeen": 1792727100,
@@ -2790,7 +2685,7 @@
         "pivot": 1306,
         "sl": 1247,
         "sector": "Textiles",
-        "sessions": 3,
+        "sessions": 4,
         "crossed": false,
         "maxHighPct": 0,
         "fund": {
@@ -2811,9 +2706,9 @@
         "pivot": 794.7,
         "sl": 758.9,
         "sector": "Hotels / Travel",
-        "sessions": 3,
+        "sessions": 4,
         "crossed": true,
-        "maxHighPct": 2.28,
+        "maxHighPct": 2.59,
         "fund": {
           "matchCount": 3,
           "outOf": 3,
@@ -2834,7 +2729,7 @@
         "pivot": 471.8,
         "sl": 450.6,
         "sector": "Realty",
-        "sessions": 3,
+        "sessions": 4,
         "crossed": false,
         "maxHighPct": 0,
         "fund": {
@@ -2855,9 +2750,9 @@
         "pivot": 6701,
         "sl": 6399,
         "sector": "Chemicals",
-        "sessions": 2,
+        "sessions": 3,
         "crossed": true,
-        "maxHighPct": 2.22,
+        "maxHighPct": 2.64,
         "fund": {
           "matchCount": 3,
           "outOf": 3,
@@ -2868,7 +2763,7 @@
           "reactionPct": 3.71,
           "quarter": "30 Jun 2026"
         },
-        "lastSeen": 1793072700,
+        "lastSeen": 1793159100,
         "crossedTs": 1793072700,
         "crossedInSessions": 2
       },
@@ -2878,7 +2773,7 @@
         "pivot": 4828,
         "sl": 4610,
         "sector": "Financial Services",
-        "sessions": 2,
+        "sessions": 3,
         "crossed": true,
         "maxHighPct": 0.23,
         "fund": {
@@ -2901,7 +2796,7 @@
         "pivot": 3389,
         "sl": 3237,
         "sector": "Services",
-        "sessions": 2,
+        "sessions": 3,
         "crossed": true,
         "maxHighPct": 0.59,
         "fund": {
@@ -2924,9 +2819,9 @@
         "pivot": 4348,
         "sl": 4152,
         "sector": "Automobile and Auto Components",
-        "sessions": 1,
-        "crossed": false,
-        "maxHighPct": 0,
+        "sessions": 2,
+        "crossed": true,
+        "maxHighPct": 0.44,
         "fund": {
           "matchCount": 1,
           "outOf": 3,
@@ -2937,7 +2832,9 @@
           "reactionPct": -2.38,
           "quarter": "30 Jun 2026"
         },
-        "lastSeen": 1793072700
+        "lastSeen": 1793159100,
+        "crossedTs": 1793159100,
+        "crossedInSessions": 2
       },
       "MBAPL": {
         "firstSeen": 1793072700,
@@ -2945,7 +2842,7 @@
         "pivot": 174.4,
         "sl": 166.6,
         "sector": "Chemicals",
-        "sessions": 1,
+        "sessions": 2,
         "crossed": false,
         "maxHighPct": 0,
         "fund": {
@@ -2958,7 +2855,7 @@
           "reactionPct": -6.66,
           "quarter": "30 Jun 2026"
         },
-        "lastSeen": 1793072700
+        "lastSeen": 1793159100
       },
       "COHANCE": {
         "firstSeen": 1793072700,
@@ -2966,9 +2863,9 @@
         "pivot": 483.7,
         "sl": 461.9,
         "sector": "Healthcare",
-        "sessions": 1,
-        "crossed": false,
-        "maxHighPct": 0,
+        "sessions": 2,
+        "crossed": true,
+        "maxHighPct": 0.76,
         "fund": {
           "matchCount": 2,
           "outOf": 3,
@@ -2979,7 +2876,9 @@
           "reactionPct": 2.2,
           "quarter": "30 Jun 2026"
         },
-        "lastSeen": 1793072700
+        "lastSeen": 1793159100,
+        "crossedTs": 1793159100,
+        "crossedInSessions": 2
       },
       "KRISHANA": {
         "firstSeen": 1793072700,
@@ -2987,9 +2886,9 @@
         "pivot": 216,
         "sl": 206.3,
         "sector": "Agri",
-        "sessions": 1,
-        "crossed": false,
-        "maxHighPct": 0,
+        "sessions": 2,
+        "crossed": true,
+        "maxHighPct": 0.92,
         "fund": {
           "matchCount": 2,
           "outOf": 3,
@@ -3000,7 +2899,72 @@
           "reactionPct": -0.86,
           "quarter": "30 Jun 2026"
         },
-        "lastSeen": 1793072700
+        "lastSeen": 1793159100,
+        "crossedTs": 1793159100,
+        "crossedInSessions": 2
+      },
+      "GLAND": {
+        "firstSeen": 1793159100,
+        "firstSeenLabel": "28 Oct",
+        "pivot": 3122,
+        "sl": 2981,
+        "sector": "Healthcare",
+        "sessions": 1,
+        "crossed": false,
+        "maxHighPct": 0,
+        "fund": {
+          "matchCount": 3,
+          "outOf": 3,
+          "growth": true,
+          "reaction": true,
+          "growthPct": 35,
+          "growthTag": "YoY",
+          "reactionPct": 9.64,
+          "quarter": "30 Jun 2026"
+        },
+        "lastSeen": 1793159100
+      },
+      "GCSL": {
+        "firstSeen": 1793159100,
+        "firstSeenLabel": "28 Oct",
+        "pivot": 756.8,
+        "sl": 722.7,
+        "sector": "Capital Markets",
+        "sessions": 1,
+        "crossed": false,
+        "maxHighPct": 0,
+        "fund": {
+          "matchCount": 1,
+          "outOf": 3,
+          "growth": false,
+          "reaction": false,
+          "growthPct": -2,
+          "growthTag": "QoQ",
+          "reactionPct": -2.27,
+          "quarter": "30 Jun 2026"
+        },
+        "lastSeen": 1793159100
+      },
+      "CEIGALL": {
+        "firstSeen": 1793159100,
+        "firstSeenLabel": "28 Oct",
+        "pivot": 396,
+        "sl": 378.2,
+        "sector": "Construction",
+        "sessions": 1,
+        "crossed": false,
+        "maxHighPct": 0,
+        "fund": {
+          "matchCount": 1,
+          "outOf": 3,
+          "growth": false,
+          "reaction": false,
+          "growthPct": -37,
+          "growthTag": "QoQ",
+          "reactionPct": -4.06,
+          "quarter": "30 Jun 2026"
+        },
+        "lastSeen": 1793159100
       }
     },
     "done": [
@@ -5540,9 +5504,109 @@
           "reactionPct": 0.86,
           "quarter": "30 Jun 2026"
         }
+      },
+      {
+        "symbol": "ASAHIINDIA",
+        "sector": "Automobile and Auto Components",
+        "from": "7 Oct",
+        "crossed": false,
+        "inSessions": null,
+        "maxHighPct": 0,
+        "pivot": 995,
+        "sl": 950.2,
+        "fund": {
+          "matchCount": 2,
+          "outOf": 3,
+          "growth": true,
+          "reaction": false,
+          "growthPct": 184,
+          "growthTag": "YoY",
+          "reactionPct": -1.38,
+          "quarter": "30 Jun 2026"
+        }
+      },
+      {
+        "symbol": "BALRAMCHIN",
+        "sector": "Agri",
+        "from": "7 Oct",
+        "crossed": true,
+        "inSessions": 2,
+        "maxHighPct": 3.01,
+        "pivot": 714.5,
+        "sl": 682.3,
+        "fund": {
+          "matchCount": 1,
+          "outOf": 3,
+          "growth": false,
+          "reaction": false,
+          "growthPct": -75,
+          "growthTag": "QoQ",
+          "reactionPct": -3.68,
+          "quarter": "30 Jun 2026"
+        }
+      },
+      {
+        "symbol": "KDDL",
+        "sector": "Consumer Durables",
+        "from": "7 Oct",
+        "crossed": false,
+        "inSessions": null,
+        "maxHighPct": 0,
+        "pivot": 4117,
+        "sl": 3931,
+        "fund": {
+          "matchCount": 2,
+          "outOf": 3,
+          "growth": false,
+          "reaction": true,
+          "growthPct": -1,
+          "growthTag": "QoQ",
+          "reactionPct": 1.41,
+          "quarter": "30 Jun 2026"
+        }
+      },
+      {
+        "symbol": "ACE",
+        "sector": "Capital Goods",
+        "from": "7 Oct",
+        "crossed": false,
+        "inSessions": null,
+        "maxHighPct": 0,
+        "pivot": 1268,
+        "sl": 1211,
+        "fund": {
+          "matchCount": 2,
+          "outOf": 3,
+          "growth": false,
+          "reaction": true,
+          "growthPct": 22,
+          "growthTag": "YoY",
+          "reactionPct": 4.43,
+          "quarter": "30 Jun 2026"
+        }
+      },
+      {
+        "symbol": "CONFIPET",
+        "sector": "Oil Gas & Consumable Fuels",
+        "from": "7 Oct",
+        "crossed": false,
+        "inSessions": null,
+        "maxHighPct": 0,
+        "pivot": 93.2,
+        "sl": 89,
+        "fund": {
+          "matchCount": 2,
+          "outOf": 3,
+          "growth": true,
+          "reaction": false,
+          "growthPct": 129,
+          "growthTag": "QoQ",
+          "reactionPct": -5.87,
+          "quarter": "30 Jun 2026"
+        }
       }
     ],
-    "updated": "2026-10-27T15:31:18.948Z"
+    "updated": "2026-10-28T17:10:11.636Z"
   },
   "history": [
     {
@@ -5903,6 +5967,17 @@
       "gear": 1,
       "sec": [],
       "picks": []
+    },
+    {
+      "d": "28/10/2026",
+      "ts": 1793159100,
+      "gear": 1,
+      "sec": [
+        "Healthcare",
+        "Automobile and Auto Components",
+        "Capital Markets"
+      ],
+      "picks": []
     }
   ],
   "delivLog": {
@@ -5941,7 +6016,8 @@
       "2026-10-22": 41.25,
       "2026-10-23": 40.85,
       "2026-10-26": 38.57,
-      "2026-10-27": 41.94
+      "2026-10-27": 41.94,
+      "2026-10-28": 29.73
     },
     "WSTCSTPAPR": {
       "2026-09-04": 57.49,
@@ -5978,7 +6054,8 @@
       "2026-10-22": 12.34,
       "2026-10-23": 28.93,
       "2026-10-26": 27.44,
-      "2026-10-27": 36.78
+      "2026-10-27": 36.78,
+      "2026-10-28": 27.18
     },
     "SHYAMMETL": {
       "2026-09-04": 56.52,
@@ -6015,7 +6092,8 @@
       "2026-10-22": 56.49,
       "2026-10-23": 44.33,
       "2026-10-26": 53.93,
-      "2026-10-27": 39.62
+      "2026-10-27": 39.62,
+      "2026-10-28": 53.89
     },
     "ROSSTECH": {
       "2026-09-09": 37.95,
@@ -6049,7 +6127,8 @@
       "2026-10-22": 42.81,
       "2026-10-23": 25.03,
       "2026-10-26": 39.46,
-      "2026-10-27": 41.6
+      "2026-10-27": 41.6,
+      "2026-10-28": 41.05
     },
     "SANSERA": {
       "2026-09-15": 58.24,
@@ -6080,7 +6159,8 @@
       "2026-10-22": 40.05,
       "2026-10-23": 55.61,
       "2026-10-26": 47.6,
-      "2026-10-27": 44.22
+      "2026-10-27": 44.22,
+      "2026-10-28": 47.02
     },
     "SAMBHV": {
       "2026-09-30": 28.92,
@@ -6100,7 +6180,8 @@
       "2026-10-22": 41.87,
       "2026-10-23": 46.59,
       "2026-10-26": 42.21,
-      "2026-10-27": 38.99
+      "2026-10-27": 38.99,
+      "2026-10-28": 48.45
     },
     "GCSL": {
       "2026-10-01": 23.32,
@@ -6119,7 +6200,8 @@
       "2026-10-22": 16.73,
       "2026-10-23": 27.85,
       "2026-10-26": 21.31,
-      "2026-10-27": 43.75
+      "2026-10-27": 43.75,
+      "2026-10-28": 33
     },
     "COFORGE": {
       "2026-10-13": 34.66,
@@ -6131,7 +6213,8 @@
       "2026-10-22": 53.7,
       "2026-10-23": 43.92,
       "2026-10-26": 39.9,
-      "2026-10-27": 56.06
+      "2026-10-27": 56.06,
+      "2026-10-28": 44.78
     },
     "MANOMAY": {
       "2026-10-14": 15.44,
@@ -6142,7 +6225,8 @@
       "2026-10-22": 20.37,
       "2026-10-23": 8.75,
       "2026-10-26": 11.61,
-      "2026-10-27": 8.44
+      "2026-10-27": 8.44,
+      "2026-10-28": 11.69
     },
     "SOUTHBANK": {
       "2026-10-14": 36.2,
@@ -6153,7 +6237,8 @@
       "2026-10-22": 33.85,
       "2026-10-23": 40.34,
       "2026-10-26": 44.87,
-      "2026-10-27": 45.65
+      "2026-10-27": 45.65,
+      "2026-10-28": 51.9
     },
     "PVRINOX": {
       "2026-10-16": 51.3,
@@ -6162,54 +6247,49 @@
       "2026-10-22": 44.16,
       "2026-10-23": 45.2,
       "2026-10-26": 48.24,
-      "2026-10-27": 56.85
+      "2026-10-27": 56.85,
+      "2026-10-28": 28.47
     },
     "SSWL": {
       "2026-10-23": 15.6,
       "2026-10-26": 8.37,
-      "2026-10-27": 11.84
+      "2026-10-27": 11.84,
+      "2026-10-28": 23.94
     },
     "INDHOTEL": {
       "2026-10-26": 55.2,
-      "2026-10-27": 70.79
+      "2026-10-27": 70.79,
+      "2026-10-28": 65.66
     },
     "SBC": {
-      "2026-10-27": 32.07
+      "2026-10-27": 32.07,
+      "2026-10-28": 35.91
     },
     "SHUKRAPHAR": {
-      "2026-10-27": 14.74
+      "2026-10-27": 14.74,
+      "2026-10-28": 14.58
     },
     "KINGFA": {
-      "2026-10-27": 47.23
+      "2026-10-27": 47.23,
+      "2026-10-28": 49.25
     },
     "CRISIL": {
-      "2026-10-27": 46.77
+      "2026-10-27": 46.77,
+      "2026-10-28": 39.39
     },
-    "KMEW": {
-      "2026-10-27": 45.31
+    "ANANDRATHI": {
+      "2026-10-28": 53.98
+    },
+    "KRISHANA": {
+      "2026-10-28": 54.88
+    },
+    "COHANCE": {
+      "2026-10-28": 43.28
     }
   },
   "breakouts": {
-    "updated": "2026-10-27T15:31:21.188Z",
+    "updated": "2026-10-28T17:10:13.495Z",
     "entries": [
-      {
-        "symbol": "BALRAMCHIN",
-        "sector": "Agri",
-        "pivot": 714.5,
-        "sl": 682.3,
-        "boTs": 1791431100,
-        "source": "watchlist",
-        "fund": {
-          "matchCount": 1,
-          "outOf": 3,
-          "growth": false,
-          "reaction": false,
-          "growthPct": -75,
-          "growthTag": "QoQ",
-          "reactionPct": -3.68,
-          "quarter": "30 Jun 2026"
-        }
-      },
       {
         "symbol": "SHYAMMETL",
         "sector": "Capital Goods",
@@ -6535,6 +6615,24 @@
         "fund": null
       },
       {
+        "symbol": "ANANDRATHI",
+        "sector": "Financial Services",
+        "pivot": 2268,
+        "sl": 2166,
+        "boTs": 1793159100,
+        "source": "watchlist",
+        "fund": {
+          "matchCount": 2,
+          "outOf": 3,
+          "growth": false,
+          "reaction": true,
+          "growthPct": -9,
+          "growthTag": "YoY",
+          "reactionPct": 2.37,
+          "quarter": "30 Sep 2026"
+        }
+      },
+      {
         "symbol": "INDHOTEL",
         "sector": "Hotels / Travel",
         "pivot": 794.7,
@@ -6603,6 +6701,60 @@
           "growthPct": 99,
           "growthTag": "QoQ",
           "reactionPct": 0.94,
+          "quarter": "30 Jun 2026"
+        }
+      },
+      {
+        "symbol": "SANSERA",
+        "sector": "Automobile and Auto Components",
+        "pivot": 4348,
+        "sl": 4152,
+        "boTs": 1793159100,
+        "source": "watchlist",
+        "fund": {
+          "matchCount": 1,
+          "outOf": 3,
+          "growth": false,
+          "reaction": false,
+          "growthPct": -17,
+          "growthTag": "QoQ",
+          "reactionPct": -2.38,
+          "quarter": "30 Jun 2026"
+        }
+      },
+      {
+        "symbol": "COHANCE",
+        "sector": "Healthcare",
+        "pivot": 483.7,
+        "sl": 461.9,
+        "boTs": 1793072700,
+        "source": "watchlist",
+        "fund": {
+          "matchCount": 2,
+          "outOf": 3,
+          "growth": false,
+          "reaction": true,
+          "growthPct": -96,
+          "growthTag": "QoQ",
+          "reactionPct": 2.2,
+          "quarter": "30 Jun 2026"
+        }
+      },
+      {
+        "symbol": "KRISHANA",
+        "sector": "Agri",
+        "pivot": 216,
+        "sl": 206.3,
+        "boTs": 1793159100,
+        "source": "watchlist",
+        "fund": {
+          "matchCount": 2,
+          "outOf": 3,
+          "growth": true,
+          "reaction": false,
+          "growthPct": 54,
+          "growthTag": "YoY",
+          "reactionPct": -0.86,
           "quarter": "30 Jun 2026"
         }
       },
@@ -6811,7 +6963,7 @@
         "sector": "Healthcare",
         "pivot": 518.9,
         "sl": 500.9,
-        "boTs": 1761536700,
+        "boTs": 1761623100,
         "source": "watchlist",
         "fund": {
           "matchCount": 2,
@@ -7221,7 +7373,7 @@
         "sector": "Oil Gas & Consumable Fuels",
         "pivot": 195,
         "sl": 186.2,
-        "boTs": 1761536700,
+        "boTs": 1761623100,
         "source": "watchlist",
         "fund": {
           "matchCount": 3,
@@ -7401,7 +7553,7 @@
         "sector": "Electronics / EMS",
         "pivot": 3692,
         "sl": 3526,
-        "boTs": 1761536700,
+        "boTs": 1761623100,
         "source": "watchlist",
         "fund": {
           "matchCount": 0,
@@ -7905,7 +8057,7 @@
         "sector": "Realty",
         "pivot": 625.8,
         "sl": 597.6,
-        "boTs": 1761536700,
+        "boTs": 1761623100,
         "source": "watchlist",
         "fund": {
           "matchCount": 1,
@@ -8230,6 +8382,24 @@
           "growthPct": -37,
           "growthTag": "QoQ",
           "reactionPct": -4.06,
+          "quarter": "30 Jun 2026"
+        }
+      },
+      {
+        "symbol": "BALRAMCHIN",
+        "sector": "Agri",
+        "pivot": 714.5,
+        "sl": 682.3,
+        "boTs": 1787197500,
+        "source": "watchlist",
+        "fund": {
+          "matchCount": 1,
+          "outOf": 3,
+          "growth": false,
+          "reaction": false,
+          "growthPct": -75,
+          "growthTag": "QoQ",
+          "reactionPct": -3.68,
           "quarter": "30 Jun 2026"
         }
       },
